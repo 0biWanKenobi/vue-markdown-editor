@@ -10,7 +10,7 @@ module.exports = merge(getBaseConfig(), {
   devServer: {
     open: true,
     progress: true,
-    host: '0.0.0.0',
+    host: '127.0.0.1',
     stats: 'errors-only',
     disableHostCheck: true,
   },
@@ -19,6 +19,7 @@ module.exports = merge(getBaseConfig(), {
     publicPath: '/',
     chunkFilename: 'async_[name].js',
   },
+  devtool: 'source-map',
   optimization: {
     splitChunks: {
       cacheGroups: {
