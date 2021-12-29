@@ -190,7 +190,7 @@ WeChat Pay 微信
 
 <img src="https://user-images.githubusercontent.com/15082905/119299205-13005200-bc91-11eb-919d-543b1550bab6.png" width="140"/>
 
-## Refrence
+## Reference
 
 - [ElementUi Utils clickoutside](https://github.com/ElemeFE/element/blob/dev/src/utils/clickoutside.js)
 - [ElementUi Utils resize-event](https://github.com/ElemeFE/element/blob/dev/src/utils/resize-event.js)

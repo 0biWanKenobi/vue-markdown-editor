@@ -55,7 +55,7 @@ Vue.use(VueMarkdownEditor);
 </script>
 \`\`\`
 
-## Refrence
+## Reference
 
 - [ElementUi Scrollbar Component](https://github.com/ElemeFE/element/tree/dev/packages/scrollbar)
 - [vuepress-plugin-container](https://vuepress.github.io/zh/plugins/container/)
