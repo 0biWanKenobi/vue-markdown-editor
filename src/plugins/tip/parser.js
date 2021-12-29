@@ -5,7 +5,7 @@ export default function (vMdParser) {
     const blockClass = 'v-md-plugin-tip';
     const getLangConfig = function () {
       const lang = vMdParser.lang.config;
-      const langConfig = lang.langConfig[lang.lang];
+      const langConfig = lang.langConfig[lang.lang] ?? lang.langConfig['en-US'];
 
       return langConfig;
     };
