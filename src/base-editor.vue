@@ -15,28 +15,16 @@
     @toolbar-menu-click="handleToolbarMenuClick"
     ref="contaner"
   >
-    <template
-      v-for="button of customSlotButtons"
-      #[button]="slotData"
-    >
-      <slot 
-        :name="button"
-        v-bind="slotData"
-      />
+    <template v-for="button of customSlotButtons" #[button]="slotData">
+      <slot :name="button" v-bind="slotData" />
     </template>
     <template #left-area>
       <scrollbar>
-        <toc-nav
-          :titles="titles"
-          @nav-click="handleNavClick"
-        />
+        <toc-nav :titles="titles" @nav-click="handleNavClick" />
       </scrollbar>
     </template>
     <template #editor>
-      <scrollbar
-        @scroll="handleEditorScroll"
-        ref="editorScroller"
-      >
+      <scrollbar @scroll="handleEditorScroll" ref="editorScroller">
         <v-md-textarea-editor
           :model-value="text"
           :min-height="textEditorMinHeight"
@@ -63,49 +51,72 @@
         />
       </scrollbar>
     </template>
-    <v-md-upload-file
-      v-if="hasUploadImage"
-      :upload-config="uploadConfig"
-      ref="uploadFile"
-    />
+    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadConfig" ref="uploadFile" />
   </v-md-container>
 </template>
 
-<script>
-import TextareaEditor from '@/components/textarea-editor';
+<script lang="ts">
+import TextareaEditor from '@/components/textarea-editor.vue';
 import createEditor from './create-editor';
+import {
+  editorProps,
+  editorEmits,
+  editorComponents,
+  shouldInheritAttrs,
+  useCommonEditor,
+} from './modules/common';
 
 import { inBrowser } from '@/utils/util';
+import { computed, defineComponent, nextTick, ref, watch } from 'vue';
 
-const component = {
+const component = defineComponent({
+  name: 'v-md-editor',
+  inheritAttrs: shouldInheritAttrs,
+  props: {
+    ...editorProps,
+    modelValue: String,
+  },
+  emits: editorEmits,
   components: {
     [TextareaEditor.name]: TextareaEditor,
+    ...editorComponents,
   },
-  watch: {
-    modelValue() {
-      this.text = this.modelValue;
-    },
-    height: {
-      async handler() {
+  setup(props) {
+    const {} = useCommonEditor(props.mode);
+    const text = ref<string>();
+    const textEditorMinHeight = ref<string>();
+
+    watch(
+      () => props.modelValue,
+      (v) => (text.value = v)
+    );
+
+    watch(
+      () => props.height,
+      async (h) => {
         if (!inBrowser) return;
 
-        await this.$nextTick();
+        await nextTick();
 
-        if (this.height) {
+        if (h) {
           const editorWrapper = this.$el.querySelector('.v-md-editor__editor-wrapper');
-          this.textEditorMinHeight = window.getComputedStyle(editorWrapper).height;
+          textEditorMinHeight.value = window.getComputedStyle(editorWrapper).height;
         } else {
-          this.textEditorMinHeight = '';
+          textEditorMinHeight.value = '';
         }
       },
-      immediate: true,
-    },
+      {
+        immediate: true,
+      }
+    );
+
+    const customSlotButtons = computed(() => )
   },
   computed: {
     customSlotButtons() {
       const toolbar = this.toolbar;
-      return Object.keys(toolbar).filter( btn => toolbar[btn].slot)
-    }
+      return Object.keys(toolbar).filter((btn) => toolbar[btn].slot);
+    },
   },
   data() {
     return {
@@ -203,7 +214,7 @@ const component = {
       });
     },
   },
-};
+});
 
 createEditor(component);
 
