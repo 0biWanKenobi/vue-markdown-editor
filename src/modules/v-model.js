@@ -1,11 +1,13 @@
-export default {
-  props: {
-    modelValue: {
-      type: String,
-      default: '',
-    },
+export const vModelProps = {
+  modelValue: {
+    type: String,
+    default: '',
   },
-  emits: ['update:modelValue'],
+};
+
+export const vModelEmits = ['update:modelValue'];
+
+export default {
   data() {
     return {
       text: this.modelValue,
