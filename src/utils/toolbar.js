@@ -14,7 +14,7 @@ export default function registerToolbar(target, name, config) {
 export function toolbarWrapper(component) {
   component.toolbars = {};
 
-  component.toolbar = function (name, config) {
+  component.addToolbar = function (name, config) {
     registerToolbar(component.toolbars, name, config);
   };
 
@@ -22,6 +22,6 @@ export function toolbarWrapper(component) {
     const module = defaultToolbars[key];
     const { default: config } = module;
 
-    component.toolbar(config.name, config);
+    component.addToolbar(config.name, config);
   });
 }

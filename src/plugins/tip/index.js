@@ -54,7 +54,7 @@ export default function createTipPlugin({ name = 'tip', icon = 'v-md-icon-tip', 
     install(VMdEditor) {
       if (VMdEditor.name === 'v-md-editor') {
         VMdEditor.command(name, commandHandler);
-        VMdEditor.toolbar(name, toolbar);
+        VMdEditor.addToolbar(name, toolbar);
         VMdEditor.lang.add({
           'zh-CN': {
             tip: {

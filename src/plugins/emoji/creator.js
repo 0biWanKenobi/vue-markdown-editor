@@ -15,7 +15,7 @@ export default function creator({ emojiJson, parser }) {
       install(VMdEditor) {
         if (VMdEditor.name === 'v-md-editor') {
           VMdEditor.command(name, commandHandler);
-          VMdEditor.toolbar(name, toolbar);
+          VMdEditor.addToolbar(name, toolbar);
           VMdEditor.lang.add({
             'zh-CN': {
               emoji: '插入emoji表情',

@@ -19,7 +19,7 @@ export default function createTodoListPlugin({
     install(VMdEditor) {
       if (VMdEditor.name === 'v-md-editor') {
         VMdEditor.command(name, commandHandler);
-        VMdEditor.toolbar(name, toolbar);
+        VMdEditor.addToolbar(name, toolbar);
         VMdEditor.hotkey({
           modifier: 'ctrlShift',
           key: 'u',
