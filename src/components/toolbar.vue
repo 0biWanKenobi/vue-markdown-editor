@@ -2,27 +2,24 @@
   <ul v-if="groups.length">
     <template v-for="(group, idx) in groups">
       <toolbar-item
-        v-for="toolbarName in group"
-        :key="toolbarName"
-        :name="toolbarName"
-        :title="getConfig(toolbarName, 'title')"
-        :icon="getConfig(toolbarName, 'icon')"
-        :text="getConfig(toolbarName, 'text')"
-        :active="getConfig(toolbarName, 'active')"
-        :menus="getConfig(toolbarName, 'menus')"
-        :prevent-native-click="getConfig(toolbarName, 'preventNativeClick')"
+        v-for="itemName in group"
+        :key="itemName"
+        :name="itemName"
+        :title="getConfig(itemName, 'title')"
+        :icon="getConfig(itemName, 'icon')"
+        :text="getConfig(itemName, 'text')"
+        :active="getConfig(itemName, 'active')"
+        :menus="getConfig(itemName, 'menus')"
+        :prevent-native-click="getConfig(itemName, 'preventNativeClick')"
         :disabled-menus="disabledMenus"
-        @click="$emit('item-click', toolbars[toolbarName])"
+        @click="$emit('item-click', toolbars[itemName])"
         @menu-click="$emit('toolbar-menu-click', $event)"
       >
         <template #icon>
-          <slot :name="toolbarName" />
+          <slot :name="itemName" />
         </template>
       </toolbar-item>
-      <li
-        v-if="idx !== groups.length - 1"
-        class="v-md-editor__toolbar-divider"
-      />
+      <li v-if="idx !== groups.length - 1" class="v-md-editor__toolbar-divider" />
     </template>
   </ul>
 </template>
@@ -43,8 +40,8 @@ export default {
   },
   emits: ['item-click', 'toolbar-menu-click'],
   methods: {
-    getConfig(toolbarName, configName) {
-      const toolbarConfig = this.toolbars[toolbarName];
+    getConfig(itemName, configName) {
+      const toolbarConfig = this.toolbars[itemName];
       const value = toolbarConfig[configName];
 
       return typeof value === 'function' ? value(this.markdownEditor) : value;
