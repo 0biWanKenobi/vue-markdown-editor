@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import PreviewMixin from '@/mixins/preview';
+import PreviewMixin from '@/modules/preview';
 
 export default {
   name: 'v-md-preview-html',

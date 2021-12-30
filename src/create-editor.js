@@ -6,18 +6,18 @@ import { commandWrapper } from '@/utils/command';
 import { toolbarWrapper } from '@/utils/toolbar';
 
 // mixins
-import commonMixin from '@/mixins/common';
-import vModelMixin from '@/mixins/v-model';
-import fullscreenMixin from '@/mixins/fullscreen';
-import uploadImageMixin from '@/mixins/upload-image';
-import syncScrollMixin from '@/mixins/sync-scroll';
-import toolbarMixin from '@/mixins/toolbar';
-import commandMixin from '@/mixins/command';
-import tocMixin from '@/mixins/toc';
-import scrollMixin from '@/mixins/scroll';
-import hotkeysMixin from '@/mixins/hotkeys';
-import listMixin from '@/mixins/list';
-import langMixin from '@/mixins/lang';
+import commonMixin from '@/modules/common';
+import vModelMixin from '@/modules/v-model';
+import fullscreenMixin from '@/modules/fullscreen';
+import uploadImageMixin from '@/modules/upload-image';
+import syncScrollMixin from '@/modules/sync-scroll';
+import toolbarMixin from '@/modules/toolbar';
+import commandMixin from '@/modules/command';
+import tocMixin from '@/modules/toc';
+import scrollMixin from '@/modules/scroll';
+import hotkeysMixin from '@/modules/hotkeys';
+import listMixin from '@/modules/list';
+import langMixin from '@/modules/lang';
 
 import Preview from '@/preview';
 
