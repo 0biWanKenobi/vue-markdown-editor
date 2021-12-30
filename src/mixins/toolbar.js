@@ -42,9 +42,13 @@ export default function (Component) {
       registerToolbar(name, config) {
         registerToolbar(this.toolbars, name, config);
       },
-      handleToolbarItemClick(toolbar) {
-        if (toolbar.action && !toolbar.menus?.length && typeof toolbar.action === 'function') {
-          toolbar.action.call(toolbar, this, this.toolbarConfig[toolbar.name]);
+      handleToolbarItemClick(toolbarItem) {
+        if (
+          toolbarItem.action &&
+          !toolbarItem.menus?.length &&
+          typeof toolbarItem.action === 'function'
+        ) {
+          toolbarItem.action.call(toolbarItem, this, this.toolbarConfig[toolbarItem.name]);
         }
       },
       handleToolbarMenuClick(menu) {
