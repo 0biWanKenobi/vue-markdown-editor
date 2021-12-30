@@ -29,13 +29,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import insertTextAtCursor from 'insert-text-at-cursor';
 import HotKeys from '@/utils/hotkeys';
 
 import { isKorean } from '@/utils/util';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'v-md-textarea-editor',
   props: {
     modelValue: String,
@@ -194,7 +195,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style lang="scss">
