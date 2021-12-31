@@ -31,9 +31,9 @@
           :placeholder="placeholder"
           @update:modelValue="handleInput"
           @click.stop
-          @drop="handleDrop"
-          @paste="handlePaste"
-          @blur="handleBlur"
+          @drop="(e) => handleDrop($emit, e)"
+          @paste="(e) => handlePaste($emit, e)"
+          @blur="(e) => handleBlur($emit, e)"
           ref="editorEngine"
         />
       </scrollbar>
@@ -51,21 +51,15 @@
         />
       </scrollbar>
     </template>
-    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadConfig" ref="uploadFile" />
+    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadImgConfig" ref="uploadFile" />
   </v-md-container>
 </template>
 
 <script lang="ts">
 import TextareaEditor from '@/components/textarea-editor.vue';
-import createEditor from './create-editor';
-import {
-  editorProps,
-  editorEmits,
-  editorComponents,
-  shouldInheritAttrs,
-  useCommonEditor,
-} from './modules/common';
+import { editorProps, editorEmits, editorComponents, shouldInheritAttrs } from './modules/common';
 import { toolbarProps } from './modules/toolbar';
+import { uploadImageProps } from './modules/upload-image';
 import { vModelProps, vModelEmits } from './modules/v-model';
 
 import { inBrowser } from '@/utils/util';
@@ -75,6 +69,12 @@ import useToolbar from './modules/useToolbar';
 import useVModel from './modules/useVModel';
 import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
+import useEditor from './modules/useEditor';
+import useToc from './modules/useToc';
+import useScroll from './modules/useScroll';
+import useFullscreen from './modules/useFullscreen';
+import useLang from './modules/useLang';
+import useUploadImage from './modules/useUploadImage';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -83,6 +83,7 @@ export default defineComponent({
     ...editorProps,
     ...toolbarProps,
     ...vModelProps,
+    ...uploadImageProps,
     modelValue: String,
   },
   emits: [...editorEmits, ...vModelEmits],
@@ -91,7 +92,6 @@ export default defineComponent({
     ...editorComponents,
   },
   setup(props, { emit }) {
-    const {} = useCommonEditor(props.mode);
     const textEditorMinHeight = ref<string>();
 
     const containerEl = ref();
@@ -124,128 +124,101 @@ export default defineComponent({
     setLeftToolbarItems(props.leftToolbar);
     setRightToolbarItems(props.rightToolbar);
 
-    const { addDefaultToolbars, handleToolbarItemClick, handleToolbarMenuClick } = useToolbar();
+    const {
+      addDefaultToolbars,
+      handleToolbarItemClick,
+      handleToolbarMenuClick,
+      toolbars,
+    } = useToolbar();
     addDefaultToolbars();
 
     const customSlotButtons = computed(() =>
       Object.keys(props.toolbar).filter((btn) => toolbar[btn].slot)
     );
 
-    const { setFocusEnd, mode } = useCommon();
+    const {
+      setFocusEnd,
+      handleChange,
+      handleBlur,
+      handlePreviewImageClick,
+      mode,
+      currentMode,
+    } = useCommon();
     mode.value = props.mode;
-    const { previewScrollTo } = useSyncScroll();
+
     const handleEditorWrapperClick = () => {
-      setFocusEnd({
-        editorFocusEnd,
-        editorScrollToTop,
-        previewScrollTo,
-      });
+      setFocusEnd();
     };
 
-    const editorEngine = ref();
     const { text } = useVModel();
+    const {
+      editor: {
+        getCursorLineLeftText,
+        focus,
+        clear: clearEditor,
+        replaceSelectionText,
+        editorEngineEl,
+      },
+    } = useEditor('base');
 
     // Must implement
     const editorFocusEnd = () => {
       focus();
 
-      editorEngine.value.setRange({
+      editorEngineEl.value.setRange({
         start: text.value.length,
         end: text.value.length,
       });
     };
     // Must implement
     const delLineLeft = () => {
-      const { start } = editorEngine.value.getRange();
+      const { start } = editorEngineEl.value.getRange();
 
       const leftText = getCursorLineLeftText();
-      editorEngine.value.setRange({ start: start - leftText.length - 1, end: start });
+      editorEngineEl.value.setRange({ start: start - leftText.length - 1, end: start });
       replaceSelectionText('\n');
-    };
-    // Must implement
-    const getCursorLineLeftText = () => {
-      const { start, end } = editorEngine.value.getRange();
-
-      return start === end ? text.value.slice(0, start).split('\n').pop() : null;
-    };
-    // Must implement
-    const editorRegisterHotkeys = (...arg) => {
-      editorEngine.value.registerHotkeys(...arg);
-    };
-
-    const editorScroller = ref();
-    // Must implement
-    const editorScrollToTop = (scrollTop) => {
-      editorScroller.value.scrollTo(scrollTop);
-    };
-    // Must implement
-    const getScrollInfo = () => {
-      return editorScroller.value.getScrollInfo();
-    };
-    // Must implement
-    const heightAtLine = (...arg) => {
-      return editorEngine.value.heightAtLine(...arg);
-    };
-    // Must implement
-    const focus = () => {
-      editorEngine.value.focus();
-    };
-    // Must implement
-    const undo = () => {
-      editorEngine.value.undo();
-    };
-    // Must implement
-    const redo = () => {
-      editorEngine.value.redo();
     };
 
     const { handleInput } = useVModel();
     // Must implement
     const clear = () => {
-      focus();
-
-      handleInput('', emit);
+      clearEditor();
+      emit('update:modelValue', '');
     };
-    // Must implement
-    const replaceSelectionText = (text) => {
-      editorEngine.value.insertText(text);
-    };
-    // Must implement
-    const getCurrentSelectedStr = () => {
-      const { start, end } = editorEngine.value.getRange();
 
-      return end > start ? text.value.slice(start, end) : null;
-    };
-    // Must implement
-    const changeSelectionTo = (insertText, selectedText) => {
-      const selectedIndexOfStr = insertText.indexOf(selectedText);
-      const cursorEndIndex = editorEngine.value.getRange().end;
-
-      if (selectedIndexOfStr === -1) return;
-
-      const textSliced = text.value.slice(0, cursorEndIndex);
-      const insertTextIndex = textSliced.length - insertText.length;
-      const rangeStartIndex = insertTextIndex + selectedIndexOfStr;
-      const rangeEndIndex = rangeStartIndex + selectedText.length;
-
-      editorEngine.value.setRange({
-        start: rangeStartIndex,
-        end: rangeEndIndex,
-      });
-    };
+    const { handleNavClick, tocVisible, titles } = useToc();
+    const { handleEditorScroll } = useSyncScroll();
+    const { getPreviewScrollContainer } = useScroll();
+    const { fullscreen } = useFullscreen();
+    const { langConfig } = useLang();
+    const { handleDrop, handlePaste, hasUploadImage, uploadImgConfig } = useUploadImage();
 
     return {
       handleEditorWrapperClick,
       handleToolbarItemClick,
       handleToolbarMenuClick,
+      toolbars,
       handleNavClick,
       handleEditorScroll,
       handleInput,
       handleDrop,
       handlePaste,
+      hasUploadImage,
+      uploadImgConfig,
       handleBlur,
+      handleChange,
       getPreviewScrollContainer,
       handlePreviewImageClick,
+      delLineLeft,
+      editorFocusEnd,
+      clear,
+      customSlotButtons,
+      currentMode,
+      fullscreen,
+      tocVisible,
+      titles,
+      langConfig,
+      text,
     };
   },
   data() {
