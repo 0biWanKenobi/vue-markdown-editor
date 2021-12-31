@@ -1,4 +1,4 @@
-import * as Commands from './command';
+import * as Commands from '../command';
 import regCommand from '@/utils/command';
 
 const commands = {};
