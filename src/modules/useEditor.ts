@@ -1,18 +1,14 @@
 import IEditor from '@/interfaces/IEditor';
-import BaseEditor from './useBaseEditor';
-import CodeMirrorEditor from './useCodemirrorEditor';
 import { ref } from 'vue';
-
-const BASE_EDITOR = 'base';
-const CODEMIRROR_EDITOR = 'codemirror';
-
-type EDITOR_TYPE = typeof BASE_EDITOR | typeof CODEMIRROR_EDITOR;
+import EDITOR_TYPE, { BASE_EDITOR, CODEMIRROR_EDITOR } from '@/types/editorType';
+import BaseEditor from '@/classes/baseEditor';
+import CodemirrorEditor from '@/classes/codemirrorEditor';
 
 const DEFAULT_EDITOR = BASE_EDITOR;
 
-const editorMap = {
-  [BASE_EDITOR]: BaseEditor,
-  [CODEMIRROR_EDITOR]: CodeMirrorEditor,
+const editorMap: Record<string, () => IEditor> = {
+  [BASE_EDITOR]: () => new BaseEditor(),
+  [CODEMIRROR_EDITOR]: () => new CodemirrorEditor(),
 };
 
 const currentEditor = ref<IEditor>();
