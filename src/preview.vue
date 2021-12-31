@@ -3,30 +3,32 @@
     class="v-md-editor-preview"
     :style="{
       tabSize,
-      '-moz-tab-size': tabSize,
-      '-o-tab-size': tabSize
     }"
-    @click="handlePreviewClick"
+    @click="(e) => handlePreviewClick($emit, e)"
+    ref="previewEl"
   >
-    <div
-      :class="[previewClass]"
-      v-html="html"
-    />
+    <div :class="[previewClass]" v-html="html" />
   </div>
 </template>
 
-<script>
-import { reactive } from 'vue';
+<script lang="ts">
+import { defineComponent, reactive, ref, toRefs, watch } from 'vue';
 import xss from '@/utils/xss/index';
 import { VMdParser } from '@/utils/v-md-parser';
+import usePreview from './modules/usePreview';
+import { previewProps, previewEmits } from '@/modules/preview';
+import useVMdParser from './modules/useVMdParser';
 
-// mixins
-import PreviewMixin from '@/modules/preview';
+const { previewEl, handlePreviewClick } = usePreview('preview');
 
-const component = {
+const vMdParser = new VMdParser();
+vMdParser.lang.config = reactive(vMdParser.lang.config);
+//component.vMdParser = new VMdParser();
+
+export default defineComponent({
   name: 'v-md-preview',
-  mixins: [PreviewMixin],
   props: {
+    ...previewProps,
     text: {
       type: String,
       default: '',
@@ -34,7 +36,37 @@ const component = {
     theme: Object,
     beforeChange: Function,
   },
-  emits: ['change'],
+  emits: [...previewEmits, 'change'],
+  setup(props, { emit }) {
+    const vMdParser = useVMdParser();
+    const { text, beforeChange } = toRefs(props);
+    const html = ref<string>();
+
+    const handleTextChange = () => {
+      const next = (text: string) => {
+        html.value = xss.process(vMdParser.parse(text));
+
+        emit('change', text, html.value);
+      };
+
+      if (beforeChange.value) {
+        beforeChange.value(text.value, next);
+      } else {
+        next(text.value);
+      }
+    };
+    watch(
+      () => text.value,
+      () => handleTextChange()
+    );
+
+    return {
+      html,
+      previewEl,
+      handleTextChange,
+      handlePreviewClick,
+    };
+  },
   data() {
     return {
       html: '',
@@ -62,26 +94,6 @@ const component = {
   created() {
     this.handleTextChange();
   },
-  methods: {
-    handleTextChange() {
-      const next = (text) => {
-        this.html = xss.process(this.$options.vMdParser.parse(text));
-
-        this.$emit('change', text, this.html);
-      };
-
-      if (this.beforeChange) {
-        this.beforeChange(this.text, next);
-      } else {
-        next(this.text);
-      }
-    },
-  },
-};
-
-const vMdParser = new VMdParser();
-vMdParser.lang.config = reactive(vMdParser.lang.config);
-component.vMdParser = new VMdParser();
-
-export default component;
+  methods: {},
+});
 </script>

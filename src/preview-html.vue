@@ -3,30 +3,37 @@
     class="v-md-editor-preview"
     :style="{
       tabSize,
-      '-moz-tab-size': tabSize,
-      '-o-tab-size': tabSize
     }"
-    @click="handlePreviewClick"
+    @click="(e) => handlePreviewClick($emit, e)"
+    ref="previewEl"
   >
-    <div
-      :class="[previewClass]"
-      v-html="html"
-    />
+    <div :class="[previewClass]" v-html="html" />
   </div>
 </template>
 
-<script>
-import PreviewMixin from '@/modules/preview';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import usePreview from './modules/usePreview';
+import { previewProps, previewEmits } from '@/modules/preview';
 
-export default {
+const { previewEl, handlePreviewClick } = usePreview('htmlPreview');
+
+export default defineComponent({
   name: 'v-md-preview-html',
-  mixins: [PreviewMixin],
   props: {
+    ...previewProps,
     html: {
       type: String,
       default: '',
     },
     previewClass: String,
   },
-};
+  emits: previewEmits,
+  setup() {
+    return {
+      previewEl,
+      handlePreviewClick,
+    };
+  },
+});
 </script>
