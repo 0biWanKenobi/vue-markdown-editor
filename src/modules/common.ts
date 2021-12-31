@@ -26,7 +26,7 @@ export const editorProps = {
   },
   beforePreviewChange: {
     type: Function,
-    default: (text, next) => {
+    default: (text: any, next: any) => {
       next(text);
     },
   },
@@ -43,13 +43,13 @@ export const editorComponents = {
   [TocNav.name]: TocNav,
 };
 
-export default {
-  provide() {
-    return {
-      markdownEditor: this,
-    };
-  },
-  created() {
-    if (this.theme) this.$options.use(this.theme);
-  },
-};
+// export default {
+//   provide() {
+//     return {
+//       markdownEditor: this,
+//     };
+//   },
+//   created() {
+//     if (this.theme) this.$options.use(this.theme);
+//   },
+// };
