@@ -45,8 +45,22 @@ const previewScrollToLine = ({ lineIndex, onScrollEnd }) => {
   previewEl.value?.scrollToLine({ lineIndex, onScrollEnd });
 };
 
+let propScrollContainer: () => Element;
+
 export default () => {
+  const getPreviewScrollContainer = computed(() => {
+    const {
+      editor: { previewScrollerEl },
+    } = useEditor();
+    const { isPreviewMode } = useCommon();
+    const previewScrollContainer = previewScrollerEl.value.querySelector('.scrollbar__wrap');
+    const defaultContainer = isPreviewMode.value ? window : previewScrollContainer;
+
+    return propScrollContainer ? propScrollContainer() : defaultContainer;
+  });
+
   return {
+    propScrollContainer,
     previewScrollerEl,
     previewEl,
     previewScrollTo,
@@ -54,5 +68,6 @@ export default () => {
     editorScrollToLine,
     previewScrollToTarget,
     previewScrollToLine,
+    getPreviewScrollContainer,
   };
 };
