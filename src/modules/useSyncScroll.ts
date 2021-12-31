@@ -6,12 +6,10 @@ import { LINE_MARKUP } from '@/utils/constants/markup';
 const syncScroll = ref(true);
 const enableSyncScroll = ref(true);
 const ignoreSyncScroll = ref(true);
-const previewEl = ref();
-const previewScrollerEl = ref();
 let scrollTimer: NodeJS.Timeout = undefined;
 
 const {
-  editor: { getScrollInfo, heightAtLine },
+  editor: { previewScrollerEl, previewEl, getScrollInfo, heightAtLine },
 } = useEditor();
 
 const toggleSyncScroll = (enabled = !syncScroll.value) => {
