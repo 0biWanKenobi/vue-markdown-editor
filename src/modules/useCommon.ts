@@ -33,7 +33,7 @@ export default () => {
   );
 
   const {
-    editor: { editorFocusEnd, editorScrollToTop },
+    editor: { editorFocusEnd, editorScrollToTop, focus },
   } = useEditor();
 
   const { previewScrollTo } = useScroll();
