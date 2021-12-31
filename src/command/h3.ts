@@ -1,17 +1,17 @@
 import { generatorText } from '@/utils/util';
 
-export { ol as name } from '@/utils/constants/command.js';
+export { h3 as name } from '@/utils/constants/command';
 
 export default function (editor) {
   editor.insert((selected) => {
-    const { placeholder } = editor.langConfig.ol;
+    const prefix = '###';
+    const { placeholder } = editor.langConfig.h3;
 
-    const selectedGetter = (selected) => selected || placeholder;
+    const selectedGetter = (selected: string) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
-      InsertGetter: (selected, rowIndex) => `${rowIndex}. ${selectedGetter(selected)}`,
+      InsertGetter: (selected: string) => `${prefix} ${selectedGetter(selected)}`,
       selectedGetter,
-      ignoreEmptyLine: false,
     });
 
     return {

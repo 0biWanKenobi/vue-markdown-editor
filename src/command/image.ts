@@ -1,7 +1,17 @@
+import useCommon from '@/modules/useCommon';
 export { image as name } from '@/utils/constants/command.js';
 
-export default function (editor, { url, desc, width, height } = {}) {
-  editor.insert(() => {
+const { insert } = useCommon();
+
+type Image = {
+  url?: string;
+  desc?: string;
+  width?: string | number;
+  height?: string | number;
+};
+
+export default function ({ url, desc, width, height }: Image = {}) {
+  insert(() => {
     const urlPlaceholder = 'http://';
     const descPlaceholder = 'Description';
     let selected = urlPlaceholder;

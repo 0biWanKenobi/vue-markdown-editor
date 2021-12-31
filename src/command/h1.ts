@@ -1,11 +1,16 @@
+import useCommon from '@/modules/useCommon';
+import useLang from '@/modules/useLang';
 import { generatorText } from '@/utils/util';
 
-export { h5 as name } from '@/utils/constants/command.js';
+export { h1 as name } from '@/utils/constants/command';
 
-export default function (editor) {
-  editor.insert((selected) => {
-    const prefix = '#####';
-    const { placeholder } = editor.langConfig.h5;
+const { insert } = useCommon();
+const { langConfig } = useLang();
+
+export default function () {
+  insert((selected) => {
+    const prefix = '#';
+    const { placeholder } = langConfig.value.h1;
 
     const selectedGetter = (selected) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
