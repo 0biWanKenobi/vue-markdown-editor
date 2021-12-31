@@ -1,17 +1,14 @@
 import useCommon from './useCommon';
 import useSyncScroll from './useSyncScroll';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
-import { ref } from 'vue';
 import useEditor from './useEditor';
-
-const previewScrollerEl = ref();
-const previewEl = ref();
+import { computed } from 'vue';
 
 const { ignoreSyncScroll } = useSyncScroll();
 const { mode } = useCommon();
 
 const {
-  editor: { heightAtLine, editorScrollToTop },
+  editor: { previewScrollerEl, previewEl, heightAtLine, editorScrollToTop },
 } = useEditor();
 
 const previewScrollTo = (scrollTop: number) => {
