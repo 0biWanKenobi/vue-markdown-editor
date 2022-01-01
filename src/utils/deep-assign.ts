@@ -2,7 +2,7 @@ import { isObject } from './util';
 
 const { hasOwnProperty } = Object.prototype;
 
-function assignKey(to, from, key) {
+function assignKey(to: any, from: any, key: string) {
   const val = from[key];
 
   if (val === undefined || val === null) {
@@ -17,7 +17,7 @@ function assignKey(to, from, key) {
   }
 }
 
-export function deepAssign(to, from) {
+export function deepAssign(to: any, from: Object) {
   Object.keys(from).forEach((key) => {
     assignKey(to, from, key);
   });

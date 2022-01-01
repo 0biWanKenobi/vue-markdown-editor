@@ -1,29 +1,36 @@
-export default function (md, { lineMarkup = 'data-line' } = {}) {
-  const defaultRender = function (tokens, idx, options, env, self) {
+import type * as MarkdownIt from 'markdown-it';
+import { RenderRule } from 'markdown-it/lib/renderer';
+
+export default function (md: MarkdownIt, { lineMarkup = 'data-line' } = {}) {
+  const defaultRender: RenderRule = function (tokens, idx, options, env, self) {
     return self.renderToken(tokens, idx, options);
   };
 
-  function addAttrwrapper(originalRender) {
-    return function (tokens, idx, options, env, self) {
+  function addAttrwrapper(originalRender: RenderRule) {
+    const renderRule: RenderRule = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
-
-      token.attrPush([lineMarkup, token.map[0] + 1]);
+      const lineNumber = token.map![0] + 1;
+      token.attrPush([lineMarkup, lineNumber.toString()]);
 
       return originalRender(tokens, idx, options, env, self);
     };
+
+    return renderRule;
   }
 
-  function modifyCodewrapper(originalRender) {
-    return function (tokens, idx, options, env, self) {
+  function modifyCodewrapper(originalRender: RenderRule) {
+    const renderRule: RenderRule = (tokens, idx, options, env, self) => {
       const rawCode = originalRender(tokens, idx, options, env, self);
       const token = tokens[idx];
-      const lineNumber = token.map[0] + 1;
+      const lineNumber = token.map![0] + 1;
 
       return `<div ${lineMarkup}="${lineNumber}">${rawCode}</div>`;
     };
+
+    return renderRule;
   }
 
-  const wrapperMap = {
+  const wrapperMap: Record<string, (v: RenderRule) => RenderRule> = {
     table_open: addAttrwrapper,
     blockquote_open: addAttrwrapper,
     bullet_list_open: addAttrwrapper,
@@ -38,10 +45,12 @@ export default function (md, { lineMarkup = 'data-line' } = {}) {
     fence: modifyCodewrapper,
   };
 
+  type RuleName = keyof typeof wrapperMap;
+
   Object.keys(wrapperMap).forEach((ruleName) => {
     const originalRender = md.renderer.rules[ruleName];
     const render = originalRender || defaultRender;
 
-    md.renderer.rules[ruleName] = wrapperMap[ruleName](render);
+    md.renderer.rules[ruleName] = wrapperMap[ruleName as RuleName](render);
   });
 }

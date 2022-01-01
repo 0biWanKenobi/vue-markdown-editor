@@ -1,8 +1,8 @@
 const { toString } = Object.prototype;
 
-export const isObject = (target) => toString.call(target) === '[object Object]';
+export const isObject = (target: any) => toString.call(target) === '[object Object]';
 
-function extend(to, _from) {
+function extend(to: any, _from: any) {
   Object.keys(_from).forEach((key) => {
     to[key] = _from[key];
   });
@@ -10,7 +10,7 @@ function extend(to, _from) {
   return to;
 }
 
-export function arraytoObject(arr) {
+export function arraytoObject(arr: Array<any>) {
   const res = {};
   for (let i = 0; i < arr.length; i++) {
     if (arr[i]) {
@@ -20,15 +20,9 @@ export function arraytoObject(arr) {
   return res;
 }
 
-export function importAll(map, r) {
-  r.keys().forEach((filePath) => {
-    map[filePath] = r(filePath);
-  });
-}
-
 export const inBrowser = typeof window !== 'undefined';
 
-export function isKorean(text) {
+export function isKorean(text: string) {
   const reg = /([(\uAC00-\uD7AF)|(\u3130-\u318F)])+/gi;
 
   return reg.test(text);
@@ -39,6 +33,11 @@ export function generatorText({
   InsertGetter,
   selectedGetter = (selected) => selected,
   ignoreEmptyLine = true,
+}: {
+  selected: string;
+  InsertGetter: Function;
+  selectedGetter: (v: string | null) => string | null;
+  ignoreEmptyLine: boolean;
 }) {
   let insertContent;
   let newSelected;

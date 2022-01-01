@@ -1,11 +1,13 @@
 // markdown-it plugin for generating copy code button.
 // It depends on preWrapper plugin.
 
+import type * as MarkdownIt from 'markdown-it';
+
 /* eslint-disable max-len */
-export default function (md) {
+export default function (md: MarkdownIt) {
   const { fence } = md.renderer.rules;
   md.renderer.rules.fence = (...args) => {
-    const rawCode = fence(...args);
+    const rawCode = fence!(...args);
     const button = `
     <button class="v-md-copy-code-btn" type="button">
       <i>

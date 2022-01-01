@@ -1,6 +1,9 @@
-import { keyCodesToName, keyNames } from './key-codes';
+import { KeyCode, keyCodesToName, KeyName, keyNames } from './key-codes';
+
+type HotKey = 'ctrl' | 'shift' | 'ctrlAlt' | 'ctrlShift' | 'keys';
 
 class Hotkeys {
+  hotkeys: { ctrl: any; shift: any; ctrlAlt: any; ctrlShift: any; keys: any };
   constructor() {
     this.hotkeys = {
       ctrl: {},
@@ -11,8 +14,8 @@ class Hotkeys {
     };
   }
 
-  dispatch(e) {
-    const keyName = this.getKeyName(e).toLowerCase();
+  dispatch(e: any) {
+    const keyName: string = this.getKeyName(e).toLowerCase();
     let opt;
 
     if (!keyName) return;
@@ -38,39 +41,49 @@ class Hotkeys {
     }
   }
 
-  isKeyEnterExact(e) {
+  isKeyEnterExact(e: any) {
     return !this.isCtrlEnter(e) && !this.isShiftEnter(e) && !this.isAltEnter(e);
   }
 
-  isCtrlShiftEnterExact(e) {
+  isCtrlShiftEnterExact(e: any) {
     return this.isCtrlEnter(e) && this.isShiftEnter(e) && !this.isAltEnter(e);
   }
 
-  isCtrlAltEnterExact(e) {
+  isCtrlAltEnterExact(e: any) {
     return this.isCtrlEnter(e) && this.isAltEnter(e) && !this.isShiftEnter(e);
   }
 
-  isCtrlEnterExact(e) {
+  isCtrlEnterExact(e: any) {
     return this.isCtrlEnter(e) && !this.isShiftEnter(e) && !this.isAltEnter(e);
   }
 
-  isShiftEnterExact(e) {
+  isShiftEnterExact(e: any) {
     return this.isShiftEnter(e) && !this.isCtrlEnter(e) && !this.isAltEnter(e);
   }
 
-  isCtrlEnter(e) {
+  isCtrlEnter(e: any) {
     return e.ctrlKey || e.metaKey;
   }
 
-  isShiftEnter(e) {
+  isShiftEnter(e: any) {
     return e.shiftKey;
   }
 
-  isAltEnter(e) {
+  isAltEnter(e: any) {
     return e.altKey;
   }
 
-  registerHotkeys({ modifier, key, preventDefault = true, action }) {
+  registerHotkeys({
+    modifier,
+    key,
+    preventDefault = true,
+    action,
+  }: {
+    modifier: HotKey;
+    key: string;
+    preventDefault: boolean;
+    action: any;
+  }) {
     if (modifier) {
       this.hotkeys[modifier][key] = {
         preventDefault,
@@ -84,12 +97,12 @@ class Hotkeys {
     }
   }
 
-  getKeyName(e) {
-    const { key, keyCode } = e;
+  getKeyName(e: any) {
+    const { key, keyCode }: { key: any; keyCode: KeyCode } = e;
 
     if (key !== undefined) {
       const keyName = Object.keys(keyNames).find((keyName) => {
-        const validNames = keyNames[keyName];
+        const validNames = keyNames[keyName as KeyName];
 
         return typeof validNames === 'string' ? validNames === key : validNames.indexOf(key) !== -1;
       });

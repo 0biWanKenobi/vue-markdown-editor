@@ -1,6 +1,6 @@
 // Modified from https://github.com/ElemeFE/element/blob/dev/src/utils/scrollbar-width.js
 
-let scrollBarWidth;
+let scrollBarWidth: number;
 const isServer = typeof window === 'undefined';
 
 export default function () {
@@ -23,7 +23,7 @@ export default function () {
   outer.appendChild(inner);
 
   const widthWithScroll = inner.offsetWidth;
-  outer.parentNode.removeChild(outer);
+  outer.parentNode?.removeChild(outer);
   scrollBarWidth = widthNoScroll - widthWithScroll;
 
   return scrollBarWidth;

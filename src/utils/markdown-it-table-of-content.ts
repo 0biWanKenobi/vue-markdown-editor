@@ -1,5 +1,10 @@
 // Modified from https://github.com/Oktavilla/markdown-it-table-of-contents/blob/master/index.js
 
+import type * as MarkdownIt from 'markdown-it';
+import { RuleInline } from 'markdown-it/lib/parser_inline';
+import StateCore from 'markdown-it/lib/rules_core/state_core';
+import Token from 'markdown-it/lib/token';
+
 /* eslint-disable */
 const defaults = {
   includeLevel: [2, 3],
@@ -8,7 +13,8 @@ const defaults = {
   listItemClass: 'table-of-content-list-item',
   markerPattern: /^\[\[toc\]\]/im,
   listType: 'ul',
-  getAnchorAttrs: () => [],
+  getAnchorAttrs: (title: string, level: number, unique: number | '') =>
+    <{ attr: string; value: string }[]>[],
   format: undefined,
   forceFullToc: false,
   containerHeaderHtml: undefined,
@@ -16,12 +22,14 @@ const defaults = {
   transformLink: undefined,
 };
 
-export default function (md, o) {
-  const options = { ...defaults, ...o };
-  const tocRegexp = options.markerPattern;
-  let gstate;
+type Options = typeof defaults;
 
-  function toc(state, silent) {
+export default function (md: MarkdownIt, o: Options) {
+  const options = { ...defaults, ...o };
+  const tocRegexp: RegExp = options.markerPattern;
+  let gstate: StateCore;
+
+  const toc: RuleInline = (state, silent) => {
     let token;
     let match;
 
@@ -35,7 +43,7 @@ export default function (md, o) {
     }
 
     // Detect TOC markdown
-    match = tocRegexp.exec(state.src.substr(state.pos));
+    match = tocRegexp.exec(state.src.substring(state.pos));
     match = !match ? [] : match.filter((m) => m);
     if (match.length < 1) {
       return false;
@@ -56,9 +64,9 @@ export default function (md, o) {
     }
 
     return true;
-  }
+  };
 
-  md.renderer.rules.toc_open = function (tokens, index) {
+  md.renderer.rules.toc_open = function (_, __) {
     let tocOpenHtml = `<div class="${options.containerClass}">`;
 
     if (options.containerHeaderHtml) {
@@ -68,7 +76,7 @@ export default function (md, o) {
     return tocOpenHtml;
   };
 
-  md.renderer.rules.toc_close = function (tokens, index) {
+  md.renderer.rules.toc_close = function (_, __) {
     let tocFooterHtml = '';
 
     if (options.containerFooterHtml) {
@@ -78,7 +86,7 @@ export default function (md, o) {
     return tocFooterHtml + '</div>';
   };
 
-  md.renderer.rules.toc_body = function (tokens, index) {
+  md.renderer.rules.toc_body = function (_, __) {
     const slugs = {};
 
     if (options.forceFullToc) {
@@ -88,16 +96,16 @@ export default function (md, o) {
 
       while (pos < tokenLength) {
         const tocHierarchy = renderChildsTokens(pos, gstate.tokens, slugs);
-        pos = tocHierarchy[0];
-        tocBody += tocHierarchy[1];
+        pos = parseInt(tocHierarchy[0].toString());
+        tocBody += tocHierarchy[1].toString();
       }
 
       return tocBody;
     }
-    return renderChildsTokens(0, gstate.tokens, slugs)[1];
+    return renderChildsTokens(0, gstate.tokens, slugs)[1].toString();
   };
 
-  function renderChildsTokens(pos, tokens, slugs) {
+  function renderChildsTokens(pos: number, tokens: Token[], slugs: any) {
     const headings = [];
     let buffer = '';
     let currentLevel;
@@ -107,7 +115,7 @@ export default function (md, o) {
     while (i < size) {
       const token = tokens[i];
       const heading = tokens[i - 1];
-      const level = token.tag && parseInt(token.tag.substr(1, 1));
+      const level = (token.tag && parseInt(token.tag.substring(1, 2))) as number;
       if (
         token.type !== 'heading_close' ||
         options.includeLevel.indexOf(level) == -1 ||
@@ -122,7 +130,7 @@ export default function (md, o) {
         if (level > currentLevel) {
           subHeadings = renderChildsTokens(i, tokens, slugs);
           buffer += subHeadings[1];
-          i = subHeadings[0];
+          i = parseInt(subHeadings[0].toString());
           continue;
         }
         if (level < currentLevel) {
@@ -143,7 +151,7 @@ export default function (md, o) {
         }
       }
 
-      const content = heading.children.reduce((acc, t) => acc + t.content, '');
+      const content = heading.children?.reduce((acc, t) => acc + t.content, '') ?? '';
       const title = heading.content;
       const unique = (slugs[title] = title in slugs ? Number(slugs[title]) + 1 : '');
       const anchorAttrs = options.getAnchorAttrs(title, level, unique);

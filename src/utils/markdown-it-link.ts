@@ -1,6 +1,15 @@
 // Modified from https://github.com/vuejs/vuepress/blob/master/packages/%40vuepress/markdown/lib/link.js
 
-export default function (md, { externalAttrs, openLinkIcon, openLinkIconClass }) {
+import type * as MarkdownIt from 'markdown-it';
+
+export default function (
+  md: MarkdownIt,
+  {
+    externalAttrs,
+    openLinkIcon,
+    openLinkIconClass,
+  }: { externalAttrs: Record<string, string>; openLinkIcon: any; openLinkIconClass: string }
+) {
   let hasOpenExternalLink = false;
 
   md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
@@ -8,7 +17,7 @@ export default function (md, { externalAttrs, openLinkIcon, openLinkIconClass })
     const hrefIndex = token.attrIndex('href');
 
     if (hrefIndex >= 0) {
-      const link = token.attrs[hrefIndex];
+      const link = token.attrs![hrefIndex];
       const href = link[1];
       const isExternal = /^https?:/.test(href);
 

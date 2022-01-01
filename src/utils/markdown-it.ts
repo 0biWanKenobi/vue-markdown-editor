@@ -1,15 +1,24 @@
 import MarkdownIt from 'markdown-it';
 import { escapeHtml } from 'markdown-it/lib/common/utils';
 
-export function createHighlightRender({
-  codeHighlightExtensionMap = {},
-  hasLang = () => true,
-  highlight = (str) => str,
-  codeBlockClass,
-}) {
-  const getCodeBlockClass = (lang) => (codeBlockClass ? codeBlockClass(lang) : `language-${lang}`);
+const defaults = {
+  codeHighlightExtensionMap: <Record<string, string>>{},
+  hasLang: (_: string) => true,
+  highlight: (str: string, _?: string) => str,
+};
 
-  return function (str, lang) {
+type Options = typeof defaults & { codeBlockClass?: (v: string) => string };
+
+export function createHighlightRender({
+  codeHighlightExtensionMap,
+  hasLang,
+  highlight,
+  codeBlockClass,
+}: Options = defaults) {
+  const getCodeBlockClass = (lang: string) =>
+    codeBlockClass ? codeBlockClass(lang) : `language-${lang}`;
+
+  return function (str: string, lang: string) {
     let res = escapeHtml(str);
 
     lang = codeHighlightExtensionMap[lang] || lang;

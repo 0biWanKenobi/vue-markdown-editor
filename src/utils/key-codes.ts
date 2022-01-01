@@ -53,6 +53,8 @@ export const keyCodesToName = {
   123: 'F12',
 };
 
+export type KeyCode = keyof typeof keyCodesToName;
+
 export const keyNames = {
   esc: ['Esc', 'Escape'],
   tab: 'Tab',
@@ -64,3 +66,5 @@ export const keyNames = {
   down: ['Down', 'ArrowDown'],
   delete: ['Backspace', 'Delete', 'Del'],
 };
+
+export type KeyName = keyof typeof keyNames;

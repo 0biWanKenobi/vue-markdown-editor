@@ -1,6 +1,19 @@
 import { deepAssign } from '@/utils/deep-assign';
 
+type LangConfig = {
+  [x: string]: Record<string, any>;
+};
+
 export default class Lang {
+  config: {
+    lang: string;
+    langConfig: LangConfig;
+  };
+
+  options: {
+    afterUse?: (name: string, config: LangConfig) => void;
+  };
+
   constructor(options = {}) {
     this.config = {
       lang: 'zh-CN',
@@ -12,7 +25,7 @@ export default class Lang {
     this.options = options;
   }
 
-  use(lang, config) {
+  use(lang: string, config: LangConfig) {
     this.config.lang = lang;
     this.add({ [lang]: config });
 

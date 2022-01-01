@@ -1,4 +1,4 @@
-export default {
+const svgWhiteList: Record<string, any> = {
   svg: [],
   altGlyph: [],
   altGlyphDef: [],
@@ -74,3 +74,7 @@ export default {
   view: [],
   vkern: [],
 };
+
+export type SvgWhiteList = keyof typeof svgWhiteList;
+
+export default svgWhiteList;

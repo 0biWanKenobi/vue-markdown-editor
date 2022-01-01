@@ -1,7 +1,19 @@
 // Modified from https://github.com/waylonflinn/markdown-it-katex/blob/master/index.js
 
+import * as Katex from 'katex';
+import type * as MarkdownIt from 'markdown-it';
+import type { RuleBlock } from 'markdown-it/lib/parser_block';
+import type { RuleInline } from 'markdown-it/lib/parser_inline';
+import type { RenderRule } from 'markdown-it/lib/renderer';
+import type * as StateInline from 'markdown-it/lib/rules_inline/state_inline';
+
+interface Options extends Katex.KatexOptions {
+  katex: typeof Katex;
+  blockClass?: string;
+}
+
 /* eslint-disable */
-function isValidDelim(state, pos) {
+function isValidDelim(state: StateInline, pos: number) {
   let prevChar;
   let nextChar;
   const max = state.posMax;
@@ -28,7 +40,7 @@ function isValidDelim(state, pos) {
   };
 }
 
-function math_inline(state, silent) {
+const math_inline: RuleInline = (state, silent) => {
   let start;
   let match;
   let token;
@@ -96,9 +108,9 @@ function math_inline(state, silent) {
 
   state.pos = match + 1;
   return true;
-}
+};
 
-function math_block(state, start, end, silent) {
+const math_block: RuleBlock = (state, start, end, silent) => {
   let firstLine;
   let lastLine;
   let next;
@@ -158,14 +170,14 @@ function math_block(state, start, end, silent) {
   token.map = [start, state.line];
   token.markup = '$$';
   return true;
-}
+};
 
-export default function math_plugin(md, options) {
+export default function math_plugin(md: MarkdownIt, options: Options) {
   options = options || {};
 
   const { katex } = options;
 
-  const katexInline = function (latex) {
+  const katexInline = function (latex: string) {
     options.displayMode = false;
     try {
       return katex.renderToString(latex, options);
@@ -177,11 +189,11 @@ export default function math_plugin(md, options) {
     }
   };
 
-  const inlineRenderer = function (tokens, idx) {
+  const inlineRenderer: RenderRule = function (tokens, idx) {
     return katexInline(tokens[idx].content);
   };
 
-  const katexBlock = function (latex) {
+  const katexBlock = function (latex: string) {
     options.displayMode = true;
     try {
       return '<p>' + katex.renderToString(latex, options) + '</p>';
@@ -193,7 +205,7 @@ export default function math_plugin(md, options) {
     }
   };
 
-  const blockRenderer = function (tokens, idx) {
+  const blockRenderer: RenderRule = function (tokens, idx) {
     return katexBlock(tokens[idx].content) + '\n';
   };
 

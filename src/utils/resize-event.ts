@@ -6,11 +6,11 @@ import ResizeObserver from 'resize-observer-polyfill';
 const isServer = typeof window === 'undefined';
 
 /* istanbul ignore next */
-const resizeHandler = function (entries) {
+const resizeHandler = function (entries: any[]) {
   entries.forEach((entry) => {
-    const listeners = entry.target.__resizeListeners__ || [];
+    const listeners = entry.target?.__resizeListeners__ || [];
     if (listeners.length) {
-      listeners.forEach((fn) => {
+      listeners.forEach((fn: Function) => {
         fn();
       });
     }
@@ -18,7 +18,7 @@ const resizeHandler = function (entries) {
 };
 
 /* istanbul ignore next */
-export const addResizeListener = function (element, fn) {
+export const addResizeListener = function (element: any, fn: Function) {
   if (isServer) return;
   if (!element.__resizeListeners__) {
     element.__resizeListeners__ = [];
@@ -29,7 +29,7 @@ export const addResizeListener = function (element, fn) {
 };
 
 /* istanbul ignore next */
-export const removeResizeListener = function (element, fn) {
+export const removeResizeListener = function (element: any, fn: Function) {
   if (!element || !element.__resizeListeners__) return;
   element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
   if (!element.__resizeListeners__.length) {

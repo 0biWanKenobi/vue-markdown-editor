@@ -1,6 +1,6 @@
 // Modified from https://github.com/ElemeFE/element/blob/dev/packages/upload/src/upload-dragger.vue
-export function filesFilter(files, config) {
-  const { accept } = config;
+export function filesFilter(files: Record<string, any>, config: any) {
+  const { accept }: { accept: string } = config;
 
   const filesKeys = Object.keys(files).filter((key) => {
     const file = files[key];
@@ -33,8 +33,8 @@ export function filesFilter(files, config) {
   return filesKeys.map((key) => files[key]);
 }
 
-export function getFilesFromClipboardData(clipboardData) {
-  const files = [];
+export function getFilesFromClipboardData(clipboardData: any) {
+  const files: Array<any> = [];
 
   Object.keys(clipboardData.items).forEach((key) => {
     const item = clipboardData.items[key];

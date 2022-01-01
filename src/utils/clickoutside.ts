@@ -1,10 +1,10 @@
 // Modified from https://github.com/ElemeFE/element/blob/dev/src/utils/clickoutside.js
 import { inBrowser } from '@/utils/util';
 
-const nodeList = [];
+const nodeList: Array<any> = [];
 const ctx = '@@clickoutsideContext';
 
-let startClick;
+let startClick: any;
 let seed = 0;
 
 if (inBrowser) {
@@ -17,8 +17,8 @@ if (inBrowser) {
   });
 }
 
-function createDocumentHandler(el, binding, vnode) {
-  return function (mouseup = {}, mousedown = {}) {
+function createDocumentHandler(el: any, binding: any, vnode: any) {
+  return function (mouseup: { target?: any } = {}, mousedown: { target?: any } = {}) {
     if (
       !vnode ||
       !binding ||
@@ -41,7 +41,7 @@ function createDocumentHandler(el, binding, vnode) {
 }
 
 export default {
-  beforeMount(el, binding, vnode) {
+  beforeMount(el: any, binding: any, vnode: any) {
     nodeList.push(el);
     const id = seed++;
     el[ctx] = {
@@ -52,13 +52,13 @@ export default {
     };
   },
 
-  updated(el, binding, vnode) {
+  updated(el: any, binding: any, vnode: any) {
     el[ctx].documentHandler = createDocumentHandler(el, binding, vnode);
     el[ctx].methodName = binding.arg;
     el[ctx].bindingFn = binding.value;
   },
 
-  unmounted(el) {
+  unmounted(el: any) {
     const len = nodeList.length;
 
     for (let i = 0; i < len; i++) {

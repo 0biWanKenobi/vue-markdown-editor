@@ -1,9 +1,30 @@
 import { getScrollTop, scrollTo } from './scroll-top';
 
-export function smooth({ currentScrollTop, scrollToTop, scrollFn, percent = 10, onScrollEnd }) {
+type SmoothScrollParams = {
+  scrollTarget: Window | HTMLElement;
+  scrollToTop: number;
+  percent: number;
+  onScrollEnd: FrameRequestCallback;
+};
+
+type SmoothParams = {
+  currentScrollTop: number;
+  scrollToTop: number;
+  scrollFn: (v: number) => void;
+  percent: number;
+  onScrollEnd: FrameRequestCallback;
+};
+
+export function smooth({
+  currentScrollTop,
+  scrollToTop,
+  scrollFn,
+  percent = 10,
+  onScrollEnd,
+}: SmoothParams) {
   const scrollWay = scrollToTop > currentScrollTop ? 'down' : 'up';
   const step = (scrollToTop - currentScrollTop) * (percent / 100);
-  let id;
+  let id: number;
 
   const scroll = () => {
     currentScrollTop += step;
@@ -25,13 +46,18 @@ export function smooth({ currentScrollTop, scrollToTop, scrollFn, percent = 10, 
   window.requestAnimationFrame(scroll);
 }
 
-export default function smoothScroll({ scrollTarget, scrollToTop, percent = 10, onScrollEnd }) {
+export default function smoothScroll({
+  scrollTarget,
+  scrollToTop,
+  percent = 10,
+  onScrollEnd,
+}: SmoothScrollParams) {
   const currentScrollTop = getScrollTop(scrollTarget);
 
   smooth({
     currentScrollTop,
     scrollToTop,
-    scrollFn: (scrollTop) => scrollTo(scrollTarget, scrollTop),
+    scrollFn: (scrollTop: number) => scrollTo(scrollTarget, scrollTop),
     percent,
     onScrollEnd,
   });

@@ -1,4 +1,4 @@
-export default {
+const kaTexWhiteList: Record<string, any> = {
   math: [],
   annotation: [],
   semantics: [],
@@ -27,3 +27,7 @@ export default {
   mphantom: [],
   mglyph: [],
 };
+
+export type KaTexWhiteList = keyof typeof kaTexWhiteList;
+
+export default kaTexWhiteList;
