@@ -1,4 +1,4 @@
 import creator from './creator';
-import mermaid from 'mermaid/dist/mermaid.min.js';
+import mermaid from 'mermaid';
 
 export default creator(mermaid);

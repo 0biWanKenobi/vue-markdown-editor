@@ -1,7 +1,9 @@
+import PluginParserFn from '@/types/pluginParserFn';
 import markdownItContainer from '@/utils/markdown-it-container';
+import MarkdownIt from 'markdown-it';
 
-export default function (vMdParser) {
-  vMdParser.extendMarkdown((mdParser) => {
+const parser: PluginParserFn = (vMdParser) => {
+  vMdParser.extendMarkdown((mdParser: MarkdownIt) => {
     const blockClass = 'v-md-plugin-tip';
     const getLangConfig = function () {
       const lang = vMdParser.lang.config;
@@ -31,7 +33,7 @@ export default function (vMdParser) {
     markdownItContainer(mdParser, {
       type: 'details',
       defaultTitle: () => getLangConfig().tip.details.defaultTitle,
-      before: (info) =>
+      before: (info?: string) =>
         `<details class="${blockClass} details">${info ? `<summary>${info}</summary>` : ''}\n`,
       after: () => '</details>\n',
     });
@@ -71,4 +73,5 @@ export default function (vMdParser) {
       },
     },
   });
-}
+};
+export default parser;
