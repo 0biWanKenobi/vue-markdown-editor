@@ -15,41 +15,39 @@
     @mousedown="preventNativeClick ? $event.preventDefault() : undefined"
     @mouseleave="handleHideTooltip"
     @mouseenter="showTooltip"
-    @click="handleClick"
+    @click="handleToolbarItemClick(name)"
+    ref="toolbarItem"
   >
     {{ text }}
     <slot name="icon" />
-    <v-md-tooltip
-      ref="tooltip"
-      :text="title"
-    />
+    <v-md-tooltip ref="tooltipEl" :text="title" />
     <v-md-menu
       v-if="hasMenu"
       ref="menu"
       :mode="menuMode"
       :menus="menuItems"
-      :item-width="menus.itemWidth"
-      :row-num="menus.rowNum"
+      :item-width="menuObject.itemWidth"
+      :row-num="menuObject.rowNum"
       :visible="menuActive"
       @update:visible="menuActive = $event"
-      @item-click="$emit('menu-click', $event)"
+      @item-click="handleToolbarMenuClick(name)"
     />
-    <i
-      v-if="hasMenu"
-      class="v-md-icon-arrow-down v-md-editor__menu-ctrl"
-      ref="menuCtrl"
-    />
+    <i v-if="hasMenu" class="v-md-icon-arrow-down v-md-editor__menu-ctrl" ref="menuCtrlEl" />
   </li>
 </template>
 
-<script>
-import Tooltip from './tooltip';
-import Menu from './menu';
+<script lang="ts">
+import Tooltip from './tooltip.vue';
+import Menu from './menu.vue';
 import Clickoutside from '@/utils/clickoutside';
-import { isObject } from '@/utils/util';
 import MENU_MODE from '@/utils/constants/menu-mode';
+import { computed, defineComponent, ref, toRefs } from 'vue';
+import VueTypes, { oneOfType } from 'vue-types';
+import useToolbar from '@/modules/useToolbar';
 
-export default {
+type MenuObject = { items: any; mode: any; itemWidth: number; rowNum: number };
+
+export default defineComponent({
   name: 'toolbar-item',
   directives: { Clickoutside },
   components: {
@@ -57,96 +55,129 @@ export default {
     [Menu.name]: Menu,
   },
   props: {
-    name: String,
+    name: VueTypes.string.isRequired,
     title: String,
     active: Boolean,
     text: String,
     icon: String,
-    menus: [Array, Object],
+    menus: oneOfType<Array<any> | MenuObject>([Array, Object]).isRequired,
     disabledMenus: Array,
     preventNativeClick: {
       type: Boolean,
       default: true,
-    }
-  },
-  emits: ['click', 'menu-click'],
-  data() {
-    return {
-      menuActive: false,
-    };
-  },
-  computed: {
-    hasMenu() {
-      return this.menuItems?.length;
     },
-    menuItems() {
-      const menus = isObject(this.menus) ? this.menus.items : this.menus;
+  },
+  setup(props, { emit }) {
+    const menuActive = ref(false);
+    const { name, menus, disabledMenus, preventNativeClick } = toRefs(props);
+    const { handleToolbarItemClick, handleToolbarMenuClick } = useToolbar();
 
-      return menus?.filter(
-        ({ name: menuName }) => !this.disabledMenus?.includes(`${this.name}/${menuName}`)
+    const menuObject = computed(() => {
+      return typeof menus.value == 'object'
+        ? <MenuObject>menus.value
+        : {
+            items: [],
+            mode: undefined,
+            itemWidth: 0,
+            rowNum: 0,
+          };
+    });
+
+    const menuItems = computed(() => {
+      const _menus = typeof menus.value == 'object' ? (<MenuObject>menus.value).items : menus;
+
+      return _menus?.filter(
+        ({ name: menuName }: { name: string }) =>
+          !disabledMenus.value?.includes(`${name.value}/${menuName}`)
       );
-    },
-    menuMode() {
-      return isObject(this.menus) ? this.menus.mode : MENU_MODE.LIST;
-    },
-  },
-  methods: {
-    hideMenu() {
-      if (this.hasMenu) {
-        this.menuActive = false;
-      }
-    },
-    showMenu() {
-      if (this.hasMenu) {
-        this.menuActive = true;
-      }
-    },
-    handleClick(e) {
-      if(this.preventNativeClick)
-        e.stopPropagation();
-      this.$emit('click');
-      this.menuActive ? this.hideMenu() : this.showMenu();
+    });
 
-      if (this.hasMenu) {
-        this.handleHideTooltip();
+    const hasMenu = computed(() => menuItems.value?.length);
+    const menuMode = computed(() => {
+      return typeof menus.value == 'object' ? (<MenuObject>menus.value).mode : MENU_MODE.LIST;
+    });
+
+    const hideMenu = () => {
+      if (hasMenu.value) {
+        menuActive.value = false;
+      }
+    };
+
+    const showMenu = () => {
+      if (hasMenu.value) {
+        menuActive.value = true;
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      if (preventNativeClick.value) e.stopPropagation();
+      emit('click');
+      menuActive.value ? hideMenu() : showMenu();
+
+      if (hasMenu.value) {
+        handleHideTooltip();
       } else {
-        this.showTooltip(e);
+        showTooltip(e);
       }
-    },
-    test() {
-      console.log("test")
-    },
-    showTooltip(e) {
-      const selfEl = this.$el;
-      const { target } = e;
-      const { menuCtrl } = this.$refs;
+    };
 
-      if ((target !== selfEl && target !== menuCtrl) || this.menuActive) {
-        this.handleHideTooltip();
+    const toolbarItemEl = ref();
+    const menuCtrlEl = ref();
+    const tooltipEl = ref();
+
+    const timer = ref<NodeJS.Timeout>();
+
+    const showTooltip = (e: MouseEvent) => {
+      const selfEl = toolbarItemEl.value.$el;
+      const { target } = e;
+
+      if ((target !== selfEl && target !== menuCtrlEl.value?.$el) || menuActive.value) {
+        handleHideTooltip();
 
         return;
       }
 
-      if (this.timer) clearTimeout(this.timer);
+      if (timer.value) clearTimeout(timer.value);
 
       const selfElRect = selfEl.getBoundingClientRect();
       const x = e.clientX - selfElRect.left;
       const y = e.clientY - selfElRect.top;
 
-      this.timer = setTimeout(() => {
-        this.$refs.tooltip?.show({
+      timer.value = setTimeout(() => {
+        tooltipEl.value?.$el.show({
           x: x - 2,
           y: y + 20,
         });
       }, 100);
-    },
-    handleHideTooltip() {
-      if (this.timer) clearTimeout(this.timer);
+    };
 
-      this.$refs.tooltip.hide();
-    },
+    const handleHideTooltip = () => {
+      if (timer.value) clearTimeout(timer.value);
+
+      tooltipEl.value?.$el.hide();
+    };
+
+    return {
+      menuObject,
+      menuActive,
+      menuItems,
+      hasMenu,
+      menuMode,
+      toolbarItemEl,
+      menuCtrlEl,
+      tooltipEl,
+      hideMenu,
+      showMenu,
+      handleClick,
+      showTooltip,
+      handleHideTooltip,
+      handleToolbarItemClick,
+      handleToolbarMenuClick,
+    };
   },
-};
+
+  methods: {},
+});
 </script>
 
 <style lang="scss">
