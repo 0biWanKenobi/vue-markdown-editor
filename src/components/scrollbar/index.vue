@@ -1,14 +1,15 @@
-<script>
+<script lang="tsx">
 // Modified from https://github.com/ElemeFE/element/tree/dev/packages/scrollbar
 
-import { h } from 'vue';
+import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, toRefs } from 'vue';
 import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import scrollbarWidth from '@/utils/scrollbar-width';
 import { arraytoObject } from '@/utils/util';
-import Bar from './bar';
+import Bar from './bar.vue';
 import smoothScroll from '@/utils/smooth-scroll';
+import VueTypes from 'vue-types';
 
-export default {
+export default defineComponent({
   name: 'scrollbar',
 
   components: { Bar },
@@ -16,7 +17,7 @@ export default {
   props: {
     native: Boolean,
     disabled: Boolean,
-    wrapStyle: null,
+    wrapStyle: VueTypes.oneOfType([Array, String]),
     wrapClass: null,
     viewClass: null,
     viewStyle: null,
@@ -29,142 +30,143 @@ export default {
 
   emits: ['scroll'],
 
-  data() {
-    return {
-      sizeWidth: '0',
-      sizeHeight: '0',
-      moveX: 0,
-      moveY: 0,
-    };
-  },
+  setup(props, { emit, slots }) {
+    const wrapEl = ref();
+    const resizeEl = ref();
 
-  computed: {
-    wrap() {
-      return this.$refs.wrap;
-    },
-  },
+    const sizeWidth = ref('0');
+    const sizeHeight = ref('0');
+    const moveX = ref(0);
+    const moveY = ref(0);
 
-  mounted() {
-    if (this.native || this.disabled) return;
-    this.$nextTick(this.update);
-    !this.noresize && addResizeListener(this.$refs.resize, this.update);
-  },
+    const { native, disabled, wrapStyle, wrapClass, viewClass, viewStyle, noresize, tag } =
+      toRefs(props);
 
-  beforeUnmount() {
-    if (this.native || this.disabled) return;
-    !this.noresize && removeResizeListener(this.$refs.resize, this.update);
-  },
+    onMounted(() => {
+      if (native.value || disabled.value) return;
+      nextTick(update);
+      !noresize.value && addResizeListener(resizeEl.value, update);
+    });
 
-  methods: {
-    getScrollInfo() {
-      const { wrap } = this;
+    onBeforeUnmount(() => {
+      if (native.value || disabled.value) return;
+      !noresize.value && removeResizeListener(resizeEl.value, update);
+    });
+
+    const getScrollInfo = () => {
+      const el = wrapEl.value?.$el;
 
       return {
-        left: wrap.scrollLeft,
-        top: wrap.scrollTop,
-        width: wrap.scrollWidth,
-        height: wrap.scrollHeight,
-        clientWidth: wrap.clientWidth,
-        clientHeight: wrap.clientHeight,
+        left: el.scrollLeft,
+        top: el.scrollTop,
+        width: el.scrollWidth,
+        height: el.scrollHeight,
+        clientWidth: el.clientWidth,
+        clientHeight: el.clientHeight,
       };
-    },
+    };
 
-    scrollTo(scrollTop) {
+    const scrollTo = (scrollTop: number) => {
+      const el = wrapEl.value?.$el;
       smoothScroll({
-        scrollTarget: this.wrap,
+        scrollTarget: el,
         scrollToTop: scrollTop,
       });
-    },
+    };
 
-    handleScroll() {
-      const { wrap } = this;
+    const handleScroll = () => {
+      const el = wrapEl.value?.$el;
 
-      this.moveY = (wrap.scrollTop * 100) / wrap.clientHeight;
-      this.moveX = (wrap.scrollLeft * 100) / wrap.clientWidth;
+      moveY.value = (el.scrollTop * 100) / el.clientHeight;
+      moveX.value = (el.scrollLeft * 100) / el.clientWidth;
 
-      this.$emit('scroll');
-    },
+      emit('scroll');
+    };
 
-    update() {
-      const { wrap } = this;
-      if (!wrap) return;
+    const update = () => {
+      const el = wrapEl.value?.$el;
+      if (!el) return;
 
-      const heightPercentage = (wrap.clientHeight * 100) / wrap.scrollHeight;
-      const widthPercentage = (wrap.clientWidth * 100) / wrap.scrollWidth;
+      const heightPercentage = (el.clientHeight * 100) / el.scrollHeight;
+      const widthPercentage = (el.clientWidth * 100) / el.scrollWidth;
 
-      this.sizeHeight = heightPercentage < 100 ? heightPercentage + '%' : '';
-      this.sizeWidth = widthPercentage < 100 ? widthPercentage + '%' : '';
-    },
-  },
+      sizeHeight.value = heightPercentage < 100 ? heightPercentage + '%' : '';
+      sizeWidth.value = widthPercentage < 100 ? widthPercentage + '%' : '';
+    };
 
-  render() {
-    if (this.disabled) return this.$slots.default();
+    return () => {
+      if (disabled.value) return slots.default;
 
-    const gutter = scrollbarWidth();
-    let style = this.wrapStyle;
+      const gutter = scrollbarWidth();
+      let style: any = wrapStyle.value;
 
-    if (gutter) {
-      const scrollView = this.$refs.resize;
-      const wrapper = this.$refs.wrap;
-      const scrollViewHeight = scrollView?.scrollHeight;
-      const scrollViewWidth = scrollView?.scrollWidth;
-      const wrapperHeight = wrapper?.clientHeight;
-      const wrapperWidth = wrapper?.clientWidth;
+      if (gutter) {
+        const scrollView = resizeEl.value?.$el;
+        const wrapper = wrapEl.value?.$el;
+        const scrollViewHeight = scrollView?.scrollHeight;
+        const scrollViewWidth = scrollView?.scrollWidth;
+        const wrapperHeight = wrapper?.clientHeight;
+        const wrapperWidth = wrapper?.clientWidth;
 
-      const gutterWith = `-${gutter}px`;
-      const marginBottom = scrollViewWidth > wrapperWidth ? gutterWith : 0;
-      const marginRight = scrollViewHeight > wrapperHeight ? gutterWith : 0;
+        const gutterWith = `-${gutter}px`;
+        const marginBottom = scrollViewWidth > wrapperWidth ? gutterWith : 0;
+        const marginRight = scrollViewHeight > wrapperHeight ? gutterWith : 0;
 
-      const gutterStyle = `margin-bottom: ${marginBottom}; margin-right: ${marginRight};`;
+        const gutterStyle = `margin-bottom: ${marginBottom}; margin-right: ${marginRight};`;
 
-      if (Array.isArray(this.wrapStyle)) {
-        style = arraytoObject(this.wrapStyle);
-        style.marginRight = gutterWith;
-        style.marginBottom = gutterWith;
-      } else if (typeof this.wrapStyle === 'string') {
-        style += gutterStyle;
-      } else {
-        style = gutterStyle;
+        if (Array.isArray(wrapStyle.value)) {
+          style = arraytoObject(wrapStyle.value);
+          style.marginRight = gutterWith;
+          style.marginBottom = gutterWith;
+        } else if (typeof wrapStyle.value === 'string') {
+          style += gutterStyle;
+        } else {
+          style = gutterStyle;
+        }
       }
-    }
 
-    const view = h(
-      this.tag,
-      {
-        class: ['scrollbar__view', this.viewClass],
-        style: this.viewStyle,
-        ref: 'resize',
-      },
-      this.$slots.default()
-    );
-    const wrap = (
-      <div
-        ref="wrap"
-        style={style}
-        onScroll={this.handleScroll}
-        class={[this.wrapClass, 'scrollbar__wrap', gutter ? '' : 'scrollbar__wrap--hidden-default']}
-      >
-        {[view]}
-      </div>
-    );
-    let nodes;
-
-    if (!this.native) {
-      nodes = [
-        wrap,
-        <Bar move={this.moveX} size={this.sizeWidth}></Bar>,
-        <Bar vertical move={this.moveY} size={this.sizeHeight}></Bar>,
-      ];
-    } else {
-      nodes = [
-        <div ref="wrap" class={[this.wrapClass, 'scrollbar__wrap']} style={style}>
+      const view = h(
+        tag.value,
+        {
+          class: ['scrollbar__view', viewClass.value],
+          style: viewStyle.value,
+          ref: 'resize',
+        },
+        slots.default
+      );
+      const wrap = (
+        <div
+          ref="wrap"
+          style={style}
+          onScroll={handleScroll}
+          class={[
+            wrapClass.value,
+            'scrollbar__wrap',
+            gutter ? '' : 'scrollbar__wrap--hidden-default',
+          ]}
+        >
           {[view]}
-        </div>,
-      ];
-    }
-    return h('div', { class: 'scrollbar' }, nodes);
+        </div>
+      );
+      let nodes;
+
+      if (!native.value) {
+        nodes = [
+          wrap,
+          <Bar move={moveX.value} size={sizeWidth.value}></Bar>,
+          <Bar vertical move={moveY.value} size={sizeHeight.value}></Bar>,
+        ];
+      } else {
+        nodes = [
+          <div ref="wrap" class={[wrapClass.value, 'scrollbar__wrap']} style={style}>
+            {[view]}
+          </div>,
+        ];
+      }
+      return h('div', { class: 'scrollbar' }, nodes);
+    };
   },
-};
+});
 </script>
 
 <style lang="scss">
