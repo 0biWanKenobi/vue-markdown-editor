@@ -12,8 +12,6 @@
         :menus="getConfig(itemName, 'menus')"
         :prevent-native-click="getConfig(itemName, 'preventNativeClick')"
         :disabled-menus="disabledMenus"
-        @click="$emit('item-click', toolbars[itemName])"
-        @menu-click="$emit('toolbar-menu-click', $event)"
       >
         <template #icon>
           <slot :name="itemName" />
@@ -24,30 +22,55 @@
   </ul>
 </template>
 
-<script>
-import ToolbarItem from '@/components/toolbar-item/index';
+<script lang="ts">
+import { computed, defineComponent, inject, PropType } from 'vue';
+import ToolbarItem from '@/components/toolbar-item/index.vue';
+import useToolbar from '@/modules/useToolbar';
+import Toolbar from '@/types/toolbarType';
+import useToolbarItems from '@/modules/useToolbarItems';
 
-export default {
+export default defineComponent({
   name: 'editor-toolbar',
   components: {
     [ToolbarItem.name]: ToolbarItem,
   },
   inject: ['markdownEditor'],
   props: {
-    groups: Array,
-    toolbars: Object,
     disabledMenus: Array,
-  },
-  emits: ['item-click', 'toolbar-menu-click'],
-  methods: {
-    getConfig(itemName, configName) {
-      const toolbarConfig = this.toolbars[itemName];
-      const value = toolbarConfig[configName];
-
-      return typeof value === 'function' ? value(this.markdownEditor) : value;
+    toolbarType: {
+      type: String as PropType<'left' | 'right'>,
+      required: true,
     },
   },
-};
+  setup(props) {
+    const markdownEditor = inject('markdownEditor');
+    const { toolbars } = useToolbar();
+    const { getToolbarItems } = useToolbarItems();
+
+    const getConfig = (itemName: string, configName: keyof Toolbar) => {
+      const toolbarConfig = toolbars[itemName];
+      const value = toolbarConfig[configName];
+
+      return typeof value === 'function' ? value(markdownEditor) : value;
+    };
+
+    const toolbarItems = getToolbarItems(props.toolbarType);
+    const getToolbarConfig = (toolbarStr: string) => {
+      return toolbarStr
+        .split('|')
+        .map((group) =>
+          group.split(' ').filter((toolbarName) => toolbarName && toolbars[toolbarName])
+        );
+    };
+    const groups = computed(() => getToolbarConfig(toolbarItems));
+
+    return {
+      toolbars,
+      groups,
+      getConfig,
+    };
+  },
+});
 </script>
 
 <style lang="scss">
