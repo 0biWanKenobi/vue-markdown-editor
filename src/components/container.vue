@@ -5,8 +5,8 @@
       `v-md-editor--${mode}`,
       {
         'v-md-editor--fullscreen': fullscreen,
-        'v-md-editor--left-area-reverse': leftAreaReverse
-      }
+        'v-md-editor--left-area-reverse': leftAreaReverse,
+      },
     ]"
     :style="{ height: heightGetter }"
   >
@@ -15,7 +15,7 @@
       class="v-md-editor__left-area"
       :style="{
         width: leftAreaVisible ? leftAreaWidth : 0,
-        borderWidth: leftAreaVisible? '1px' : 0
+        borderWidth: leftAreaVisible ? '1px' : 0,
       }"
     >
       <div
@@ -32,45 +32,23 @@
       </div>
     </div>
     <div class="v-md-editor__right-area">
-      <div
-        v-show="!isPreviewMode"
-        class="v-md-editor__toolbar"
-        ref="toolbarWrapper"
-      >
+      <div v-show="!isPreviewMode" class="v-md-editor__toolbar" ref="toolbarWrapper">
         <editor-toolbar
           class="v-md-editor__toolbar-left"
-          :groups="leftToolbarGroup"
-          :toolbars="toolbars"
+          toolbarType="left"
           :disabled-menus="disabledMenus"
-          @item-click="handleToolbarItemClick"
-          @toolbar-menu-click="handleToolbarMenuClick"
         >
-          <template
-            v-for="button of leftToolbarCustomSlots"
-            #[button]="slotData"
-          >
-            <slot
-              :name="button"
-              v-bind="slotData"
-            />
+          <template v-for="button of leftToolbarCustomSlots" #[button]="slotData">
+            <slot :name="button" v-bind="slotData" />
           </template>
         </editor-toolbar>
         <editor-toolbar
           class="v-md-editor__toolbar-right"
-          :groups="rightToolbarGroup"
-          :toolbars="toolbars"
-          :disabled-mens="disabledMenus"
-          @item-click="handleToolbarItemClick"
-          @toolbar-menu-click="handleToolbarMenuClick"
+          tytoolbarTypepe="right"
+          :disabled-menus="disabledMenus"
         >
-          <template
-            v-for="button of rightToolbarCustomSlots"
-            #[button]="slotData"
-          >
-            <slot
-              :name="button"
-              v-bind="slotData"
-            />
+          <template v-for="button of rightToolbarCustomSlots" #[button]="slotData">
+            <slot :name="button" v-bind="slotData" />
           </template>
         </editor-toolbar>
       </div>
@@ -83,11 +61,7 @@
         >
           <slot name="editor" />
         </div>
-        <div
-          v-show="!isEditMode"
-          class="v-md-editor__preview-wrapper"
-          ref="previewWrapper"
-        >
+        <div v-show="!isEditMode" class="v-md-editor__preview-wrapper" ref="previewWrapper">
           <slot name="preview" />
         </div>
         <slot />
@@ -96,20 +70,21 @@
   </div>
 </template>
 
-<script>
-import Toolbar from '@/components/toolbar';
+<script lang="ts">
+import Toolbar from '@/components/toolbar.vue';
 import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
+import { computed, defineComponent, onBeforeUnmount, onMounted, toRefs, ref } from 'vue';
+import useToolbar from '@/modules/useToolbar';
+import useCommon from '@/modules/useCommon';
+import useToolbarItems from '@/modules/useToolbarItems';
 
-export default {
+export default defineComponent({
   name: 'v-md-container',
   components: {
     [Toolbar.name]: Toolbar,
   },
   props: {
-    leftToolbar: String,
-    rightToolbar: String,
-    toolbars: Object,
     fullscreen: Boolean,
     height: String,
     noresize: Boolean,
@@ -126,76 +101,83 @@ export default {
       default: EDITOR_MODE.EDITABLE,
     },
   },
-  emits: ['resize', 'editor-wrapper-click', 'toolbar-item-click', 'toolbar-menu-click'],
-  data() {
-    return {
-      toolbarHeight: 0,
-    };
-  },
-  computed: {
-    heightGetter() {
-      return this.fullscreen ? 'auto' : this.height;
-    },
-    leftToolbarGroup() {
-      return this.getToolbarConfig(this.leftToolbar);
-    },
-    leftToolbarCustomSlots() {
-      const buttons =  this.leftToolbarGroup.flat();
-      return buttons.filter( btn => !!this.toolbars[btn].slot);
-    },
-    rightToolbarGroup() {
-      return this.getToolbarConfig(this.rightToolbar);
-    },
-    rightToolbarCustomSlots() {
-      const buttons =  this.rightToolbarGroup.flat();
-      return buttons.filter( btn => !!this.toolbars[btn].slot);
-    },
-    isPreviewMode() {
-      return this.mode === EDITOR_MODE.PREVIEW;
-    },
-    isEditMode() {
-      return this.mode === EDITOR_MODE.EDIT;
-    },
-  },
-  mounted() {
-    if (!this.noresize) {
-      addResizeListener(this.$refs.editorWrapper, this.handleResize);
-      addResizeListener(this.$refs.toolbarWrapper, this.handleToolbarWrapperResize);
-    }
-  },
-  beforeUnmount() {
-    if (!this.noresize) {
-      removeResizeListener(this.$refs.editorWrapper, this.handleResize);
-      removeResizeListener(this.$refs.toolbarWrapper, this.handleToolbarWrapperResize);
-    }
-  },
-  methods: {
-    handleResize() {
-      this.$emit('resize');
-    },
-    handleToolbarWrapperResize() {
-      const { toolbarWrapper } = this.$refs;
+  emits: ['resize'],
+  setup(props, { emit }) {
+    const toolbarHeight = ref(0);
 
-      if (toolbarWrapper) this.toolbarHeight = toolbarWrapper.offsetHeight;
-    },
-    getToolbarConfig(toolbarStr) {
+    const { fullscreen, height } = toRefs(props);
+    const heightGetter = computed(() => (fullscreen.value ? 'auto' : height.value));
+
+    const { toolbars } = useToolbar();
+    const getToolbarConfig = (toolbarStr: string) => {
       return toolbarStr
         .split('|')
         .map((group) =>
-          group.split(' ').filter((toolbarName) => toolbarName && this.toolbars[toolbarName])
+          group.split(' ').filter((toolbarName) => toolbarName && toolbars[toolbarName])
         );
-    },
-    handleEditorWrapperClick(e) {
-      this.$emit('editor-wrapper-click', e);
-    },
-    handleToolbarItemClick(toolbar) {
-      this.$emit('toolbar-item-click', toolbar);
-    },
-    handleToolbarMenuClick(menu) {
-      this.$emit('toolbar-menu-click', menu);
-    },
+    };
+
+    const { leftToolbarItems: leftToolbar, rightToolbarItems: rightToolbar } = useToolbarItems();
+    const leftToolbarGroup = computed(() => getToolbarConfig(leftToolbar.value));
+
+    const leftToolbarCustomSlots = computed(() => {
+      const buttons = leftToolbarGroup.value.flat();
+      return buttons.filter((btn) => !!toolbars[btn].slot);
+    });
+
+    const rightToolbarGroup = computed(() => getToolbarConfig(rightToolbar.value));
+
+    const rightToolbarCustomSlots = computed(() => {
+      const buttons = rightToolbarGroup.value.flat();
+      return buttons.filter((btn) => !!toolbars[btn].slot);
+    });
+
+    const { mode } = toRefs(props);
+    const isPreviewMode = computed(() => mode.value == EDITOR_MODE.PREVIEW);
+    const isEditMode = computed(() => mode.value == EDITOR_MODE.EDIT);
+
+    const editorWrapper = ref();
+    const toolbarWrapper = ref();
+
+    const { setFocusEnd: handleEditorWrapperClick } = useCommon();
+
+    const handleResize = () => {
+      emit('resize');
+    };
+
+    const handleToolbarWrapperResize = () => {
+      if (toolbarWrapper.value) toolbarHeight.value = toolbarWrapper.value.offsetHeight;
+    };
+
+    const { noresize } = toRefs(props);
+
+    onMounted(() => {
+      if (noresize.value) return;
+      addResizeListener(editorWrapper.value, handleResize);
+      addResizeListener(toolbarWrapper.value, handleToolbarWrapperResize);
+    });
+
+    onBeforeUnmount(() => {
+      if (noresize.value) return;
+      removeResizeListener(editorWrapper, handleResize);
+      removeResizeListener(toolbarWrapper, handleToolbarWrapperResize);
+    });
+
+    return {
+      toolbarHeight,
+      heightGetter,
+      leftToolbarGroup,
+      leftToolbarCustomSlots,
+      rightToolbarGroup,
+      rightToolbarCustomSlots,
+      isPreviewMode,
+      isEditMode,
+      toolbarWrapper,
+      editorWrapper,
+      handleEditorWrapperClick,
+    };
   },
-};
+});
 </script>
 
 <style lang="scss">
