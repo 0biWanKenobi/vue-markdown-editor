@@ -6,40 +6,49 @@
     :accept="uploadConfig.accept"
     :multiple="uploadConfig.multiple"
     @input="handleUpload"
-    ref="fileInput"
-  >
+    ref="fileInputEl"
+  />
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import VueTypes from 'vue-types';
+
+export default defineComponent({
   name: 'v-md-upload-file',
   props: {
-    uploadConfig: Object,
+    uploadConfig: VueTypes.object.isRequired,
   },
-  data() {
-    return {
-      handleUpload() {},
-      key: 0,
-    };
-  },
-  methods: {
-    async upload() {
-      const event = await this.chooseFile();
+  setup() {
+    const key = ref(0);
+    let handleUpload = (e: Event) => {};
+
+    const fileInputEl = ref();
+
+    const upload = async () => {
+      const event = await chooseFile();
 
       return event;
-    },
-    chooseFile() {
+    };
+
+    const chooseFile = () => {
       return new Promise((resolve) => {
-        this.handleUpload = (e) => {
+        handleUpload = (e) => {
           resolve(e);
 
           // 解决上传同一文件不触发change事件的问题
-          this.key++;
+          key.value++;
         };
 
-        this.$refs.fileInput.click();
+        fileInputEl.value?.$el.click();
       });
-    },
+    };
+
+    return {
+      key,
+      handleUpload,
+      fileInputEl,
+    };
   },
-};
+});
 </script>
