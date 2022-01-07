@@ -14,7 +14,7 @@ export default function ({ url, desc, width, height }: Image = {}) {
   insert(() => {
     const urlPlaceholder = 'http://';
     const descPlaceholder = 'Description';
-    let selected = urlPlaceholder;
+    let selected: string | undefined = urlPlaceholder;
     let text = `![${desc || descPlaceholder}](${url || urlPlaceholder})`;
     const style = [];
 
@@ -31,7 +31,7 @@ export default function ({ url, desc, width, height }: Image = {}) {
     }
 
     if (url && desc) {
-      selected = null;
+      selected = undefined;
     } else if (url) {
       selected = descPlaceholder;
     } else if (desc) {

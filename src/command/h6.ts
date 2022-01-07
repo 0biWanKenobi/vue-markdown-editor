@@ -12,10 +12,10 @@ export default function () {
     const prefix = '######';
     const { placeholder } = langConfig.value.h6;
 
-    const selectedGetter = (selected: string) => selected || placeholder;
+    const selectedGetter = (selected: string | undefined) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
-      InsertGetter: (selected: string) => `${prefix} ${selectedGetter(selected)}`,
+      InsertGetter: (selected) => `${prefix} ${selectedGetter(selected)}`,
       selectedGetter,
     });
 

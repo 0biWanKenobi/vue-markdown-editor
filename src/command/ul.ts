@@ -11,7 +11,7 @@ export default function () {
   insert((selected) => {
     const { placeholder } = langConfig.value.ul;
 
-    const selectedGetter = (selected) => selected || placeholder;
+    const selectedGetter = (selected: string | undefined) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
       InsertGetter: (selected) => `- ${selectedGetter(selected)}`,

@@ -11,11 +11,10 @@ export default function () {
   insert((selected) => {
     const { placeholder } = langConfig.value.ol;
 
-    const selectedGetter = (selected: string) => selected || placeholder;
+    const selectedGetter = (selected: string | undefined) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
-      InsertGetter: (selected: string, rowIndex: string | number) =>
-        `${rowIndex}. ${selectedGetter(selected)}`,
+      InsertGetter: (selected, rowIndex) => `${rowIndex}. ${selectedGetter(selected)}`,
       selectedGetter,
       ignoreEmptyLine: false,
     });

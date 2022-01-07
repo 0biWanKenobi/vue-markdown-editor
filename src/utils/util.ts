@@ -28,17 +28,18 @@ export function isKorean(text: string) {
   return reg.test(text);
 }
 
+type GeneratorTextParams = {
+  selected: string | undefined;
+  InsertGetter: (v: string | undefined, i?: number) => string;
+  selectedGetter: (v: string | undefined) => string;
+  ignoreEmptyLine?: boolean;
+};
 export function generatorText({
   selected,
   InsertGetter,
-  selectedGetter = (selected) => selected,
+  selectedGetter,
   ignoreEmptyLine = true,
-}: {
-  selected: string;
-  InsertGetter: Function;
-  selectedGetter: (v: string | null) => string | null;
-  ignoreEmptyLine: boolean;
-}) {
+}: GeneratorTextParams) {
   let insertContent;
   let newSelected;
 
@@ -54,14 +55,14 @@ export function generatorText({
           const isEmptyLine = !rowText;
           if (ignoreEmptyLine && isEmptyLine) return '';
 
-          return InsertGetter(rowText, index + 1).replace(selectedGetter(null), '');
+          return InsertGetter(rowText, index + 1).replace(selectedGetter(undefined), '');
         })
         .join('\n');
 
       newSelected = insertContent;
     }
   } else {
-    insertContent = InsertGetter(null, 1);
+    insertContent = InsertGetter(undefined, 1);
     newSelected = selectedGetter(selected);
   }
 

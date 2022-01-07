@@ -13,7 +13,7 @@ export default function () {
     const suffix = '*';
     const { placeholder } = langConfig.value.italic;
 
-    const selectedGetter = (selected: string) => selected || placeholder;
+    const selectedGetter = (selected: string | undefined) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
       InsertGetter: (selected) => `${prefix}${selectedGetter(selected)}${suffix}`,
