@@ -11,14 +11,14 @@ class BaseEditor implements IEditor {
     focus();
     const { text } = useVModel();
     this.editorEngineEl.value.setRange({
-      start: text.value.length,
-      end: text.value.length,
+      start: text.value?.length ?? 0,
+      end: text.value?.length ?? 0,
     });
   };
   getCursorLineLeftText = () => {
     const { start, end } = this.editorEngineEl.value.getRange();
     const { text } = useVModel();
-    return start === end ? text.value.slice(0, start).split('\n').pop() : null;
+    return start === end ? text.value?.slice(0, start).split('\n').pop() ?? null : null;
   };
   editorRegisterHotkeys = (...arg: any[]) => {
     this.editorEngineEl.value.registerHotkeys(...arg);
@@ -52,16 +52,16 @@ class BaseEditor implements IEditor {
   getCurrentSelectedStr = () => {
     const { start, end } = this.editorEngineEl.value.getRange();
     const { text } = useVModel();
-    return end > start ? text.value.slice(start, end) : null;
+    return end > start ? text.value?.slice(start, end) ?? undefined : undefined;
   };
-  changeSelectionTo = (insertText: string, selectedText: string) => {
-    const selectedIndexOfStr = insertText.indexOf(selectedText);
+  changeSelectionTo = (insertText: string, selectedText: string | undefined) => {
+    const selectedIndexOfStr = selectedText ? insertText.indexOf(selectedText) : -1;
     const cursorEndIndex = this.editorEngineEl.value.getRange().end;
 
-    if (selectedIndexOfStr === -1) return;
+    if (!selectedText || selectedIndexOfStr === -1) return;
 
     const { text } = useVModel();
-    const textSliced = text.value.slice(0, cursorEndIndex);
+    const textSliced = text.value?.slice(0, cursorEndIndex) ?? '';
     const insertTextIndex = textSliced.length - insertText.length;
     const rangeStartIndex = insertTextIndex + selectedIndexOfStr;
     const rangeEndIndex = rangeStartIndex + selectedText.length;
