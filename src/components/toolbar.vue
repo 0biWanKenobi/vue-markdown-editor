@@ -23,11 +23,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, PropType } from 'vue';
+import { computed, defineComponent, inject } from 'vue';
 import ToolbarItem from '@/components/toolbar-item/index.vue';
 import useToolbar from '@/modules/useToolbar';
 import Toolbar from '@/types/toolbarType';
 import useToolbarItems from '@/modules/useToolbarItems';
+import { string } from 'vue-types';
 
 export default defineComponent({
   name: 'editor-toolbar',
@@ -37,10 +38,7 @@ export default defineComponent({
   inject: ['markdownEditor'],
   props: {
     disabledMenus: Array,
-    toolbarType: {
-      type: String as PropType<'left' | 'right'>,
-      required: true,
-    },
+    toolbarType: string<'left' | 'right'>().isRequired,
   },
   setup(props) {
     const markdownEditor = inject('markdownEditor');

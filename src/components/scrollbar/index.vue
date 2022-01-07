@@ -22,10 +22,7 @@ export default defineComponent({
     viewClass: null,
     viewStyle: null,
     noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能
-    tag: {
-      type: String,
-      default: 'div',
-    },
+    tag: VueTypes.string.def('div'),
   },
 
   emits: ['scroll'],

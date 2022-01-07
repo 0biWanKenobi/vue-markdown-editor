@@ -4,55 +4,63 @@
       v-show="visible"
       :style="{
         left: `${position.x}px`,
-        top: `${position.y}px`
+        top: `${position.y}px`,
       }"
       class="v-md-editor__tooltip"
+      ref="tooltip"
     >
       {{ text }}
     </div>
   </transition>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, nextTick, ref, toRefs, watch } from 'vue';
+import VueTypes, { object } from 'vue-types';
+
+type Position = {
+  x: number;
+  y: number;
+};
+
+export default defineComponent({
   name: 'v-md-tooltip',
   props: {
     text: String,
+    visible: VueTypes.bool.def(false),
+    position: object<Position>().def({
+      x: 0,
+      y: 0,
+    }),
   },
-  data () {
-    return {
-      position: {
-        x: 0,
-        y: 0,
-      },
-      visible: false,
-    };
-  },
-  methods: {
-    show (position) {
-      this.position = {
-        x: position.x,
-        y: position.y,
-      };
+  setup(props) {
+    const { position, visible } = toRefs(props);
 
-      this.visible = true;
+    watch(
+      () => visible.value,
+      (isVisible) => {
+        if (!isVisible) return;
+        nextTick(calculateLayout);
+      }
+    );
 
-      this.$nextTick(this.calculateLayout);
-    },
-    hide () {
-      this.visible = false;
-    },
-    calculateLayout () {
+    const tooltip = ref();
+
+    const calculateLayout = () => {
       // 容器右边框距离可视区域左侧的距离
-      const { right } = this.$el.getBoundingClientRect();
+      const { right } = tooltip.value.$el.getBoundingClientRect();
       const windowWidth = document.documentElement.clientWidth;
 
       if (windowWidth - right < 0) {
-        this.position.x -= (right - windowWidth);
+        position.value.x -= right - windowWidth;
       }
-    },
+    };
+
+    return {
+      tooltip,
+    };
   },
-};
+});
 </script>
 
 <style lang="scss">

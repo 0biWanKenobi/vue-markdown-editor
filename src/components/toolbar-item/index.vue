@@ -16,11 +16,16 @@
     @mouseleave="handleHideTooltip"
     @mouseenter="showTooltip"
     @click="handleToolbarItemClick(name)"
-    ref="toolbarItem"
+    ref="toolbarItemEl"
   >
     {{ text }}
     <slot name="icon" />
-    <v-md-tooltip ref="tooltipEl" :text="title" />
+    <v-md-tooltip
+      ref="tooltipEl"
+      :text="title"
+      :visible="tooltipVisible"
+      :position="tooltipPosition"
+    />
     <v-md-menu
       v-if="hasMenu"
       ref="menu"
@@ -44,6 +49,7 @@ import MENU_MODE from '@/utils/constants/menu-mode';
 import { computed, defineComponent, ref, toRefs } from 'vue';
 import VueTypes, { oneOfType } from 'vue-types';
 import useToolbar from '@/modules/useToolbar';
+import Position from '@/types/tooltipPositionType';
 
 type MenuObject = { items: any; mode: any; itemWidth: number; rowNum: number };
 
@@ -62,10 +68,7 @@ export default defineComponent({
     icon: String,
     menus: oneOfType<Array<any> | MenuObject>([Array, Object]).isRequired,
     disabledMenus: Array,
-    preventNativeClick: {
-      type: Boolean,
-      default: true,
-    },
+    preventNativeClick: VueTypes.bool.def(true),
   },
   setup(props, { emit }) {
     const menuActive = ref(false);
@@ -127,6 +130,12 @@ export default defineComponent({
 
     const timer = ref<NodeJS.Timeout>();
 
+    const tooltipVisible = ref(false);
+    const tooltipPosition = ref<Position>({
+      x: 0,
+      y: 0,
+    });
+
     const showTooltip = (e: MouseEvent) => {
       const selfEl = toolbarItemEl.value.$el;
       const { target } = e;
@@ -144,17 +153,17 @@ export default defineComponent({
       const y = e.clientY - selfElRect.top;
 
       timer.value = setTimeout(() => {
-        tooltipEl.value?.$el.show({
+        tooltipPosition.value = {
           x: x - 2,
           y: y + 20,
-        });
+        };
+        tooltipVisible.value = true;
       }, 100);
     };
 
     const handleHideTooltip = () => {
       if (timer.value) clearTimeout(timer.value);
-
-      tooltipEl.value?.$el.hide();
+      tooltipVisible.value = false;
     };
 
     return {
@@ -166,6 +175,8 @@ export default defineComponent({
       toolbarItemEl,
       menuCtrlEl,
       tooltipEl,
+      tooltipVisible,
+      tooltipPosition,
       hideMenu,
       showMenu,
       handleClick,
@@ -175,8 +186,6 @@ export default defineComponent({
       handleToolbarMenuClick,
     };
   },
-
-  methods: {},
 });
 </script>
 

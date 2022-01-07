@@ -78,6 +78,7 @@ import { computed, defineComponent, onBeforeUnmount, onMounted, toRefs, ref } fr
 import useToolbar from '@/modules/useToolbar';
 import useCommon from '@/modules/useCommon';
 import useToolbarItems from '@/modules/useToolbarItems';
+import VueTypes from 'vue-types';
 
 export default defineComponent({
   name: 'v-md-container',
@@ -92,14 +93,8 @@ export default defineComponent({
     leftAreaVisible: Boolean,
     leftAreaTitle: String,
     leftAreaReverse: Boolean,
-    leftAreaWidth: {
-      type: String,
-      default: '200px',
-    },
-    mode: {
-      type: String,
-      default: EDITOR_MODE.EDITABLE,
-    },
+    leftAreaWidth: VueTypes.string.def('200px'),
+    mode: VueTypes.string.def(EDITOR_MODE.EDITABLE),
   },
   emits: ['resize'],
   setup(props, { emit }) {

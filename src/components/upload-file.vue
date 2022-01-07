@@ -11,43 +11,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import VueTypes from 'vue-types';
+import useUploadFile from '@/modules/useUploadFile';
+import { defineComponent } from 'vue';
+import { object } from 'vue-types';
 
 export default defineComponent({
   name: 'v-md-upload-file',
   props: {
-    uploadConfig: VueTypes.object.isRequired,
+    uploadConfig: object<{
+      accept: string | undefined;
+      multiple: boolean | 'true' | 'false' | undefined;
+    }>().isRequired,
   },
   setup() {
-    const key = ref(0);
-    let handleUpload = (e: Event) => {};
-
-    const fileInputEl = ref();
-
-    const upload = async () => {
-      const event = await chooseFile();
-
-      return event;
-    };
-
-    const chooseFile = () => {
-      return new Promise((resolve) => {
-        handleUpload = (e) => {
-          resolve(e);
-
-          // 解决上传同一文件不触发change事件的问题
-          key.value++;
-        };
-
-        fileInputEl.value?.$el.click();
-      });
-    };
+    const { key, handleUpload } = useUploadFile();
 
     return {
       key,
       handleUpload,
-      fileInputEl,
     };
   },
 });

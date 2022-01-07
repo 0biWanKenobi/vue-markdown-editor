@@ -2,7 +2,7 @@
   <ul class="v-md-editor__toc-nav">
     <li
       :style="{
-        paddingLeft: `${indent * (item.indent)}px`
+        paddingLeft: `${indent * item.indent}px`,
       }"
       @click="$emit('nav-click', item)"
       class="v-md-editor__toc-nav-item"
@@ -13,18 +13,19 @@
   </ul>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import TocTitle from '@/types/tocTitleType';
+import { defineComponent } from 'vue';
+import VueTypes, { array } from 'vue-types';
+
+export default defineComponent({
   name: 'toc-nav',
   props: {
-    titles: Array,
-    indent: {
-      type: Number,
-      default: 16,
-    },
+    titles: array<TocTitle>(),
+    indent: VueTypes.number.def(16),
   },
   emits: ['nav-click'],
-};
+});
 </script>
 
 <style lang="scss">

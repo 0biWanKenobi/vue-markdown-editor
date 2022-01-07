@@ -7,6 +7,7 @@
       v-show="visible"
       @mousemove.stop
       @click.stop
+      ref="menuEl"
     >
       <template v-if="isListMode">
         <li
@@ -16,11 +17,7 @@
           :class="[`v-md-editor__menu-item-${item.name}`, item.class]"
           @click.stop="handleClick(item)"
         >
-          <v-md-render
-            :render="item.render"
-            :editor="$self"
-            v-if="item.render"
-          />
+          <v-md-render :render-fn="item.render" :editor="$self" v-if="item.render" />
           <template v-else>
             {{ getText(item.text) }}
           </template>
@@ -28,20 +25,18 @@
       </template>
       <template v-else>
         <li>
-          <div
-            v-for="rowIndex in rowCount"
-            class="v-md-editor__menu-row"
-          >
+          <div v-for="rowIndex in rowCount" class="v-md-editor__menu-row">
             <span
               v-for="item in getRowMenus(rowIndex)"
               :key="item.name"
               :style="{
-                width: itemWidth
+                width: itemWidth,
               }"
               class="v-md-editor__menu-item"
               :class="[`v-md-editor__menu-item-${item.name}`, item.class]"
               @click.stop="handleClick(item)"
-            >{{ item.text }}</span>
+              >{{ item.text }}</span
+            >
           </div>
         </li>
       </template>
@@ -49,84 +44,100 @@
   </transition>
 </template>
 
-<script>
-import VMdRender from '@/components/render';
+<script lang="ts">
+import VMdRender from '@/components/render.vue';
 import MENU_MODE from '@/utils/constants/menu-mode';
+import { computed, defineComponent, inject, nextTick, ref, toRefs, watch } from 'vue';
+import VueTypes, { array } from 'vue-types';
 
-export default {
+type Menu = {
+  name: string;
+  class: string;
+  render: Function;
+  text: string;
+};
+export default defineComponent({
   name: 'v-md-menu',
   components: {
     VMdRender,
   },
   inject: ['markdownEditor'],
   props: {
-    mode: {
-      type: String,
-      default: MENU_MODE.PANEL,
-    },
-    menus: Array,
-    itemWidth: {
-      type: String,
-      default: '30px',
-    },
-    rowNum: {
-      type: Number,
-      default: 10,
-    },
+    mode: VueTypes.string.def(MENU_MODE.PANEL),
+    menus: array<Menu>().isRequired,
+    itemWidth: VueTypes.string.def('30px'),
+    rowNum: VueTypes.number.def(10),
     visible: Boolean,
   },
   emits: ['update:visible', 'item-click'],
-  data() {
-    return {
-      style: {
-        left: 0,
-      },
-    };
-  },
-  computed: {
-    rowCount() {
-      return Math.ceil(this.menus.length / this.rowNum);
-    },
-    isListMode() {
-      return this.mode === MENU_MODE.LIST;
-    },
-  },
-  watch: {
-    visible() {
-      if (this.visible) this.$nextTick(this.calculateLayout);
-    },
-  },
-  methods: {
-    calculateLayout() {
+  setup(props, { emit }) {
+    const style = ref<{
+      left?: number;
+      right?: number;
+    }>({
+      left: 0,
+    });
+
+    const { mode, menus, rowNum, visible } = toRefs(props);
+
+    const rowCount = computed(() => Math.ceil(menus.value.length / rowNum.value));
+    const isListMode = computed(() => mode.value === MENU_MODE.LIST);
+
+    const menuEl = ref();
+
+    const calculateLayout = () => {
       // 容器右边框距离可视区域左侧的距离
-      const { right } = this.$el.getBoundingClientRect();
+      const { right } = menuEl.value?.$el.getBoundingClientRect();
       const windowWidth = document.documentElement.clientWidth;
 
-      if (windowWidth - right < 0) this.style = { right: 0 };
-    },
-    getRowMenus(rowIndex) {
-      const end = rowIndex * this.rowNum;
-      const start = end - this.rowNum;
+      if (windowWidth - right < 0) style.value = { right: 0 };
+    };
 
-      return this.menus.slice(start, end);
-    },
-    getText(text) {
+    const getRowMenus = (rowIndex: number) => {
+      const end = rowIndex * rowNum.value;
+      const start = end - rowNum.value;
+
+      return menus.value.slice(start, end);
+    };
+
+    const markdownEditor = inject('markdownEditor');
+
+    const getText = (text: any) => {
       if (typeof text === 'function') {
-        return text(this.markdownEditor);
+        return text(markdownEditor);
       }
 
       return text;
-    },
-    hide() {
-      this.$emit('update:visible', false);
-    },
-    handleClick(item) {
-      this.$emit('item-click', item);
+    };
 
-      this.hide();
-    },
+    const hide = () => {
+      emit('update:visible', false);
+    };
+
+    const handleClick = (item: Menu) => {
+      emit('item-click', item);
+
+      hide();
+    };
+
+    watch(
+      () => visible.value,
+      (v) => {
+        if (v) nextTick(calculateLayout);
+      }
+    );
+
+    return {
+      style,
+      rowCount,
+      isListMode,
+      menuEl,
+      handleClick,
+      getText,
+      getRowMenus,
+    };
   },
-};
+});
 </script>
 
 <style lang="scss">
