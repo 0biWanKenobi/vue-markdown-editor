@@ -9,9 +9,9 @@ const { langConfig } = useLang();
 export default function () {
   insert((selected) => {
     const prefix = '##';
-    const { placeholder } = langConfig.value.h2;
+    const { placeholder }: { placeholder: string } = langConfig.value.h2;
 
-    const selectedGetter = (selected) => selected || placeholder;
+    const selectedGetter = (selected: string | undefined) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
       InsertGetter: (selected) => `${prefix} ${selectedGetter(selected)}`,
