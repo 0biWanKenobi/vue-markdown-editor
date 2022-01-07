@@ -1,5 +1,6 @@
 import createPrismTheme from '@/theme/base/prism';
-import ThemeConfig from '@/types/themeConfigType';
+import type ThemeConfig from '@/types/themeConfigType';
+import type Theme from '@/types/themeType';
 
 export default function createVuepressTheme(config: ThemeConfig) {
   const prismTheme = createPrismTheme({
@@ -14,7 +15,7 @@ export default function createVuepressTheme(config: ThemeConfig) {
     },
   });
 
-  return {
+  return <Theme>{
     previewClass: 'vuepress-markdown-body',
     extend(callback: Function) {
       prismTheme.extend(callback);

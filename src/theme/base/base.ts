@@ -8,12 +8,7 @@ import { LINE_MARKUP, HEADING_MARKUP, ANCHOR_MARKUP } from '@/utils/constants/ma
 import { slugify } from '@vuepress/shared-utils';
 
 import markdownIt from '@/utils/markdown-it';
-
-type BaseThemeParams = {
-  toc?: any;
-  link?: any;
-  attrs?: any;
-};
+import BaseThemeParams from '@/types/baseThemeParams';
 
 export default function createBaseTheme({ toc, link, attrs }: BaseThemeParams = {}) {
   const mdIt = markdownIt();
