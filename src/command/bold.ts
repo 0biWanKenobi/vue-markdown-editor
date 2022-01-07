@@ -11,12 +11,12 @@ export default function () {
   insert((selected) => {
     const prefix = '**';
     const suffix = '**';
-    const { placeholder } = langConfig.value.bold;
+    const { placeholder }: { placeholder: string } = langConfig.value.bold;
 
-    const selectedGetter = (selected: string) => selected || placeholder;
+    const selectedGetter = (v: string | undefined) => v || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
-      InsertGetter: (selected: string) => `${prefix}${selectedGetter(selected)}${suffix}`,
+      InsertGetter: (selected?: string) => `${prefix}${selectedGetter(selected)}${suffix}`,
       selectedGetter,
     });
 
