@@ -1,14 +1,12 @@
 // Modified from https://github.com/ElemeFE/element/blob/dev/packages/upload/src/upload-dragger.vue
-export function filesFilter(files: Record<string, any>, config: any) {
+export function* filesFilter(files: FileList | File[], config: any) {
   const { accept }: { accept: string } = config;
 
-  const filesKeys = Object.keys(files).filter((key) => {
-    const file = files[key];
+  for (const file of files) {
     const { type, name } = file;
     const extension = name.indexOf('.') > -1 ? `.${name.split('.').pop()}` : '';
     const baseType = type.replace(/\/.*$/, '');
-
-    return accept
+    const valid = accept
       .split(',')
       .map((type) => type.trim())
       .filter((type) => type)
@@ -28,16 +26,16 @@ export function filesFilter(files: Record<string, any>, config: any) {
 
         return false;
       });
-  });
 
-  return filesKeys.map((key) => files[key]);
+    if (valid) yield file;
+  }
 }
 
-export function getFilesFromClipboardData(clipboardData: any) {
-  const files: Array<any> = [];
+export function getFilesFromClipboardData(clipboardData: DataTransfer) {
+  const files: Array<File> = [];
 
   Object.keys(clipboardData.items).forEach((key) => {
-    const item = clipboardData.items[key];
+    const item = clipboardData.items[parseInt(key)];
 
     if (item.kind === 'file') {
       const file = item.getAsFile();

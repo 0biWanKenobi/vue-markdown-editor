@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, SetupContext } from 'vue';
 import imageToolbar from '@/toolbar/image';
 import { filesFilter, getFilesFromClipboardData } from '@/utils/file';
 import { image } from '@/utils/constants/command';
@@ -24,29 +24,30 @@ const hasUploadImage = computed(
     !disabledMenus.includes(`${imageToolbar.name}/upload-image`)
 );
 
-const handleDrop = (emit, e) => {
+const handleDrop = (e: DragEvent) => {
+  if (!e.dataTransfer) return;
   const files = filesFilter(e.dataTransfer.files, uploadImgConfig);
-  emitUploadImage(emit, e, files);
+  emitUploadImage(e, Array.from(files));
 };
 
-const handlePaste = (emit, e) => {
+const handlePaste = (e: ClipboardEvent) => {
   const { clipboardData } = e;
 
   if (!clipboardData) return;
 
   const files = filesFilter(getFilesFromClipboardData(clipboardData), uploadImgConfig.value);
 
-  emitUploadImage(emit, e, files);
+  emitUploadImage(e, Array.from(files));
 };
 
-const emitUploadImage = (emit, e, files) => {
+const emitUploadImage = (e: Event, files: File[]) => {
   if (hasUploadImage.value && files.length) {
     e.preventDefault();
 
-    emit(
+    ctx.value?.emit(
       'upload-image',
       e,
-      (imageConfig) => {
+      (imageConfig: any) => {
         execCommand(image, imageConfig);
       },
       files
@@ -54,9 +55,16 @@ const emitUploadImage = (emit, e, files) => {
   }
 };
 
-export default () => {
+const ctx = ref<SetupContext<string[]> | SetupContext<Record<string, any>>>();
+
+export default (
+  _ctx?: SetupContext<string[]> | SetupContext<Record<string, any>>,
+  _propImgConfig?: any
+) => {
+  propImgConfig.value = _propImgConfig;
+  ctx.value = _ctx;
   return {
-    propImgConfig,
+    emitUploadImage,
     uploadImgConfig,
     hasUploadImage,
     handleDrop,
