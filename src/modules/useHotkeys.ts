@@ -28,7 +28,7 @@ const registerHotkeys = ({
     modifier,
     key,
     preventDefault,
-    action: (...arg) => action(this, ...arg),
+    action,
   });
 };
 
