@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-const text = ref<string>('');
+const text = ref<string | undefined>('');
 
 const handleInput = (val: string) => {
   text.value = val;
