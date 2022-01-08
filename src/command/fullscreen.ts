@@ -1,7 +1,11 @@
 import useFullscreen from '@/modules/useFullscreen';
-export { fullscreen as name } from '@/utils/constants/command';
+import { fullscreen as name } from '@/utils/constants/command';
 
-export default function (fullScreen: boolean) {
+const command = (fullScreen: boolean) => {
   const { toggleFullScreen } = useFullscreen();
   toggleFullScreen(fullScreen);
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

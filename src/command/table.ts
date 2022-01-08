@@ -1,9 +1,9 @@
 import useCommon from '@/modules/useCommon';
-export { table as name } from '@/utils/constants/command';
+import { table as name } from '@/utils/constants/command';
 
 const { insert } = useCommon();
 
-export default function () {
+const command = () => {
   insert(() => {
     const content = '|column1|column2|column3|\n|-|-|-|\n|content1|content2|content3|';
 
@@ -12,4 +12,8 @@ export default function () {
       selected: 'column1',
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

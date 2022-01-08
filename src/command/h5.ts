@@ -5,9 +5,9 @@ import { generatorText } from '@/utils/util';
 const { insert } = useCommon();
 const { langConfig } = useLang();
 
-export { h5 as name } from '@/utils/constants/command';
+import { h5 as name } from '@/utils/constants/command';
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const prefix = '#####';
     const { placeholder } = langConfig.value.h5;
@@ -24,4 +24,8 @@ export default function () {
       selected: newSelected,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

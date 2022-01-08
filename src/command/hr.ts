@@ -1,10 +1,14 @@
 import useCommon from '@/modules/useCommon';
-export { hr as name } from '@/utils/constants/command';
+import { hr as name } from '@/utils/constants/command';
 
 const { insert } = useCommon();
 
-export default function () {
+const command = () => {
   insert(() => ({
     text: '------------------------------------',
   }));
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

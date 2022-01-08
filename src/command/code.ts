@@ -1,9 +1,9 @@
 import useCommon from '@/modules/useCommon';
-export { code as name } from '@/utils/constants/command';
+import { code as name } from '@/utils/constants/command';
 
 const { insert } = useCommon();
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const prefix = '``` language';
     const suffix = '```';
@@ -18,4 +18,8 @@ export default function () {
       selected: 'language',
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

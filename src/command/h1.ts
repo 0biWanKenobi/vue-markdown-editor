@@ -2,12 +2,12 @@ import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
 import { generatorText } from '@/utils/util';
 
-export { h1 as name } from '@/utils/constants/command';
+import { h1 as name } from '@/utils/constants/command';
 
 const { insert } = useCommon();
 const { langConfig } = useLang();
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const prefix = '#';
     const { placeholder } = langConfig.value.h1;
@@ -24,4 +24,8 @@ export default function () {
       selected: newSelected,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

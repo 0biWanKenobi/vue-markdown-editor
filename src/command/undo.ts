@@ -1,8 +1,12 @@
 import useEditor from '@/modules/useEditor';
-export { undo as name } from '@/utils/constants/command';
+import { undo as name } from '@/utils/constants/command';
 
 const { editor } = useEditor();
 
-export default function () {
+const command = () => {
   editor.undo();
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

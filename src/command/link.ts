@@ -5,9 +5,9 @@ import { generatorText } from '@/utils/util';
 const { insert } = useCommon();
 const { langConfig } = useLang();
 
-export { link as name } from '@/utils/constants/command';
+import { link as name } from '@/utils/constants/command';
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const { descPlaceholder } = langConfig.value.link;
     const linkPlaceholder = 'http://';
@@ -23,4 +23,8 @@ export default function () {
       selected: newSelected,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

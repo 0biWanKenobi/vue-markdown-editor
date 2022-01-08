@@ -1,9 +1,14 @@
 import useEditor from '@/modules/useEditor';
-export { clear as name } from '@/utils/constants/command';
+import { clear as name } from '@/utils/constants/command';
+
 const {
   editor: { clear },
 } = useEditor();
 
-export default function () {
+const command = () => {
   clear();
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

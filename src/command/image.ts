@@ -1,5 +1,5 @@
 import useCommon from '@/modules/useCommon';
-export { image as name } from '@/utils/constants/command.js';
+import { image as name } from '@/utils/constants/command';
 
 const { insert } = useCommon();
 
@@ -10,7 +10,7 @@ type Image = {
   height?: string | number;
 };
 
-export default function ({ url, desc, width, height }: Image = {}) {
+const command = ({ url, desc, width, height }: Image = {}) => {
   insert(() => {
     const urlPlaceholder = 'http://';
     const descPlaceholder = 'Description';
@@ -43,4 +43,8 @@ export default function ({ url, desc, width, height }: Image = {}) {
       selected,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

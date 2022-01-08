@@ -1,11 +1,11 @@
 import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
-export { quote as name } from '@/utils/constants/command';
+import { quote as name } from '@/utils/constants/command';
 
 const { insert } = useCommon();
 const { langConfig } = useLang();
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const prefix = '>';
     const content = selected || langConfig.value.quote.placeholder;
@@ -15,4 +15,8 @@ export default function () {
       selected: content,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

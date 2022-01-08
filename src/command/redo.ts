@@ -1,9 +1,13 @@
 import useEditor from '@/modules/useEditor';
 
-export { redo as name } from '@/utils/constants/command';
+import { redo as name } from '@/utils/constants/command';
 
 const { editor } = useEditor();
 
-export default function () {
+const command = () => {
   editor.redo();
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

@@ -5,9 +5,9 @@ import { generatorText } from '@/utils/util';
 const { insert } = useCommon();
 const { langConfig } = useLang();
 
-export { ol as name } from '@/utils/constants/command';
+import { ol as name } from '@/utils/constants/command';
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const { placeholder } = langConfig.value.ol;
 
@@ -24,4 +24,8 @@ export default function () {
       selected: newSelected,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;

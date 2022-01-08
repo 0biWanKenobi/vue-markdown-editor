@@ -5,9 +5,9 @@ import { generatorText } from '@/utils/util';
 const { insert } = useCommon();
 const { langConfig } = useLang();
 
-export { italic as name } from '@/utils/constants/command';
+import { italic as name } from '@/utils/constants/command';
 
-export default function () {
+const command = () => {
   insert((selected) => {
     const prefix = '*';
     const suffix = '*';
@@ -25,4 +25,8 @@ export default function () {
       selected: newSelected,
     };
   });
-}
+};
+
+Object.defineProperty(command, 'name', { value: name });
+
+export default command;
