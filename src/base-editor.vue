@@ -18,7 +18,7 @@
       </scrollbar>
     </template>
     <template #editor>
-      <scrollbar @scroll="handleEditorScroll" ref="editorScroller">
+      <scrollbar @scroll="handleEditorScroll" ref="editorScrollerEl">
         <v-md-textarea-editor
           :model-value="text"
           :min-height="textEditorMinHeight"
@@ -33,7 +33,7 @@
       </scrollbar>
     </template>
     <template #preview>
-      <scrollbar ref="previewScroller">
+      <scrollbar ref="previewScrollerEl">
         <v-md-preview
           :text="text"
           :tab-size="tabSize"
@@ -41,7 +41,7 @@
           :before-change="beforePreviewChange"
           @change="handleChange"
           @image-click="handlePreviewImageClick"
-          ref="preview"
+          ref="previewEl"
         />
       </scrollbar>
     </template>
