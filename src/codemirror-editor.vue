@@ -10,28 +10,19 @@
     @resize="handleContainerResize"
     ref="container"
   >
-    <template
-      v-for="button of customSlotButtons"
-      #[button]="slotData"
-    >
-      <slot 
-        :name="button"
-        v-bind="slotData"
-      />
+    <template v-for="button of customSlotButtons" #[button]="slotData">
+      <slot :name="button" v-bind="slotData" />
     </template>
     <template #left-area>
       <scrollbar>
-        <toc-nav
-          :titles="titles"
-          @nav-click="handleNavClick"
-        />
+        <toc-nav :titles="titles" @nav-click="handleNavClick" />
       </scrollbar>
     </template>
     <template #editor>
       <div
         class="codemirror-wrapper"
         :class="{
-          'codemirror-reset': codemirrorStyleReset
+          'codemirror-reset': codemirrorStyleReset,
         }"
         ref="codemirrorEditorEl"
       />
@@ -49,11 +40,7 @@
         />
       </scrollbar>
     </template>
-    <v-md-upload-file
-      v-if="hasUploadImage"
-      :upload-config="uploadConfig"
-      ref="uploadFile"
-    />
+    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadConfig" ref="uploadFile" />
   </v-md-container>
 </template>
 
