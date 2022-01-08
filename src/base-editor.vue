@@ -51,15 +51,25 @@
 
 <script lang="ts">
 import TextareaEditor from '@/components/textarea-editor.vue';
+import VMdContainer from '@/components/container.vue';
 import { editorProps, editorEmits, editorComponents, shouldInheritAttrs } from './modules/common';
 import { toolbarProps } from './modules/toolbar';
 import { uploadImageProps } from './modules/upload-image';
 import { vModelProps, vModelEmits } from './modules/v-model';
 
 import { inBrowser } from '@/utils/util';
-import { computed, defineComponent, nextTick, ref, watch } from 'vue';
+import {
+  defineComponent,
+  nextTick,
+  onBeforeMount,
+  onBeforeUnmount,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  toRefs,
+} from 'vue';
 import useToolbarItems from './modules/useToolbarItems';
-import useToolbar from './modules/useToolbar';
 import useVModel from './modules/useVModel';
 import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
@@ -69,6 +79,10 @@ import useScroll from './modules/useScroll';
 import useFullscreen from './modules/useFullscreen';
 import useLang from './modules/useLang';
 import useUploadImage from './modules/useUploadImage';
+import useList from './modules/useList';
+import LifecycleStage from './types/lifecycleStage';
+import type BaseEditor from './classes/baseEditor';
+import '@/assets/css/font';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -83,9 +97,10 @@ export default defineComponent({
   emits: [...editorEmits, ...vModelEmits],
   components: {
     [TextareaEditor.name]: TextareaEditor,
-    ...editorComponents,
+    VMdContainer,
+    ...editorComponents(),
   },
-  setup(props, { emit }) {
+  setup(props, ctx) {
     const textEditorMinHeight = ref<string>();
 
     const containerEl = ref();
@@ -114,35 +129,14 @@ export default defineComponent({
       }
     );
 
-    const { setLeftToolbarItems, setRightToolbarItems } = useToolbarItems();
+    const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
+    const { setLeftToolbarItems, setRightToolbarItems, setCustomToolbarItems } = useToolbarItems();
     setLeftToolbarItems(props.leftToolbar);
     setRightToolbarItems(props.rightToolbar);
+    setCustomToolbarItems(customSlotButtons);
 
-    const {
-      addDefaultToolbars,
-      handleToolbarItemClick,
-      handleToolbarMenuClick,
-      toolbars,
-    } = useToolbar();
-    addDefaultToolbars();
-
-    const customSlotButtons = computed(() =>
-      Object.keys(props.toolbar).filter((btn) => toolbar[btn].slot)
-    );
-
-    const {
-      setFocusEnd,
-      handleChange,
-      handleBlur,
-      handlePreviewImageClick,
-      mode,
-      currentMode,
-    } = useCommon();
+    const { handleChange, handleBlur, handlePreviewImageClick, mode, currentMode } = useCommon(ctx);
     mode.value = props.mode;
-
-    const handleEditorWrapperClick = () => {
-      setFocusEnd();
-    };
 
     const { text } = useVModel();
     const {
@@ -152,46 +146,71 @@ export default defineComponent({
         clear: clearEditor,
         replaceSelectionText,
         editorEngineEl,
+        editorScrollerEl,
+        previewEl,
+        previewScrollerEl,
       },
-    } = useEditor('base');
+      setContext,
+      callLifeCycleHooks,
+    } = useEditor<BaseEditor>('base');
+
+    setContext(ctx);
+
+    onBeforeMount(() => {
+      callLifeCycleHooks(LifecycleStage.beforeMount);
+    });
+
+    onMounted(() => {
+      callLifeCycleHooks(LifecycleStage.mounted);
+    });
+
+    onBeforeUnmount(() => {
+      callLifeCycleHooks(LifecycleStage.beforeUnmount);
+    });
+
+    onUnmounted(() => {
+      callLifeCycleHooks(LifecycleStage.unmounted);
+    });
 
     // Must implement
     const editorFocusEnd = () => {
       focus();
 
       editorEngineEl.value.setRange({
-        start: text.value.length,
-        end: text.value.length,
+        start: text.value?.length ?? 0,
+        end: text.value?.length ?? 0,
       });
     };
     // Must implement
     const delLineLeft = () => {
       const { start } = editorEngineEl.value.getRange();
 
-      const leftText = getCursorLineLeftText();
+      const leftText = getCursorLineLeftText() ?? '';
       editorEngineEl.value.setRange({ start: start - leftText.length - 1, end: start });
       replaceSelectionText('\n');
     };
 
     const { handleInput } = useVModel();
     // Must implement
+    const { emit } = ctx;
     const clear = () => {
       clearEditor();
       emit('update:modelValue', '');
     };
 
+    useList();
     const { handleNavClick, tocVisible, titles } = useToc();
     const { handleEditorScroll } = useSyncScroll();
     const { getPreviewScrollContainer } = useScroll();
-    const { fullscreen } = useFullscreen();
+    const { fullscreen } = useFullscreen(ctx);
     const { langConfig } = useLang();
-    const { handleDrop, handlePaste, hasUploadImage, uploadImgConfig } = useUploadImage();
+    const { uploadImageConfig } = toRefs(props);
+    const { handleDrop, handlePaste, hasUploadImage, uploadImgConfig } = useUploadImage(
+      ctx,
+      uploadImageConfig.value
+    );
 
     return {
-      handleEditorWrapperClick,
-      handleToolbarItemClick,
-      handleToolbarMenuClick,
-      toolbars,
       handleNavClick,
       handleEditorScroll,
       handleInput,
@@ -206,6 +225,10 @@ export default defineComponent({
       delLineLeft,
       editorFocusEnd,
       clear,
+      previewEl,
+      previewScrollerEl,
+      editorEngineEl,
+      editorScrollerEl,
       customSlotButtons,
       currentMode,
       fullscreen,
