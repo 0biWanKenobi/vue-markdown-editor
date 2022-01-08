@@ -1,4 +1,4 @@
-import UploadFile from '@/components/upload-file';
+import UploadFile from '@/components/upload-file.vue';
 
 export const uploadImageProps = {
   uploadImageConfig: Object,
