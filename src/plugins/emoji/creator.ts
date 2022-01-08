@@ -19,8 +19,8 @@ export default function creator({ emojiJson, parser }: { emojiJson: any; parser:
     return {
       install() {
         // if (VMdEditor.name === 'v-md-editor') {
-        const { execCommand } = useCommand();
-        execCommand(name, commandHandler);
+        const { registerCommand } = useCommand();
+        registerCommand(name!, commandHandler);
 
         const { registerToolbar } = useToolbar();
         registerToolbar(name, toolbar);
