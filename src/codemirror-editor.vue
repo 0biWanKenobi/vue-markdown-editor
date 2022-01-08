@@ -44,233 +44,179 @@
   </v-md-container>
 </template>
 
-<script>
-import createEditor from './create-editor';
-import { smooth } from '@/utils/smooth-scroll';
-import HotKeys from '@/utils/hotkeys';
+<script lang="ts">
+import { defineComponent, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import VueTypes from 'vue-types';
+import { toolbarProps } from './modules/toolbar';
+import { editorComponents, editorProps } from './modules/common';
+import { uploadImageProps } from './modules/upload-image';
+import useVModel from './modules/useVModel';
+import useCodemirror from './modules/useCodemirror';
+import useUploadImage from './modules/useUploadImage';
+import useSyncScroll from './modules/useSyncScroll';
+import useCommon from './modules/useCommon';
+import useFullscreen from './modules/useFullscreen';
+import useToc from './modules/useToc';
+import useScroll from './modules/useScroll';
+import useLang from './modules/useLang';
+import useEditor from './modules/useEditor';
+import type CodemirrorEditor from './classes/codemirrorEditor';
+import '@/assets/css/font';
 
-const component = {
+export default defineComponent({
+  name: 'v-md-editor',
+  components: {
+    ...editorComponents(),
+  },
   props: {
+    ...editorProps,
+    ...toolbarProps,
+    ...uploadImageProps,
     codemirrorConfig: Object,
-    codemirrorStyleReset: {
-      type: Boolean,
-      default: true,
-    },
+    codemirrorStyleReset: VueTypes.bool.def(true),
+    modelValue: String,
   },
-  watch: {
-    modelValue() {
-      if (this.modelValue !== this.text) {
-        this.text = this.modelValue;
-        this.codemirrorInstance.setValue(this.text);
+  setup(props, ctx) {
+    const {
+      editor: { previewEl, previewScrollerEl, codemirrorInstance, hotkeysManager },
+    } = useEditor<CodemirrorEditor>('codemirror');
+
+    const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
+    const { text, handleInput } = useVModel();
+
+    const { Codemirror } = useCodemirror();
+    const codemirrorEditorEl = ref();
+
+    const { uploadImageConfig } = toRefs(props);
+    const { langConfig } = useLang();
+    const { handleDrop, handlePaste, hasUploadImage } = useUploadImage(
+      ctx,
+      uploadImageConfig.value
+    );
+
+    const { handleEditorScroll } = useSyncScroll();
+    const { getPreviewScrollContainer } = useScroll();
+    const { uploadConfig, handleChange, handleBlur, handlePreviewImageClick, currentMode } =
+      useCommon(ctx);
+
+    watch(
+      () => modelValue.value,
+      (v) => {
+        if (v !== text.value) {
+          text.value = v;
+          codemirrorInstance.value.setValue(text.value);
+        }
       }
-    },
-  },
-  created() {
-    this.hotkeysManager = new HotKeys();
-  },
-  computed: {
-    Codemirror() {
-      return this.$options.Codemirror;
-    },
-    customSlotButtons() {
-      const toolbar = this.toolbar;
-      return Object.keys(toolbar).filter( btn => toolbar[btn].slot)
-    }
-  },
-  mounted() {
-    if (!this.Codemirror) {
-      return console.error(
-        '1.5.0与2.1.0版本之后Codemirror将由用户自己配置，请配置Codemirror，如何配置请参考相关文档'
-      );
-    }
+    );
 
-    this.codemirrorInstance = new this.Codemirror(this.$refs.codemirrorEditor, {
-      lineNumbers: true,
-      styleActiveLine: true,
-      autoCloseTags: true,
-      matchBrackets: true,
-      indentWithTabs: true,
-      autoCloseBrackets: true,
-      ...this.codemirrorConfig,
-      tabSize: this.tabSize,
-      indentUnit: this.tabSize,
-      value: this.text,
-      placeholder: this.placeholder,
-      mode: 'markdown',
-      lineWrapping: true,
-      scrollbarStyle: 'overlay',
+    onBeforeUnmount(() => {
+      const element = codemirrorInstance.value.doc.cm.getWrapperElement();
+      element?.remove?.();
     });
 
-    this.codemirrorInstance.on('change', () => {
-      const newValue = this.getValue();
+    onMounted(() => {
+      if (!Codemirror)
+        return console.error(
+          '1.5.0与2.1.0版本之后Codemirror将由用户自己配置，请配置Codemirror，如何配置请参考相关文档'
+        );
 
-      this.handleInput(newValue);
+      codemirrorInstance.value = new Codemirror(codemirrorEditorEl.value, {
+        lineNumbers: true,
+        styleActiveLine: true,
+        autoCloseTags: true,
+        matchBrackets: true,
+        indentWithTabs: true,
+        autoCloseBrackets: true,
+        ...codemirrorConfig,
+        tabSize: tabSize.value,
+        indentUnit: tabSize.value,
+        value: text.value,
+        placeholder: placeholder.value,
+        mode: 'markdown',
+        lineWrapping: true,
+        scrollbarStyle: 'overlay',
+      });
+
+      codemirrorInstance.value.on('change', () => {
+        const newValue = getValue();
+
+        handleInput(newValue);
+      });
+
+      codemirrorInstance.value.on('scroll', () => {
+        handleEditorScroll();
+      });
+
+      codemirrorInstance.value.on('keydown', (_: any, e: KeyboardEvent) => {
+        hotkeysManager.dispatch(e);
+      });
+
+      codemirrorInstance.value.on('drop', (_: any, e: DragEvent) => {
+        handleDrop(e);
+      });
+
+      codemirrorInstance.value.on('paste', (_: any, e: ClipboardEvent) => {
+        handlePaste(e);
+      });
+
+      codemirrorInstance.value.on('blur', (_: any, e: Event) => {
+        handleBlur(e);
+      });
     });
 
-    this.codemirrorInstance.on('scroll', () => {
-      this.handleEditorScroll();
-    });
+    const { toolbar } = toRefs(props);
+    const { fullscreen } = useFullscreen(ctx);
+    const { handleNavClick, tocVisible, titles } = useToc();
+    const customSlotButtons = Object.keys(toolbar.value).filter((btn) => toolbar.value[btn].slot);
 
-    this.codemirrorInstance.on('keydown', (_, e) => {
-      this.hotkeysManager.dispatch(e);
-    });
-
-    this.codemirrorInstance.on('drop', (_, e) => {
-      this.handleDrop(e);
-    });
-
-    this.codemirrorInstance.on('paste', (_, e) => {
-      this.handlePaste(e);
-    });
-
-    this.codemirrorInstance.on('blur', (_, e) => {
-      this.handleBlur(e);
-    });
-  },
-  beforeUnmount() {
-    const element = this.codemirrorInstance.doc.cm.getWrapperElement();
-
-    element?.remove?.();
-  },
-  methods: {
-    handleContainerResize() {
-      if (!this.Codemirror) return;
+    const handleContainerResize = () => {
+      if (!Codemirror) return;
       // 容器大小变化的时候刷新 codemirror 解决滚动条的显示问题
-      this.codemirrorInstance.refresh();
-    },
-    getValue() {
-      return this.codemirrorInstance.getValue();
-    },
-    getIndexInInterval(number, start, end) {
-      if (start <= number && number <= end) {
-        return number - start;
-      }
-    },
-    // Must implement
-    delLineLeft() {
-      this.codemirrorInstance.execCommand('delLineLeft');
-    },
-    // Must implement
-    getCursorLineLeftText() {
-      const { codemirrorInstance } = this;
-      const { line: startLine, ch: startCh } = codemirrorInstance.getCursor('from');
-      const { line: endLine, ch: endCh } = codemirrorInstance.getCursor('to');
+      codemirrorInstance.value.refresh();
+    };
+    const getValue = () => {
+      return codemirrorInstance.value.getValue();
+    };
 
-      if (startLine !== endLine || startCh !== endCh) return;
-
-      return codemirrorInstance.getLine(startLine).slice(0, startCh);
-    },
     // Must implement
-    editorRegisterHotkeys(...arg) {
-      this.hotkeysManager.registerHotkeys(...arg);
-    },
+    const delLineLeft = () => {
+      codemirrorInstance.value.execCommand('delLineLeft');
+    };
+
     // Must implement
-    editorScrollToTop(scrollTop) {
-      const currentScrollTop = this.getScrollInfo().top;
+    const editorFocusEnd = () => {
+      focus();
 
-      smooth({
-        currentScrollTop,
-        scrollToTop: scrollTop,
-        scrollFn: (scrollTop) => this.codemirrorInstance.scrollTo(0, scrollTop),
-      });
-    },
-    // Must implement
-    getScrollInfo() {
-      return this.codemirrorInstance.getScrollInfo();
-    },
-    // Must implement
-    heightAtLine(...arg) {
-      return this.codemirrorInstance.heightAtLine(...arg);
-    },
-    // Must implement
-    focus() {
-      this.codemirrorInstance.focus();
-    },
-    // Must implement
-    undo() {
-      this.codemirrorInstance.undo();
-    },
-    // Must implement
-    redo() {
-      this.codemirrorInstance.redo();
-    },
-    // Must implement
-    clear() {
-      this.codemirrorInstance.setValue('');
-    },
-    // Must implement
-    editorFocusEnd() {
-      this.focus();
+      const lastLineIndex = codemirrorInstance.value.lastLine();
+      const lastLineContent = codemirrorInstance.value.getLine(lastLineIndex);
 
-      const lastLineIndex = this.codemirrorInstance.lastLine();
-      const lastLineContent = this.codemirrorInstance.getLine(lastLineIndex);
+      codemirrorInstance.value.setCursor({ line: lastLineIndex, ch: lastLineContent.length });
+    };
 
-      this.codemirrorInstance.setCursor({ line: lastLineIndex, ch: lastLineContent.length });
-    },
-    // Must implement
-    replaceSelectionText(text, type = 'around') {
-      this.codemirrorInstance.replaceSelection(text, type);
-    },
-    // Must implement
-    changeSelctionTo(insertText, selectedText) {
-      const curStartLine = this.codemirrorInstance.getCursor('from');
-      const curEndLine = this.codemirrorInstance.getCursor('to');
-
-      if (!selectedText) {
-        this.codemirrorInstance.setSelection(curEndLine);
-        return;
-      }
-
-      const lines = this.text.split('\n').slice(curStartLine.line, curEndLine.line + 1);
-      const startIndex = lines.join('\n').indexOf(selectedText, curStartLine.ch);
-      const endIndex = startIndex + selectedText.length;
-
-      const start = {
-        line: 0,
-        ch: null,
-        indexOfSelected: startIndex,
-      };
-      const end = {
-        line: 0,
-        ch: null,
-        indexOfSelected: endIndex,
-      };
-
-      let strLen = 0;
-      lines.find((rowText, lineIndex) => {
-        const rowLength = rowText.length;
-
-        [start, end].forEach((position) => {
-          const newCursor = this.getIndexInInterval(
-            position.indexOfSelected,
-            strLen,
-            strLen + rowLength
-          );
-
-          if (typeof newCursor !== 'undefined') {
-            position.ch = newCursor;
-            position.line = curStartLine.line + lineIndex;
-          }
-        });
-
-        // + 1 是算上换行符占的长度
-        strLen += rowLength + 1;
-
-        return start.ch !== null && end.ch !== null;
-      });
-
-      this.codemirrorInstance.setSelection(end, start);
-    },
-    // Must implement
-    getCurrentSelectedStr() {
-      return this.codemirrorInstance.getSelection();
-    },
+    return {
+      text,
+      fullscreen,
+      tocVisible,
+      titles,
+      currentMode,
+      langConfig,
+      hasUploadImage,
+      uploadConfig,
+      customSlotButtons,
+      previewEl,
+      previewScrollerEl,
+      handleChange,
+      handleNavClick,
+      handlePreviewImageClick,
+      handleContainerResize,
+      getPreviewScrollContainer,
+    };
   },
-};
+});
 
-createEditor(component);
+// createEditor(component);
 
-export default component;
+// export default component;
 </script>
 
 <style lang="scss">
