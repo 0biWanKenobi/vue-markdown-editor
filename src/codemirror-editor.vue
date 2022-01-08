@@ -33,11 +33,11 @@
         :class="{
           'codemirror-reset': codemirrorStyleReset
         }"
-        ref="codemirrorEditor"
+        ref="codemirrorEditorEl"
       />
     </template>
     <template #preview>
-      <scrollbar ref="previewScroller">
+      <scrollbar ref="previewScrollerEl">
         <v-md-preview
           :text="text"
           :tab-size="tabSize"
@@ -45,7 +45,7 @@
           :before-change="beforePreviewChange"
           @change="handleChange"
           @image-click="handlePreviewImageClick"
-          ref="preview"
+          ref="previewEl"
         />
       </scrollbar>
     </template>
