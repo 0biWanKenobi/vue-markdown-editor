@@ -6,6 +6,7 @@ import Preview from '@/preview';
 import Container from '@/components/container.vue';
 import Scrollbar from '@/components/scrollbar/index.vue';
 import TocNav from '@/components/toc-nav.vue';
+import VueTypes, { string, instanceOf } from 'vue-types';
 
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import EDITOR_MODE_TYPE from '@/types/editorMode';
@@ -13,23 +14,14 @@ import EDITOR_MODE_TYPE from '@/types/editorMode';
 export const editorProps = {
   height: String,
   theme: Object,
-  mode: {
-    type: Object as PropType<EDITOR_MODE_TYPE>,
-    default: EDITOR_MODE.EDITABLE,
-  },
+  mode: string<EDITOR_MODE_TYPE>().def(EDITOR_MODE.EDITABLE),
   autofocus: Boolean,
   placeholder: String,
   tocNavPositionRight: Boolean,
-  tabSize: {
-    type: Number,
-    default: 2,
-  },
-  beforePreviewChange: {
-    type: Function,
-    default: (text: any, next: any) => {
+  tabSize: VueTypes.number.def(2),
+  beforePreviewChange: instanceOf(Function).def((text: any, next: any) => {
       next(text);
-    },
-  },
+  }),
 };
 
 export const editorEmits = ['blur', 'change', 'save', 'image-click'];
