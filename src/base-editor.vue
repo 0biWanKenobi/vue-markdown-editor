@@ -25,10 +25,10 @@
           :placeholder="placeholder"
           @update:modelValue="handleInput"
           @click.stop
-          @drop="(e) => handleDrop($emit, e)"
-          @paste="(e) => handlePaste($emit, e)"
-          @blur="(e) => handleBlur($emit, e)"
-          ref="editorEngine"
+          @drop="handleDrop"
+          @paste="handlePaste"
+          @blur="handleBlur"
+          ref="editorEngineEl"
         />
       </scrollbar>
     </template>
