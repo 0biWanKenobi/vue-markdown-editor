@@ -1,7 +1,10 @@
+import useCommon from '@/modules/useCommon';
+
 export default {
   modifier: 'ctrl',
   key: 's',
-  action(editor) {
-    editor.save();
+  action() {
+    const { save } = useCommon();
+    save();
   },
 };
