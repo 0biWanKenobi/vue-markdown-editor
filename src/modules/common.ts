@@ -1,8 +1,7 @@
 // base css
 import '@/styles/index.scss';
 
-import { PropType } from 'vue';
-import Preview from '@/preview';
+import Preview from '@/preview.vue';
 import Container from '@/components/container.vue';
 import Scrollbar from '@/components/scrollbar/index.vue';
 import TocNav from '@/components/toc-nav.vue';
@@ -20,7 +19,7 @@ export const editorProps = {
   tocNavPositionRight: Boolean,
   tabSize: VueTypes.number.def(2),
   beforePreviewChange: instanceOf(Function).def((text: any, next: any) => {
-      next(text);
+    next(text);
   }),
 };
 
