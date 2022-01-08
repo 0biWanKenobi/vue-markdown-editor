@@ -1,14 +1,21 @@
-import * as Commands from '../command';
-import regCommand from '@/utils/command';
+import * as DefaultCommands from '../command';
 
-const commands = {};
+const commands: Record<string, Function> = {};
 
-const registerCommands = () => {
-  for (let command of Object.values(Commands)) registerCommand(command.name, command);
+const addDefaultCommands = () => {
+  for (let command of Object.values(DefaultCommands)) registerCommand(command.name, command);
 };
 
 const registerCommand = (name: string, callback: Function) => {
-  regCommand(commands, name, callback);
+  if (name) {
+    if (!commands[name]) {
+      commands[name] = callback;
+    } else {
+      console.error(`The command name is already in use: ${name}`);
+    }
+  } else {
+    console.error('Command name is required');
+  }
 };
 
 const execCommand = (name: string, ...arg: any[]) => {
@@ -22,8 +29,8 @@ const execCommand = (name: string, ...arg: any[]) => {
 };
 
 export default () => {
-  registerCommands();
   return {
+    addDefaultCommands,
     registerCommand,
     execCommand,
   };
