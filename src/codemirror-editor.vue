@@ -13,7 +13,7 @@
     @toolbar-item-click="handleToolbarItemClick"
     @toolbar-menu-click="handleToolbarMenuClick"
     @resize="handleContainerResize"
-    ref="contaner"
+    ref="container"
   >
     <template
       v-for="button of customSlotButtons"
