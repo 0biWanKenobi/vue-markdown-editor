@@ -1,17 +1,27 @@
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, SetupContext, watch } from 'vue';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useSyncScroll from './useSyncScroll';
 import EDITOR_MODE_TYPE from '@/types/editorMode';
 import useEditor from './useEditor';
 import useScroll from './useScroll';
+import LifecycleStage from '@/types/lifecycleStage';
+import UploadConfig from '@/types/uploadConfigType';
+import useVModel from './useVModel';
+import usePreview from './usePreview';
 
-export default () => {
+const useCommon = (
+  ctx?: SetupContext<string[]> | SetupContext<Record<string, any>>,
+  props?: Record<string, any>
+) => {
+  const uploadConfig = ref<UploadConfig>({});
+
   const mode = ref<EDITOR_MODE_TYPE>();
   const currentMode = ref(mode.value);
   let data = {};
 
   const isPreviewMode = computed(() => currentMode.value === EDITOR_MODE.PREVIEW);
   const isEditMode = computed(() => currentMode.value === EDITOR_MODE.EDIT);
+  const isEditableMode = computed(() => currentMode.value === EDITOR_MODE.EDITABLE);
 
   watch(
     () => mode.value,
@@ -45,28 +55,32 @@ export default () => {
   };
 
   // change event
-  const handleChange = (emit, text, html) => {
-    emit('change', text, html);
+  const handleChange = (text: string, html: string) => {
+    ctx?.emit('change', text, html);
   };
 
-  const handleBlur = (emit, e) => {
-    emit('blur', e);
+  const handleBlur = (e: Event) => {
+    ctx?.emit('blur', e);
   };
 
-  const handlePreviewImageClick = (emit, images, currentIndex) => {
-    emit('image-click', images, currentIndex);
+  const handlePreviewImageClick = (images: Array<any>, currentIndex: number) => {
+    ctx?.emit('image-click', images, currentIndex);
   };
 
-  const save = (emit, text, html) => {
+  const save = () => {
+    const { text } = useVModel();
+    const { html } = usePreview();
     // emit('save', this.text, this.$refs.preview.html);
-    emit('save', text, html);
+    ctx?.emit('save', text.value, html.value);
   };
 
   const {
     editor: { getCurrentSelectedStr, replaceSelectionText, changeSelectionTo },
   } = useEditor();
 
-  const insert = (getInsertContent: (v: string) => { text: string; selected?: string }) => {
+  const insert = (
+    getInsertContent: (v: string | undefined) => { text: string; selected?: string }
+  ) => {
     focus();
 
     const currentSelectedStr = getCurrentSelectedStr();
@@ -79,15 +93,15 @@ export default () => {
     });
   };
 
-  const onCreated = (theme, options) => {
-    if (theme) options.use(theme);
-  };
+  const { setLifeCycleHooks } = useEditor();
 
-  const onMounted = async (isAutofocused: boolean) => {
-    if (isAutofocused) {
+  const onMounted = async () => {
+    if (props?.autofocus) {
       await nextTick(() => setFocusEnd());
     }
   };
+
+  setLifeCycleHooks(LifecycleStage.mounted, onMounted);
 
   return {
     data,
@@ -95,13 +109,15 @@ export default () => {
     currentMode,
     isPreviewMode,
     isEditMode,
+    isEditableMode,
+    uploadConfig,
     setFocusEnd,
     handleChange,
     handleBlur,
     handlePreviewImageClick,
     save,
     insert,
-    onCreated,
-    onMounted,
   };
 };
+
+export default useCommon;
