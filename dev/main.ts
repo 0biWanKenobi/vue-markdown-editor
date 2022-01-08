@@ -1,10 +1,6 @@
-import App from './App';
+import App from '@/dev/App.vue';
 import { createApp } from 'vue';
-import PreviewHtml from '@/preview-html.js';
-import VueMarkdownEditor from '@/base-editor';
-// import VueMarkdownEditor from '@/codemirror-editor';
-// import Preview from '@/preview';
-// import githubTheme from '@/theme/github/index';
+import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml } from '@/main';
 
 import createEmojiPlugin from '@/plugins/emoji/full';
 import '@/plugins/emoji/emoji';
@@ -20,13 +16,13 @@ import createMermaidPlugin from '@/plugins/mermaid/cdn';
 
 import createCreateCopyCodePreview from '@/plugins/copy-code/preview';
 
-import vuepressTheme from '@/theme/vuepress';
+// import vuepressTheme from '@/theme/vuepress';
 import enUS from '@/lang/en-US';
 
 import Prism from 'prismjs';
 
 // codemirror 编辑器的相关资源
-import Codemirror from 'codemirror';
+//import Codemirror from 'codemirror';
 // mode
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/javascript/javascript';
@@ -46,38 +42,60 @@ import 'codemirror/addon/scroll/simplescrollbars';
 import 'codemirror/addon/scroll/simplescrollbars.css';
 // style
 import 'codemirror/lib/codemirror.css';
+import CodeMirror from 'codemirror';
 
 const app = createApp(App);
 
-PreviewHtml.use(createCreateCopyCodePreview());
+// PreviewHtml.use(createCreateCopyCodePreview());
 
-VueMarkdownEditor.lang.use('en-US', enUS);
+// VueMarkdownEditor.lang.use('en-US', enUS);
 
-// VueMarkdownEditor.use(githubTheme, {
+// VueMarkdownEditor.use(vuepressTheme, {
+//   Prism,
 //   codeHighlightExtensionMap: {
-//     vue: 'xml',
+//     vue: 'markup',
 //   },
 // });
-VueMarkdownEditor.use(vuepressTheme, {
-  Prism,
-  codeHighlightExtensionMap: {
-    vue: 'markup',
+
+// VueMarkdownEditor.use(createEmojiPlugin())
+//   .use(createKatexPlugin())
+//   .use(createTodoListPlugin())
+//   .use(createLineNumberPlugin())
+//   .use(createCopyCodePlugin())
+//   .use(createHighLinesPlugin())
+//   .use(createMermaidPlugin());
+
+// VueMarkdownEditor.Codemirror = Codemirror;
+
+// app.use(PreviewHtml);
+
+app.use(VueMarkdownEditor, <EditorConfig>{
+  editor: BaseEditor,
+  langConfig: {
+    lang: 'en-US',
+    langConfig: enUS,
   },
+  preview: PreviewHtml,
+  Codemirror: CodeMirror,
+  themeConfig: {
+    config: {
+      Prism,
+      codeHighlightExtensionMap: {
+        vue: 'markup',
+      },
+    },
+    theme: 'vuepress',
+  },
+  plugins: [
+    { plugin: createCreateCopyCodePreview() },
+    { plugin: createEmojiPlugin() },
+    { plugin: createKatexPlugin() },
+    { plugin: createTodoListPlugin() },
+    { plugin: createLineNumberPlugin() },
+    { plugin: createCopyCodePlugin() },
+    { plugin: createHighLinesPlugin() },
+    { plugin: createMermaidPlugin() },
+  ],
 });
-// Preview.use(githubTheme);
-
-VueMarkdownEditor.use(createEmojiPlugin())
-  .use(createKatexPlugin())
-  .use(createTodoListPlugin())
-  .use(createLineNumberPlugin())
-  .use(createCopyCodePlugin())
-  .use(createHighLinesPlugin())
-  .use(createMermaidPlugin());
-
-VueMarkdownEditor.Codemirror = Codemirror;
-
-app.use(VueMarkdownEditor);
-app.use(PreviewHtml);
-// app.use(Preview);
 
 app.mount('#app');

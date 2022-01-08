@@ -13,15 +13,11 @@
       ref="editor"
       :toolbar="customToolbar"
       left-toolbar="undo redo | myButton my2ndButton"
-    > 
+    >
       <template #myButton>
         <select name="opts">
-          <option value="opt1">
-            option 1
-          </option>
-          <option value="opt2">
-            option 2
-          </option>
+          <option value="opt1">option 1</option>
+          <option value="opt2">option 2</option>
         </select>
       </template>
       <template #my2ndButton>
@@ -32,7 +28,7 @@
           height="16"
           srcset="https://www.svgrepo.com/show/131974/settings.svg 4x"
           alt="Settings SVG Vector"
-        >
+        />
       </template>
     </v-md-editor>
 
@@ -43,7 +39,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import text from './text';
 import html from './html';
 import { defineComponent } from '@vue/runtime-core';
@@ -65,11 +61,11 @@ export default defineComponent({
       },
     };
 
-    const handleFullscreenChange = (v) => {
+    const handleFullscreenChange = (v: boolean) => {
       console.log(v);
     };
 
-    const handleUploadImage = (e, insertImage, files) => {
+    const handleUploadImage = (e: Event, insertImage: Function, files: File[]) => {
       console.log(files);
 
       insertImage({
@@ -78,11 +74,11 @@ export default defineComponent({
       });
     };
 
-    const handleSave = (v, html) => {
-      console.log(v, html);
+    const handleSave = (text: string, html: string) => {
+      console.log(text, html);
     };
 
-    const handleCopyCodeSuccess = (code) => {
+    const handleCopyCodeSuccess = (code: string | undefined) => {
       console.log(code);
     };
 
