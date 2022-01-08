@@ -5,7 +5,7 @@ import markdownItTableOfContent from '@/utils/markdown-it-table-of-content';
 import markdownItPreWrapper from '@/utils/markdown-it-pre-wrapper';
 import markdownItLink from '@/utils/markdown-it-link';
 import { LINE_MARKUP, HEADING_MARKUP, ANCHOR_MARKUP } from '@/utils/constants/markup';
-import { slugify } from '@vuepress/shared-utils';
+import slugify from '@vuepress/shared-utils/lib/slugify.js';
 
 import markdownIt from '@/utils/markdown-it';
 import BaseThemeParams from '@/types/baseThemeParams';

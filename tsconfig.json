@@ -4,15 +4,24 @@
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
+    "importHelpers": true,
     "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@vuepress/shared-utils": ["./node_modules/@vuepress/shared-utils/types/index.d.ts"]
+      "@/*": ["src/*"],
+      "@vuepress/shared-utils/lib/slugify.js": [
+        "./node_modules/@vuepress/shared-utils/types/slugify.d.ts"
+      ],
+      "@vuepress/markdown/lib/lineNumbers.js": ["./src/lineNumbers.d.ts"]
     },
-    "types": ["node"]
+    "types": ["node", "webpack-env"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["node_modules", "lib", "dev", "docs", "build"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "dev"],
+  "exclude": ["node_modules", "lib", "dev_bkp", "docs", "build", "dev_bkp"]
 }

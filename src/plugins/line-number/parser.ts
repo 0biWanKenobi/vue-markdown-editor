@@ -1,5 +1,5 @@
 import PluginParserFn from '@/types/pluginParserFn';
-const markdownItCodeLineNumber = require('@vuepress/markdown');
+import markdownItCodeLineNumber from '@vuepress/markdown/lib/lineNumbers.js';
 import MarkdownIt from 'markdown-it';
 
 const parser: PluginParserFn = function (vMdParser) {
