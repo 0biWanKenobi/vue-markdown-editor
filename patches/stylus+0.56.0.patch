@@ -1,0 +1,12 @@
+diff --git a/node_modules/stylus/index.js b/node_modules/stylus/index.js
+index ab58d3e..bd486f6 100644
+--- a/node_modules/stylus/index.js
++++ b/node_modules/stylus/index.js
+@@ -1,4 +1,2 @@
+ 
+-module.exports = process.env.STYLUS_COV
+-  ? require('./lib-cov/stylus')
+-  : require('./lib/stylus');
+\ No newline at end of file
++module.exports = require('./lib/stylus');
+\ No newline at end of file
