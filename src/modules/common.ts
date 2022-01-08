@@ -28,20 +28,15 @@ export const editorEmits = ['blur', 'change', 'save', 'image-click'];
 
 export const shouldInheritAttrs = false;
 
-export const editorComponents = {
-  [Preview.name]: Preview,
-  [Container.name]: Container,
-  [Scrollbar.name]: Scrollbar,
-  [TocNav.name]: TocNav,
+export const editorComponents = () => {
+  const PreviewName = Preview.name;
+  const ContainerName = Container.name;
+  const ScrollbarName = Scrollbar.name;
+  const TocNavName = TocNav.name;
+  return {
+    [PreviewName]: Preview,
+    [ContainerName]: Container,
+    [ScrollbarName]: Scrollbar,
+    [TocNavName]: TocNav,
+  };
 };
-
-// export default {
-//   provide() {
-//     return {
-//       markdownEditor: this,
-//     };
-//   },
-//   created() {
-//     if (this.theme) this.$options.use(this.theme);
-//   },
-// };
