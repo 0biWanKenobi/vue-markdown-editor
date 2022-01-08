@@ -1,8 +1,5 @@
 <template>
   <v-md-container
-    :left-toolbar="leftToolbar"
-    :right-toolbar="rightToolbar"
-    :toolbars="toolbars"
     :disabled-menus="disabledMenus"
     :height="height"
     :fullscreen="fullscreen"
@@ -10,9 +7,6 @@
     :left-area-title="langConfig.toc.title"
     :left-area-reverse="tocNavPositionRight"
     :mode="currentMode"
-    @editor-wrapper-click="handleEditorWrapperClick"
-    @toolbar-item-click="handleToolbarItemClick"
-    @toolbar-menu-click="handleToolbarMenuClick"
     ref="container"
   >
     <template v-for="button of customSlotButtons" #[button]="slotData">
