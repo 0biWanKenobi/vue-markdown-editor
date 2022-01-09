@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import VueTypes, { func } from 'vue-types';
+import VueTypes from 'vue-types';
 
 export default defineComponent({
   props: {
