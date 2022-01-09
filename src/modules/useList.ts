@@ -1,3 +1,4 @@
+import LifecycleStage from '@/types/lifecycleStage';
 import useEditor from './useEditor';
 import useHotkeys from './useHotkeys';
 
@@ -16,19 +17,19 @@ const onMounted = () => {
   registerHotkeys({
     key: 'enter',
     preventDefault: false,
-    action: (_, e) => {
+    action: (_: any, e: any) => {
       if (e.isComposing) return;
 
       const cursorLineLeftText = getCursorLineLeftText();
       let suffix;
       let syntax;
 
-      if (ol.test(cursorLineLeftText)) {
+      if (cursorLineLeftText && ol.test(cursorLineLeftText)) {
         suffix = 'x. ';
         syntax = olSyntax;
 
         e.preventDefault();
-      } else if (ul.test(cursorLineLeftText)) {
+      } else if (cursorLineLeftText && ul.test(cursorLineLeftText)) {
         suffix = '- ';
         syntax = ulSyntax;
 
@@ -54,7 +55,6 @@ const onMounted = () => {
 };
 
 export default () => {
-  return {
-    onMounted,
-  };
+  const { setLifeCycleHooks } = useEditor();
+  setLifeCycleHooks(LifecycleStage.mounted, onMounted);
 };
