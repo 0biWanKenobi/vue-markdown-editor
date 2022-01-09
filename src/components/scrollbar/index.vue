@@ -84,8 +84,8 @@ export default defineComponent({
       let style: any = wrapStyle.value;
 
       if (gutter) {
-        const scrollView = resizeEl.value?.$el;
-        const wrapper = wrapEl.value?.$el;
+        const scrollView = resizeEl.value;
+        const wrapper = wrapEl.value;
         const scrollViewHeight = scrollView?.scrollHeight;
         const scrollViewWidth = scrollView?.scrollWidth;
         const wrapperHeight = wrapper?.clientHeight;
@@ -115,8 +115,9 @@ export default defineComponent({
           style: viewStyle.value,
           ref: 'resizeEl',
         },
-        slots.default
+        slots.default && slots.default()
       );
+
       const wrap = (
         <div
           ref={wrapEl}
