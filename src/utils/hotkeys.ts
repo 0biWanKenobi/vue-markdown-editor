@@ -1,6 +1,5 @@
-import { KeyCode, keyCodesToName, KeyName, keyNames } from './key-codes';
-
-type HotKey = 'ctrl' | 'shift' | 'ctrlAlt' | 'ctrlShift' | 'keys';
+import { HotKey } from '@/types/hotKeyType';
+import { keyCodesToName, KeyName, keyNames } from './key-codes';
 
 class Hotkeys {
   hotkeys: { ctrl: any; shift: any; ctrlAlt: any; ctrlShift: any; keys: any };
@@ -14,8 +13,8 @@ class Hotkeys {
     };
   }
 
-  dispatch(e: any) {
-    const keyName: string = this.getKeyName(e).toLowerCase();
+  dispatch(e: KeyboardEvent) {
+    const keyName: string = this.getKeyName(e).toString().toLowerCase();
     let opt;
 
     if (!keyName) return;
@@ -41,49 +40,39 @@ class Hotkeys {
     }
   }
 
-  isKeyEnterExact(e: any) {
+  isKeyEnterExact(e: KeyboardEvent) {
     return !this.isCtrlEnter(e) && !this.isShiftEnter(e) && !this.isAltEnter(e);
   }
 
-  isCtrlShiftEnterExact(e: any) {
+  isCtrlShiftEnterExact(e: KeyboardEvent) {
     return this.isCtrlEnter(e) && this.isShiftEnter(e) && !this.isAltEnter(e);
   }
 
-  isCtrlAltEnterExact(e: any) {
+  isCtrlAltEnterExact(e: KeyboardEvent) {
     return this.isCtrlEnter(e) && this.isAltEnter(e) && !this.isShiftEnter(e);
   }
 
-  isCtrlEnterExact(e: any) {
+  isCtrlEnterExact(e: KeyboardEvent) {
     return this.isCtrlEnter(e) && !this.isShiftEnter(e) && !this.isAltEnter(e);
   }
 
-  isShiftEnterExact(e: any) {
+  isShiftEnterExact(e: KeyboardEvent) {
     return this.isShiftEnter(e) && !this.isCtrlEnter(e) && !this.isAltEnter(e);
   }
 
-  isCtrlEnter(e: any) {
+  isCtrlEnter(e: KeyboardEvent) {
     return e.ctrlKey || e.metaKey;
   }
 
-  isShiftEnter(e: any) {
+  isShiftEnter(e: KeyboardEvent) {
     return e.shiftKey;
   }
 
-  isAltEnter(e: any) {
+  isAltEnter(e: KeyboardEvent) {
     return e.altKey;
   }
 
-  registerHotkeys({
-    modifier,
-    key,
-    preventDefault = true,
-    action,
-  }: {
-    modifier: HotKey;
-    key: string;
-    preventDefault: boolean;
-    action: any;
-  }) {
+  registerHotkeys({ modifier, key, preventDefault = true, action }: HotKey) {
     if (modifier) {
       this.hotkeys[modifier][key] = {
         preventDefault,
@@ -97,8 +86,8 @@ class Hotkeys {
     }
   }
 
-  getKeyName(e: any) {
-    const { key, keyCode }: { key: any; keyCode: KeyCode } = e;
+  getKeyName(e: KeyboardEvent) {
+    const { key, keyCode } = e;
 
     if (key !== undefined) {
       const keyName = Object.keys(keyNames).find((keyName) => {
