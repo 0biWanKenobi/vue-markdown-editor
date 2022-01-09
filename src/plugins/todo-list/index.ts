@@ -8,20 +8,21 @@ import useHotkeys from '@/modules/useHotkeys';
 import useVMdParser from '@/modules/useVMdParser';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
 
-const createTodoListPlugin: PluginCreatorFn = ({
-  name = 'todo-list',
-  icon = 'v-md-icon-checkbox',
-  text,
-  color,
-}) => {
+const createTodoListPlugin: PluginCreatorFn = (
+  params = {
+    name: 'todo-list',
+    icon: 'v-md-icon-checkbox',
+  }
+) => {
+  const { name, icon, text, color } = params;
   const toolbar = createToolbar({
-    commandName: name,
+    commandName: name!,
     title: () => {
       const { langConfig } = useLang();
       return `${langConfig.value.task.toolbar}（Ctrl+Shift+U）`;
     },
     text,
-    icon,
+    icon: icon!,
   });
 
   return {
@@ -32,13 +33,13 @@ const createTodoListPlugin: PluginCreatorFn = ({
       const { registerHotkeys } = useHotkeys();
       const lang = useLang();
 
-      registerCommand(name, commandHandler);
-      registerToolbar(name, toolbar);
+      registerCommand(name!, commandHandler);
+      registerToolbar(name!, toolbar);
       registerHotkeys({
         modifier: 'ctrlShift',
         key: 'u',
         action() {
-          execCommand(name);
+          execCommand(name!);
         },
       });
       lang.add({
