@@ -75,6 +75,12 @@ const mdEditorPlugin: Plugin = {
 
     if (!themeConfig || !configTheme(themeConfig)) return;
 
+    const { addDefaultCommands } = useCommand();
+    addDefaultCommands();
+
+    const { addDefaultToolbars } = useToolbar();
+    addDefaultToolbars();
+
     for (const pluginConfig of plugins) {
       VmdEditor.editor.use(pluginConfig.plugin, pluginConfig.params);
     }
@@ -83,12 +89,6 @@ const mdEditorPlugin: Plugin = {
       const codeMirrorSetup = useCodemirror();
       codeMirrorSetup.setValue(Codemirror);
     }
-
-    const { addDefaultToolbars } = useToolbar();
-    addDefaultToolbars();
-
-    const { addDefaultCommands } = useCommand();
-    addDefaultCommands();
   },
 };
 
