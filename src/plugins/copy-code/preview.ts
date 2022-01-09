@@ -1,4 +1,6 @@
 import useEditor from '@/modules/useEditor';
+import usePreview from '@/modules/usePreview';
+import LifecycleStage from '@/types/lifecycleStage';
 import copyToClipboard from 'copy-to-clipboard';
 import { nextTick, ref, watch } from 'vue';
 
@@ -16,13 +18,7 @@ function findCodeWrapperEl(el: Element): Element | null {
   return el.parentNode ? findCodeWrapperEl(el.parentNode as Element) : null;
 }
 
-function getPreviewEl(el: Element) {
-  const previewElClass = 'v-md-editor-preview';
-
-  return el.classList.contains(previewElClass) ? el : el.querySelector(`.${previewElClass}`);
-}
-
-function handleCopyCodeClick({ target }: Event) {
+function handleCopyCodeClick({ target }: Event, emit: Function) {
   const targetEl = target ? <Element>target : null;
 
   if (targetEl && isCopyButton(targetEl)) {
@@ -32,18 +28,21 @@ function handleCopyCodeClick({ target }: Event) {
       const code = codeWrapper.querySelector('code')?.innerText;
 
       code && copyToClipboard(code);
-      // this.$emit('copy-code-success', code);
+      emit('copy-code-success', code);
     }
   }
 }
 
 export default function createCopyCodePreview() {
+  const { emit, setLifeCycleHooks, installEmits } = useEditor();
+  const eventListener = (e: Event) => handleCopyCodeClick(e, emit);
   return {
     install() {
-      const { editor: VMdEditor } = useEditor();
+      installEmits('copy-code-success');
 
+      const { previewEl } = usePreview();
       const stopHandle = watch(
-        () => VMdEditor.previewEl,
+        () => previewEl.value,
         (el) => {
           if (installed.value) {
             stopHandle();
@@ -52,21 +51,18 @@ export default function createCopyCodePreview() {
           nextTick(() => {
             if (el.value) {
               installed.value = true;
-              el.value.addEventListener('click', handleCopyCodeClick);
+              el.value.addEventListener('click', eventListener);
             }
           });
         }
       );
 
-      // VMdEditor.mixins.push({
-      //   emits: ['copy-code-success'],
+      const beforeUnmount = () => {
+        const { previewEl } = usePreview();
+        previewEl.value?.$el.removeEventListener('click', eventListener);
+      };
 
-      //   beforeUnmount() {
-      //     const previewEl = getPreviewEl(this.$el);
-
-      //     previewEl.removeEventListener('click', this.handleCopyCodeClick);
-      //   },
-      // });
+      setLifeCycleHooks(LifecycleStage.beforeUnmount, beforeUnmount);
     },
   };
 }
