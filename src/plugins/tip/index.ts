@@ -33,7 +33,7 @@ const createTipPlugin: PluginCreatorFn = (
   const { execCommand } = useCommand();
 
   const toolbar = {
-    name,
+    name: name!,
     title: () => langConfig.value.tip.toolbar,
     icon,
     text,
@@ -42,28 +42,28 @@ const createTipPlugin: PluginCreatorFn = (
         name: 'tip',
         text: () => langConfig.value.tip.tip.toolbar,
         action() {
-          execCommand(name);
+          execCommand(name!);
         },
       },
       {
         name: 'warning',
         text: () => langConfig.value.tip.warning.toolbar,
         action() {
-          execCommand(name, 'warning');
+          execCommand(name!, 'warning');
         },
       },
       {
         name: 'danger',
         text: () => langConfig.value.tip.danger.toolbar,
         action() {
-          execCommand(name, 'danger');
+          execCommand(name!, 'danger');
         },
       },
       {
         name: 'details',
         text: () => langConfig.value.tip.details.toolbar,
         action() {
-          execCommand(name, 'details');
+          execCommand(name!, 'details');
         },
       },
     ],
@@ -72,10 +72,10 @@ const createTipPlugin: PluginCreatorFn = (
   return {
     install() {
       // if (VMdEditor.name === 'v-md-') {
-      const { registerCommand, execCommand } = useCommand();
+      const { registerCommand } = useCommand();
       const { registerToolbar } = useToolbar();
-      registerCommand(name, commandHandler);
-      registerToolbar(name, toolbar);
+      registerCommand(name!, commandHandler);
+      registerToolbar(name!, toolbar);
       const lang = useLang();
 
       lang.add({
