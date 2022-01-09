@@ -2,7 +2,7 @@ import { computed, reactive, ref } from 'vue';
 import Lang from '@/utils/lang';
 import zhCNConfig from '@/lang/zh-CN';
 
-const lang = ref<Lang>();
+const lang = ref<Lang>(new Lang());
 const add = (val: Record<string, any>) => {
   lang.value.add(val);
 };
@@ -12,7 +12,7 @@ const use = (name: string, val: Record<string, any>) => {
 };
 
 const langConfig = computed(() => {
-  const cfg = lang.value.config;
+  const cfg = lang.value?.config;
   return cfg.langConfig[cfg.lang] ?? cfg.langConfig['zh-CN'];
 });
 
