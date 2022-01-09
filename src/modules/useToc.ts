@@ -2,15 +2,10 @@ import { computed, nextTick, ref, watch } from 'vue';
 import useScroll from './useScroll';
 import { LINE_MARKUP } from '@/utils/constants/markup';
 import useVModel from '@/modules/useVModel';
+import type TocTitle from '@/types/tocTitleType';
 
 const tocVisible = ref(false);
-const titles = ref<
-  {
-    title: string;
-    lineIndex: string | number;
-    indent: number;
-  }[]
->([]);
+const titles = ref<TocTitle[]>([]);
 const tocIncludeLevel = ref<string[]>();
 
 const { text } = useVModel();
@@ -64,7 +59,7 @@ const updateTocNav = () => {
 
 const { scrollToLine } = useScroll();
 
-const handleNavClick = ({ lineIndex }) => {
+const handleNavClick = ({ lineIndex }: { lineIndex: number }) => {
   scrollToLine(lineIndex);
 };
 
