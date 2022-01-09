@@ -18,10 +18,18 @@ if (process.env.STYLUS_COV) {
 //   );
 // }
 
-var nodeExternals = require('webpack-node-externals');
-
 module.exports = {
+  chainWebpack: (config) => {
+    config.plugin('html').tap((args) => {
+      if (process.env.NODE_ENV == 'development') {
+        args[0].template = './dev/index.html';
+      }
+      return args;
+    });
+  },
   configureWebpack: {
+    target: 'web',
+    devtool: 'source-map',
     resolve: {
       extensions: ['.js', '.ts', '.vue', '.css'],
       alias: {
@@ -32,7 +40,6 @@ module.exports = {
       {
         consolidate: 'commonjs consolidate',
       },
-      // nodeExternals(),
     ],
     // module: {
     //   rules: [
