@@ -1,5 +1,5 @@
 import IEditor from '@/interfaces/IEditor';
-import { ref, SetupContext } from 'vue';
+import { Ref, ref, SetupContext } from 'vue';
 import EDITOR_TYPE, { BASE_EDITOR, CODEMIRROR_EDITOR } from '@/types/editorType';
 import BaseEditor from '@/classes/baseEditor';
 import CodemirrorEditor from '@/classes/codemirrorEditor';
@@ -21,6 +21,7 @@ const lifeCycleHooks: Record<string, Function[]> = {
 };
 
 const currentEditor = ref<IEditor>();
+
 const ctx = ref<SetupContext<string[]>>();
 
 const setContext = (_ctx: SetupContext<string[]>) => {
