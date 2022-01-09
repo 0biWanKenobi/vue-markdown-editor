@@ -1,14 +1,9 @@
+import LangClassConfig from '@/types/langClassConfig';
+import LangConfig from '@/types/langConfig';
 import { deepAssign } from '@/utils/deep-assign';
 
-type LangConfig = {
-  [x: string]: Record<string, any>;
-};
-
 export default class Lang {
-  config: {
-    lang: string;
-    langConfig: LangConfig;
-  };
+  config: LangClassConfig;
 
   options: {
     afterUse?: (name: string, config: LangConfig) => void;
