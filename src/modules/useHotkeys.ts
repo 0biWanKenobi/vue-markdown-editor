@@ -1,6 +1,10 @@
+import LifecycleStage from '@/types/lifecycleStage';
 import * as Hotkeys from '../hotkeys';
 import useCommon from './useCommon';
 import useEditor from './useEditor';
+import { HotKey } from '@/types/hotKeyType';
+
+const hotkeys: HotKey[] = [];
 
 const { isPreviewMode } = useCommon();
 const {
@@ -10,31 +14,27 @@ const {
 const onMounted = () => {
   if (isPreviewMode.value) return;
 
-  for (let hotKey of Object.values(Hotkeys)) registerHotkeys(hotKey);
+  for (let hotKey of Object.values(Hotkeys)) editorRegisterHotkeys(hotKey);
+  for (const hotKey of hotkeys) {
+    editorRegisterHotkeys(hotKey);
+  }
 };
 
-const registerHotkeys = ({
-  modifier,
-  key,
-  action,
-  preventDefault = true,
-}: {
-  modifier?: string;
-  key: string;
-  action: Function;
-  preventDefault?: boolean;
-}) => {
-  editorRegisterHotkeys({
-    modifier,
-    key,
-    preventDefault,
-    action,
-  });
+const { setLifeCycleHooks } = useEditor();
+setLifeCycleHooks(LifecycleStage.mounted, onMounted);
+
+const registerHotkeys = (hotkey: HotKey) => {
+  hotkeys.push(hotkey);
+  // editorRegisterHotkeys({
+  //   modifier,
+  //   key,
+  //   preventDefault,
+  //   action,
+  // });
 };
 
 export default () => {
   return {
-    onMounted,
     registerHotkeys,
   };
 };
