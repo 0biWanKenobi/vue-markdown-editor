@@ -32,9 +32,9 @@
 <script lang="ts">
 import insertTextAtCursor from 'insert-text-at-cursor';
 import { isKorean } from '@/utils/util';
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
-import Hotkeys from '@/utils/hotkeys';
+import useTextarea from '@/modules/useTextarea';
 
 export default defineComponent({
   name: 'v-md-textarea-editor',
@@ -47,14 +47,16 @@ export default defineComponent({
   },
   emits: ['blur', 'paste', 'update:modelValue'],
   setup(props, { emit }) {
+    const { triggerInputBySetHistory, hotkeysManager, textareaEl } = useTextarea();
+
     onMounted(() => {
       saveHistory();
 
-      textareaEl.value?.$el.addEventListener('keydown', handleKeydown, false);
+      textareaEl.value?.addEventListener('keydown', handleKeydown, false);
     });
 
     onBeforeUnmount(() => {
-      textareaEl.value?.$el.removeEventListener('keydown', handleKeydown, false);
+      textareaEl.value?.removeEventListener('keydown', handleKeydown, false);
     });
 
     const handleKeydown = (e: KeyboardEvent) => {
@@ -62,12 +64,10 @@ export default defineComponent({
     };
 
     const isComposing = ref(false);
-    const textareaEl = ref();
 
     const { modelValue } = toRefs(props);
     const timer = ref<NodeJS.Timeout>();
 
-    let triggerInputBySetHistory = false;
     watch(
       () => modelValue.value,
       () => {
@@ -106,29 +106,9 @@ export default defineComponent({
       emit('blur', e);
     };
 
-    const hotkeysManager = new Hotkeys();
-
-    const registerHotkeys = (config: any) => {
-      hotkeysManager.registerHotkeys(config);
-    };
-
-    const heightAtLine = (lineIndex: number) => {
-      const el = textareaEl.value?.$el.querySelector(`section[data-line="${lineIndex}"]`);
-
-      return el ? el.offsetTop + el.offsetHeight : 0;
-    };
-
     const clearTheTimeout = () => {
       if (timer.value) clearTimeout(timer.value);
       timer.value = undefined;
-    };
-
-    const updateCurrentHistoryRange = () => {
-      if (!timer.value) {
-        updateHistory(historyIndex, {
-          range: getRange(),
-        });
-      }
     };
 
     const handleInput = (e: Event) => {
@@ -137,16 +117,9 @@ export default defineComponent({
       emit('update:modelValue', (<HTMLInputElement>e.target)?.value);
     };
 
-    type History = {
-      value: string | undefined;
-      range: {
-        start: any;
-        end: any;
-      };
-    };
-    let historyStack: Array<History> = [];
-    let historyIndex = 0;
     const { historyMax } = toRefs(props);
+
+    const { getRange, historyIndex, historyStack } = useTextarea();
 
     const saveHistory = () => {
       const range = getRange();
@@ -155,64 +128,17 @@ export default defineComponent({
         range,
       };
 
-      historyStack = historyStack.slice(0, historyIndex + 1);
-      historyStack.push(history);
-      if (historyStack.length > historyMax.value) historyStack.shift();
-      historyIndex = historyStack.length - 1;
-    };
-
-    const updateHistory = (index: number, data: any) => {
-      const history = historyStack[index];
-
-      if ('value' in data) history.value = data.value;
-      Object.assign(history.range, data.range);
-    };
-
-    const goHistory = (index: number) => {
-      const { value, range } = historyStack[index];
-
-      emit('update:modelValue', value);
-      triggerInputBySetHistory = true;
-
-      nextTick(() => {
-        triggerInputBySetHistory = false;
-        setRange(range);
-      });
-    };
-
-    const getRange = () => {
-      return {
-        start: textareaEl.value?.$el.selectionStart,
-        end: textareaEl.value?.$el.selectionEnd,
-      };
-    };
-
-    const setRange = ({ start, end }: { start: number; end: number }) => {
-      textareaEl.value?.$el.setSelectionRange(start, end);
-      updateCurrentHistoryRange();
-    };
-
-    const focus = () => {
-      textareaEl.value?.$el.focus();
+      historyStack.value = historyStack.value.slice(0, historyIndex.value + 1);
+      historyStack.value.push(history);
+      if (historyStack.value.length > historyMax.value) historyStack.value.shift();
+      historyIndex.value = historyStack.value.length - 1;
     };
 
     const insertText = (text: string) => {
-      insertTextAtCursor(textareaEl.value?.$el, text);
+      insertTextAtCursor(textareaEl.value, text);
     };
 
-    const undo = () => {
-      if (historyIndex > 0) {
-        historyIndex--;
-        goHistory(historyIndex);
-      }
-    };
-
-    const redo = () => {
-      if (historyIndex < historyStack.length - 1) {
-        historyIndex++;
-        goHistory(historyIndex);
-      }
-    };
+    const { updateCurrentHistoryRange, undo, redo } = useTextarea();
 
     return {
       isComposing,
