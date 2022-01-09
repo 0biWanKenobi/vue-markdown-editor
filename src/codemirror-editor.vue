@@ -28,7 +28,7 @@
       />
     </template>
     <template #preview>
-      <scrollbar ref="previewScrollerEl">
+      <scrollbar type="preview" ref="previewScrollerEl">
         <v-md-preview
           :text="text"
           :tab-size="tabSize"
@@ -61,12 +61,19 @@ import useScroll from './modules/useScroll';
 import useLang from './modules/useLang';
 import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
+import VMdContainer from '@/components/container.vue';
+import VMdUploadFile from '@/components/upload-file.vue';
 import '@/assets/css/font';
+import useEditorElements from './modules/useEditorElements';
+import Scrollbar from './components/scrollbar/index.vue';
 
 export default defineComponent({
   name: 'v-md-editor',
   components: {
+    VMdContainer,
+    VMdUploadFile,
     ...editorComponents(),
+    Scrollbar,
   },
   props: {
     ...editorProps,
@@ -78,8 +85,10 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const {
-      editor: { previewEl, previewScrollerEl, codemirrorInstance, hotkeysManager },
+      editor: { hotkeysManager },
     } = useEditor<CodemirrorEditor>('codemirror');
+
+    const { codemirrorInstance } = useEditorElements();
 
     const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
     const { text, handleInput } = useVModel();
@@ -203,8 +212,6 @@ export default defineComponent({
       hasUploadImage,
       uploadConfig,
       customSlotButtons,
-      previewEl,
-      previewScrollerEl,
       handleChange,
       handleNavClick,
       handlePreviewImageClick,
