@@ -49,9 +49,9 @@ export default function createCopyCodePreview() {
             return;
           }
           nextTick(() => {
-            if (el.value) {
+            if (el) {
               installed.value = true;
-              el.value.addEventListener('click', eventListener);
+              el.addEventListener('click', eventListener);
             }
           });
         }
