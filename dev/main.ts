@@ -1,23 +1,23 @@
-import App from '@/dev/App.vue';
+import App from './App.vue';
 import { createApp } from 'vue';
-import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml } from '@/main';
+import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml } from '../src/main';
 
-import createEmojiPlugin from '@/plugins/emoji/full';
-import '@/plugins/emoji/emoji';
-import createKatexPlugin from '@/plugins/katex/cdn';
-import createTodoListPlugin from '@/plugins/todo-list/index';
-import '@/plugins/todo-list/todo-list';
-import createLineNumberPlugin from '@/plugins/line-number/index';
-import createCopyCodePlugin from '@/plugins/copy-code/index';
-import '@/plugins/copy-code/copy-code';
-import createHighLinesPlugin from '@/plugins/highlight-lines/';
-import '@/plugins/highlight-lines/highlight-lines';
-import createMermaidPlugin from '@/plugins/mermaid/cdn';
+import createEmojiPlugin from '../src/plugins/emoji/full';
+import '../src/plugins/emoji/emoji';
+import createKatexPlugin from '../src/plugins/katex/cdn';
+import createTodoListPlugin from '../src/plugins/todo-list/index';
+import '../src/plugins/todo-list/todo-list';
+import createLineNumberPlugin from '../src/plugins/line-number/index';
+import createCopyCodePlugin from '../src/plugins/copy-code/index';
+import '../src/plugins/copy-code/copy-code';
+import createHighLinesPlugin from '../src/plugins/highlight-lines/';
+import '../src/plugins/highlight-lines/highlight-lines';
+import createMermaidPlugin from '../src/plugins/mermaid/cdn';
 
-import createCreateCopyCodePreview from '@/plugins/copy-code/preview';
+import createCreateCopyCodePreview from '../src/plugins/copy-code/preview';
 
-// import vuepressTheme from '@/theme/vuepress';
-import enUS from '@/lang/en-US';
+// import vuepressTheme from '../src/theme/vuepress';
+import enUS from '../src/lang/en-US';
 
 import Prism from 'prismjs';
 
@@ -70,7 +70,10 @@ const app = createApp(App);
 // app.use(PreviewHtml);
 
 app.use(VueMarkdownEditor, <EditorConfig>{
-  editor: BaseEditor,
+  editor: {
+    instance: BaseEditor,
+    type: 'base',
+  },
   langConfig: {
     lang: 'en-US',
     langConfig: enUS,
