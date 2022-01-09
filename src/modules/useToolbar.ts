@@ -16,18 +16,20 @@ const addDefaultToolbars = () => {
 const registerToolbar = (name: string, config: Toolbar) => {
   addToolbar(config);
 };
-const handleToolbarItemClick = (toolbarItem: Toolbar) => {
+const handleToolbarItemClick = (itemName: string) => {
+  const toolbarItem = toolbars[itemName];
   if (
     toolbarItem.action &&
     !toolbarItem.menus?.length &&
     typeof toolbarItem.action === 'function'
   ) {
-    toolbarItem.action.call(toolbarItem, this, toolbars[toolbarItem.name]);
+    toolbarItem.action();
   }
 };
-const handleToolbarMenuClick = (menu: Toolbar) => {
+const handleToolbarMenuClick = (menuName: string) => {
+  const menu = toolbars[menuName];
   if (menu.action && typeof menu.action === 'function') {
-    menu.action.call(menu, this, toolbars[menu.name]);
+    menu.action();
   }
 };
 
