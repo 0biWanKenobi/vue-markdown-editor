@@ -1,8 +1,8 @@
-import useVMdParser from '@/modules/useVMdParser';
 import ThemeParserOpts from '@/types/themeParserOpts';
+import type { VMdParser } from '@/utils/v-md-parser';
 import createVuepressTheme from './theme';
 
-export default function (options: ThemeParserOpts = {}) {
+export default function (parser: VMdParser, options: ThemeParserOpts = {}) {
   const { extend, config, codeHighlightExtensionMap, Prism } = options;
   const theme = createVuepressTheme({
     Prism,
@@ -11,6 +11,5 @@ export default function (options: ThemeParserOpts = {}) {
   });
 
   if (extend) theme.extend(extend);
-  const vMdParser = useVMdParser();
-  vMdParser.theme(theme);
+  parser.theme(theme);
 }

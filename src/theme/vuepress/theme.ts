@@ -2,7 +2,7 @@ import createPrismTheme from '@/theme/base/prism';
 import type ThemeConfig from '@/types/themeConfigType';
 import type Theme from '@/types/themeType';
 
-export default function createVuepressTheme(config: ThemeConfig) {
+export default function createVuepressTheme(config: Partial<ThemeConfig>) {
   const prismTheme = createPrismTheme({
     Prism: config.Prism,
     codeHighlightExtensionMap: config.codeHighlightExtensionMap || {},
@@ -11,7 +11,7 @@ export default function createVuepressTheme(config: ThemeConfig) {
       link: {
         openLinkIcon: true,
       },
-      ...config.baseConfig,
+      ...(config.baseConfig ?? {}),
     },
   });
 

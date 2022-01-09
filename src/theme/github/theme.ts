@@ -2,7 +2,7 @@ import createHljsTheme from '@/theme/base/highlight';
 import type ThemeConfig from '@/types/themeConfigType';
 import type Theme from '@/types/themeType';
 
-export default function createGithubTheme(config: ThemeConfig) {
+export default function createGithubTheme(config: Partial<ThemeConfig>) {
   const hljsTheme = createHljsTheme({
     Hljs: config.Hljs,
     baseConfig: config.baseConfig,

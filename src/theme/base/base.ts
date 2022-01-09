@@ -10,7 +10,16 @@ import slugify from '@vuepress/shared-utils/lib/slugify.js';
 import markdownIt from '@/utils/markdown-it';
 import BaseThemeParams from '@/types/baseThemeParams';
 
-export default function createBaseTheme({ toc, link, attrs }: BaseThemeParams = {}) {
+const defaultParam = {
+  attrs: {
+    allowedAttributes: [],
+  },
+  link: {},
+  toc: {},
+};
+
+export default function createBaseTheme(params: BaseThemeParams = defaultParam) {
+  const { attrs = defaultParam.attrs, link = defaultParam.link, toc = defaultParam.toc } = params;
   const mdIt = markdownIt();
 
   mdIt
