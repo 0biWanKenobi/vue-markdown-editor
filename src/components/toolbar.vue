@@ -35,13 +35,11 @@ export default defineComponent({
   components: {
     [ToolbarItem.name]: ToolbarItem,
   },
-  inject: ['markdownEditor'],
   props: {
     disabledMenus: Array,
     toolbarType: string<'left' | 'right'>().isRequired,
   },
   setup(props) {
-    const markdownEditor = inject('markdownEditor');
     const { toolbars } = useToolbar();
     const { getToolbarItems } = useToolbarItems();
 
@@ -49,7 +47,7 @@ export default defineComponent({
       const toolbarConfig = toolbars[itemName];
       const value = toolbarConfig[configName];
 
-      return typeof value === 'function' ? value(markdownEditor) : value;
+      return typeof value === 'function' ? value() : value;
     };
 
     const toolbarItems = getToolbarItems(props.toolbarType);
