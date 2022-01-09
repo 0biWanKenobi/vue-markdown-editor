@@ -17,9 +17,9 @@
           :class="[`v-md-editor__menu-item-${item.name}`, item.class]"
           @click.stop="handleClick(item)"
         >
-          <v-md-render :render-fn="item.render" :editor="$self" v-if="item.render" />
+          <v-md-render :render-fn="item.render" v-if="item.render" />
           <template v-else>
-            {{ getText(item.text) }}
+            {{ item.text }}
           </template>
         </li>
       </template>
@@ -47,7 +47,7 @@
 <script lang="ts">
 import VMdRender from '@/components/render.vue';
 import MENU_MODE from '@/utils/constants/menu-mode';
-import { computed, defineComponent, inject, nextTick, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
 import VueTypes, { array } from 'vue-types';
 
 type Menu = {
@@ -61,7 +61,6 @@ export default defineComponent({
   components: {
     VMdRender,
   },
-  inject: ['markdownEditor'],
   props: {
     mode: VueTypes.string.def(MENU_MODE.PANEL),
     menus: array<Menu>().isRequired,
@@ -100,16 +99,6 @@ export default defineComponent({
       return menus.value.slice(start, end);
     };
 
-    const markdownEditor = inject('markdownEditor');
-
-    const getText = (text: any) => {
-      if (typeof text === 'function') {
-        return text(markdownEditor);
-      }
-
-      return text;
-    };
-
     const hide = () => {
       emit('update:visible', false);
     };
@@ -133,7 +122,6 @@ export default defineComponent({
       isListMode,
       menuEl,
       handleClick,
-      getText,
       getRowMenus,
     };
   },
