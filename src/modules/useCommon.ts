@@ -39,6 +39,9 @@ const useCommon = (
       if (newValue === EDITOR_MODE.EDITABLE && enableSyncScroll.value) {
         await nextTick(previewSyncScroll);
       }
+    },
+    {
+      flush: 'post',
     }
   );
 
