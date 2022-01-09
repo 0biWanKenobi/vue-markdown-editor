@@ -1,4 +1,5 @@
 // Modified from https://github.com/ElemeFE/element/blob/dev/src/utils/clickoutside.js
+import { DirectiveTransform } from '@vue/compiler-dom';
 import { inBrowser } from '@/utils/util';
 
 const nodeList: Array<any> = [];
@@ -39,6 +40,13 @@ function createDocumentHandler(el: any, binding: any, vnode: any) {
     }
   };
 }
+
+export const ssrTransformClickoutside: DirectiveTransform = (dir, node, context) => {
+  return {
+    // do nothing
+    props: [],
+  };
+};
 
 export default {
   beforeMount(el: any, binding: any, vnode: any) {
