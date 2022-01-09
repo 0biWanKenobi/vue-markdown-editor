@@ -10,7 +10,7 @@ export default function commandHandler({ type = 'todo' } = {}) {
     const { placeholder } = langConfig.value.task;
     const markup = type === 'todo' ? ' ' : 'x';
 
-    const selectedGetter = (selected: string | null) => selected || placeholder;
+    const selectedGetter = (selected: string | undefined) => selected || placeholder;
     const { insertContent, newSelected } = generatorText({
       selected,
       InsertGetter: (selected) => `- [${markup}] ${selectedGetter(selected)}`,
