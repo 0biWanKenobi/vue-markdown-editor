@@ -96,10 +96,10 @@ export default defineComponent({
         class={['scrollbar__bar', 'is-' + bar.value.key]}
         onMousedown={clickTrackHandler}
         onClick={(e) => e.stopPropagation()}
-        ref="rootEl"
+        ref={rootEl}
       >
         <div
-          ref="thumbEl"
+          ref={thumbEl}
           class="scrollbar__thumb"
           onMousedown={clickThumbHandler}
           style={renderThumbStyle({ size: size.value, move: move.value, bar: bar.value })}
