@@ -19,8 +19,8 @@ export default defineComponent({
   name: 'v-md-upload-file',
   props: {
     uploadConfig: object<{
-      accept: string | undefined;
-      multiple: boolean | 'true' | 'false' | undefined;
+      accept?: string;
+      multiple?: boolean | 'true' | 'false';
     }>().isRequired,
   },
   setup() {
