@@ -7,7 +7,14 @@ const defaults = {
   highlight: (str: string, _?: string) => str,
 };
 
-type Options = typeof defaults & { codeBlockClass?: (v: string) => string };
+type Options = {
+  codeHighlightExtensionMap: Record<string, string>;
+  hasLang: (name: string) => boolean;
+  highlight: ((str: string) => string) | ((str: string, lang: string) => string);
+  codeBlockClass?: (v: string) => string;
+};
+
+// type Options = typeof defaults & { codeBlockClass?: (v: string) => string };
 
 export function createHighlightRender({
   codeHighlightExtensionMap,
