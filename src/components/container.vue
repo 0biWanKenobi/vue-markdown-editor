@@ -44,7 +44,7 @@
         </editor-toolbar>
         <editor-toolbar
           class="v-md-editor__toolbar-right"
-          tytoolbarTypepe="right"
+          toolbarType="right"
           :disabled-menus="disabledMenus"
         >
           <template v-for="button of rightToolbarCustomSlots" #[button]="slotData">
