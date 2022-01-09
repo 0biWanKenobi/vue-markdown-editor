@@ -3,16 +3,16 @@ import { getScrollTop, scrollTo } from './scroll-top';
 type SmoothScrollParams = {
   scrollTarget: Window | HTMLElement;
   scrollToTop: number;
-  percent: number;
-  onScrollEnd: FrameRequestCallback;
+  percent?: number;
+  onScrollEnd?: FrameRequestCallback;
 };
 
 type SmoothParams = {
   currentScrollTop: number;
   scrollToTop: number;
   scrollFn: (v: number) => void;
-  percent: number;
-  onScrollEnd: FrameRequestCallback;
+  percent?: number;
+  onScrollEnd?: FrameRequestCallback;
 };
 
 export function smooth({
