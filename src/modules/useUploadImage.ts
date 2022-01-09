@@ -1,4 +1,4 @@
-import { computed, ref, SetupContext } from 'vue';
+import { computed, Ref, ref, SetupContext } from 'vue';
 import imageToolbar from '@/toolbar/image';
 import { filesFilter, getFilesFromClipboardData } from '@/utils/file';
 import { image } from '@/utils/constants/command';
@@ -12,6 +12,7 @@ const defaultConfig = {
 };
 
 const propImgConfig = ref();
+const disabledMenus = ref<string | string[]>([]);
 const uploadImgConfig = computed(() => {
   return {
     ...defaultConfig,
@@ -20,8 +21,7 @@ const uploadImgConfig = computed(() => {
 });
 
 const hasUploadImage = computed(
-  (disabledMenus: string | Array<string>) =>
-    !disabledMenus.includes(`${imageToolbar.name}/upload-image`)
+  () => !disabledMenus.value.includes(`${imageToolbar.name}/upload-image`)
 );
 
 const handleDrop = (e: DragEvent) => {
@@ -59,10 +59,12 @@ const ctx = ref<SetupContext<string[]> | SetupContext<Record<string, any>>>();
 
 export default (
   _ctx?: SetupContext<string[]> | SetupContext<Record<string, any>>,
-  _propImgConfig?: any
+  _propImgConfig?: any,
+  _disabledMenus: Ref<string | string[]> = ref([])
 ) => {
   propImgConfig.value = _propImgConfig;
   ctx.value = _ctx;
+  disabledMenus.value = _disabledMenus.value;
   return {
     emitUploadImage,
     uploadImgConfig,
