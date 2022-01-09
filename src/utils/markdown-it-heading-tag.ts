@@ -1,4 +1,4 @@
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 
 type GetMarksFn = (title: string, level: number, slug: any) => { attr: string; value: string }[];
 

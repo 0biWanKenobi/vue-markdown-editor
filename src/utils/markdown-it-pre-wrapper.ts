@@ -1,5 +1,5 @@
 // Modified from https://github.com/vuejs/vuepress/blob/master/packages/%40vuepress/markdown/lib/preWrapper.js
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import type { RenderRule } from 'markdown-it/lib/renderer';
 
 export default function (

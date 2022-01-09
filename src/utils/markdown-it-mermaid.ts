@@ -1,4 +1,4 @@
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import type { RenderRule } from 'markdown-it/lib/renderer';
 
 export default function (md: MarkdownIt, { className = 'v-md-mermaid' } = {}) {

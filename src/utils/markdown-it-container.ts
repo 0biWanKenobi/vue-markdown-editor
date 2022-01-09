@@ -1,7 +1,7 @@
 // Modified from https://github.com/vuepress/vuepress-community/blob/master/packages/vuepress-plugin-container/src/markdown-it-container.ts
 
-import * as container from 'markdown-it-container';
-import type * as MarkdownIt from 'markdown-it';
+import container from 'markdown-it-container';
+import MarkdownIt from 'markdown-it';
 
 function wrapRenderPlaceFunction(func: any) {
   if (typeof func === 'string') {

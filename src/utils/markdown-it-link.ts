@@ -1,6 +1,6 @@
 // Modified from https://github.com/vuejs/vuepress/blob/master/packages/%40vuepress/markdown/lib/link.js
 
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 
 export default function (
   md: MarkdownIt,

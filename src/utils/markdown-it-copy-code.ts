@@ -1,7 +1,7 @@
 // markdown-it plugin for generating copy code button.
 // It depends on preWrapper plugin.
 
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 
 /* eslint-disable max-len */
 export default function (md: MarkdownIt) {

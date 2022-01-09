@@ -1,4 +1,4 @@
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import { RenderRule } from 'markdown-it/lib/renderer';
 
 export default function (md: MarkdownIt, { lineMarkup = 'data-line' } = {}) {

@@ -1,7 +1,7 @@
 // Modified from https://github.com/waylonflinn/markdown-it-katex/blob/master/index.js
 
 import * as Katex from 'katex';
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import type { RuleBlock } from 'markdown-it/lib/parser_block';
 import type { RuleInline } from 'markdown-it/lib/parser_inline';
 import type { RenderRule } from 'markdown-it/lib/renderer';

@@ -1,6 +1,6 @@
 // Modified from https://github.com/Oktavilla/markdown-it-table-of-contents/blob/master/index.js
 
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import { RuleInline } from 'markdown-it/lib/parser_inline';
 import StateCore from 'markdown-it/lib/rules_core/state_core';
 import Token from 'markdown-it/lib/token';

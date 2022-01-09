@@ -1,7 +1,7 @@
 // Modified from https://github.com/vuejs/vuepress/blob/master/packages/%40vuepress/markdown/lib/highlightLines.js
 // It depends on preWrapper plugin.
 
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import * as Token from 'markdown-it/lib/token';
 
 export default function (

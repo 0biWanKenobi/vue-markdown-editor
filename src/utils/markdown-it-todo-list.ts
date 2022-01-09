@@ -1,6 +1,6 @@
 // Modified from https://github.com/revin/markdown-it-task-lists/blob/master/index.js
 
-import type * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import Token from 'markdown-it/lib/token';
 
 const defaults = {
