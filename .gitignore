@@ -8,3 +8,4 @@ lib
 es
 
 .DS_Store
+.env.*
