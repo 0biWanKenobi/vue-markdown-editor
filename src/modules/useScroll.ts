@@ -3,24 +3,35 @@ import useSyncScroll from './useSyncScroll';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useEditor from './useEditor';
 import { computed } from 'vue';
+import usePreview from './usePreview';
+import useScrollbar from './useScrollbar';
 
-const { ignoreSyncScroll } = useSyncScroll();
-const { mode } = useCommon();
+const getPreviewScrollContainer = computed(() => {
+  const { wrapEl } = useScrollbar('preview');
+  const { isPreviewMode } = useCommon();
+  const previewScrollContainer = wrapEl.value;
+  const defaultContainer = isPreviewMode.value ? window : previewScrollContainer;
+
+  return propScrollContainer ? propScrollContainer() : defaultContainer;
+});
 
 const {
-  editor: { previewScrollerEl, previewEl, heightAtLine, editorScrollToTop },
+  editor: { heightAtLine, editorScrollToTop },
 } = useEditor();
 
 const previewScrollTo = (scrollTop: number) => {
-  previewScrollerEl.value?.scrollTo(scrollTop);
+  const { scrollTo } = useScrollbar('preview');
+  scrollTo(scrollTop);
 };
 
 const scrollToLine = (lineIndex: number) => {
+  const { mode } = useCommon();
   if (mode.value != EDITOR_MODE.PREVIEW) {
     editorScrollToLine(lineIndex);
   }
 
   if (mode.value != EDITOR_MODE.EDIT) {
+    const { ignoreSyncScroll } = useSyncScroll();
     ignoreSyncScroll.value = true;
     previewScrollToLine({
       lineIndex,
@@ -38,31 +49,26 @@ const editorScrollToLine = (lineIndex: number) => {
 };
 
 const previewScrollToTarget = (...arg: any[]) => {
+  const { previewEl } = usePreview();
   previewEl.value?.scrollToTarget(...arg);
 };
 
-const previewScrollToLine = ({ lineIndex, onScrollEnd }) => {
+const previewScrollToLine = ({
+  lineIndex,
+  onScrollEnd,
+}: {
+  lineIndex: number;
+  onScrollEnd: Function;
+}) => {
+  const { previewEl } = usePreview();
   previewEl.value?.scrollToLine({ lineIndex, onScrollEnd });
 };
 
 let propScrollContainer: () => Element;
 
 export default () => {
-  const getPreviewScrollContainer = computed(() => {
-    const {
-      editor: { previewScrollerEl },
-    } = useEditor();
-    const { isPreviewMode } = useCommon();
-    const previewScrollContainer = previewScrollerEl.value.querySelector('.scrollbar__wrap');
-    const defaultContainer = isPreviewMode.value ? window : previewScrollContainer;
-
-    return propScrollContainer ? propScrollContainer() : defaultContainer;
-  });
-
   return {
     propScrollContainer,
-    previewScrollerEl,
-    previewEl,
     previewScrollTo,
     scrollToLine,
     editorScrollToLine,
