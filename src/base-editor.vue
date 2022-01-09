@@ -18,7 +18,7 @@
       </scrollbar>
     </template>
     <template #editor>
-      <scrollbar @scroll="handleEditorScroll" ref="editorScrollerEl">
+      <scrollbar type="editor" @scroll="handleEditorScroll" ref="editorScrollerEl">
         <v-md-textarea-editor
           :model-value="text"
           :min-height="textEditorMinHeight"
@@ -33,7 +33,7 @@
       </scrollbar>
     </template>
     <template #preview>
-      <scrollbar ref="previewScrollerEl">
+      <scrollbar type="preview" ref="previewScrollerEl">
         <v-md-preview
           :text="text"
           :tab-size="tabSize"
@@ -41,7 +41,6 @@
           :before-change="beforePreviewChange"
           @change="handleChange"
           @image-click="handlePreviewImageClick"
-          ref="previewEl"
         />
       </scrollbar>
     </template>
@@ -52,6 +51,7 @@
 <script lang="ts">
 import TextareaEditor from '@/components/textarea-editor.vue';
 import VMdContainer from '@/components/container.vue';
+import VMdUploadFile from '@/components/upload-file.vue';
 import { editorProps, editorEmits, editorComponents, shouldInheritAttrs } from './modules/common';
 import { toolbarProps } from './modules/toolbar';
 import { uploadImageProps } from './modules/upload-image';
@@ -83,6 +83,7 @@ import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
 import '@/assets/css/font';
+import useEditorElements from './modules/useEditorElements';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -98,6 +99,7 @@ export default defineComponent({
   components: {
     [TextareaEditor.name]: TextareaEditor,
     VMdContainer,
+    VMdUploadFile,
     ...editorComponents(),
   },
   setup(props, ctx) {
@@ -118,8 +120,9 @@ export default defineComponent({
         await nextTick();
 
         if (h) {
-          const editorWrapper = containerEl.value.querySelector('.v-md-editor__editor-wrapper');
-          textEditorMinHeight.value = window.getComputedStyle(editorWrapper).height;
+          const editorWrapper = containerEl.value?.querySelector('.v-md-editor__editor-wrapper');
+          editorWrapper &&
+            (textEditorMinHeight.value = window.getComputedStyle(editorWrapper).height);
         } else {
           textEditorMinHeight.value = '';
         }
@@ -139,20 +142,7 @@ export default defineComponent({
     mode.value = props.mode;
 
     const { text } = useVModel();
-    const {
-      editor: {
-        getCursorLineLeftText,
-        focus,
-        clear: clearEditor,
-        replaceSelectionText,
-        editorEngineEl,
-        editorScrollerEl,
-        previewEl,
-        previewScrollerEl,
-      },
-      setContext,
-      callLifeCycleHooks,
-    } = useEditor<BaseEditor>('base');
+    const { setContext, callLifeCycleHooks } = useEditor<BaseEditor>('base');
 
     setContext(ctx);
 
@@ -172,31 +162,7 @@ export default defineComponent({
       callLifeCycleHooks(LifecycleStage.unmounted);
     });
 
-    // Must implement
-    const editorFocusEnd = () => {
-      focus();
-
-      editorEngineEl.value.setRange({
-        start: text.value?.length ?? 0,
-        end: text.value?.length ?? 0,
-      });
-    };
-    // Must implement
-    const delLineLeft = () => {
-      const { start } = editorEngineEl.value.getRange();
-
-      const leftText = getCursorLineLeftText() ?? '';
-      editorEngineEl.value.setRange({ start: start - leftText.length - 1, end: start });
-      replaceSelectionText('\n');
-    };
-
     const { handleInput } = useVModel();
-    // Must implement
-    const { emit } = ctx;
-    const clear = () => {
-      clearEditor();
-      emit('update:modelValue', '');
-    };
 
     useList();
     const { handleNavClick, tocVisible, titles } = useToc();
@@ -204,10 +170,11 @@ export default defineComponent({
     const { getPreviewScrollContainer } = useScroll();
     const { fullscreen } = useFullscreen(ctx);
     const { langConfig } = useLang();
-    const { uploadImageConfig } = toRefs(props);
+    const { uploadImageConfig, disabledMenus } = toRefs(props);
     const { handleDrop, handlePaste, hasUploadImage, uploadImgConfig } = useUploadImage(
       ctx,
-      uploadImageConfig.value
+      uploadImageConfig.value,
+      disabledMenus
     );
 
     return {
@@ -222,13 +189,6 @@ export default defineComponent({
       handleChange,
       getPreviewScrollContainer,
       handlePreviewImageClick,
-      delLineLeft,
-      editorFocusEnd,
-      clear,
-      previewEl,
-      previewScrollerEl,
-      editorEngineEl,
-      editorScrollerEl,
       customSlotButtons,
       currentMode,
       fullscreen,
