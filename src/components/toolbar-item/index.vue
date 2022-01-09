@@ -66,7 +66,7 @@ export default defineComponent({
     active: Boolean,
     text: String,
     icon: String,
-    menus: oneOfType<Array<any> | MenuObject>([Array, Object]).isRequired,
+    menus: oneOfType<Array<any> | MenuObject>([Array, Object]),
     disabledMenus: Array,
     preventNativeClick: VueTypes.bool.def(true),
   },
@@ -87,7 +87,7 @@ export default defineComponent({
     });
 
     const menuItems = computed(() => {
-      const _menus = typeof menus.value == 'object' ? (<MenuObject>menus.value).items : menus;
+      const _menus = typeof menus.value == 'object' ? (<MenuObject>menus.value).items : menus.value;
 
       return _menus?.filter(
         ({ name: menuName }: { name: string }) =>
