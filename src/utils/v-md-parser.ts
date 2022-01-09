@@ -1,15 +1,19 @@
+import Theme from '@/types/themeType';
 import Lang from '@/utils/lang';
 
 export class VMdParser {
+  lang: Lang;
+  themeConfig?: Theme;
+
   constructor() {
     this.lang = new Lang();
   }
 
-  defaultMarkdownLoader(text) {
+  defaultMarkdownLoader(text: string) {
     return text;
   }
 
-  use(optionsOrInstall, opt) {
+  use(optionsOrInstall: Function | { install: Function }, opt?: Record<string, any>) {
     if (typeof optionsOrInstall === 'function') {
       optionsOrInstall(this, opt);
     } else {
@@ -19,11 +23,11 @@ export class VMdParser {
     return this;
   }
 
-  theme(themeConfig) {
+  theme(themeConfig: Theme) {
     this.themeConfig = themeConfig;
   }
 
-  extendMarkdown(extender) {
+  extendMarkdown(extender: Function) {
     if (!this.themeConfig) {
       return console.error('Please use theme before using plugins');
     }
@@ -33,7 +37,11 @@ export class VMdParser {
     extender(markdownParser);
   }
 
-  parse(text) {
+  parse(text: string) {
+    if (!this.themeConfig) {
+      throw new Error('Please use theme before using plugins');
+    }
+
     const { markdownParser } = this.themeConfig;
     const markdownLoader =
       markdownParser?.render?.bind(markdownParser) || this.defaultMarkdownLoader;
