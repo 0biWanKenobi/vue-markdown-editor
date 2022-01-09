@@ -37,6 +37,8 @@ export default defineComponent({
 
     const previewClass = computed(() => vMdParser.themeConfig?.previewClass);
 
+    const { text, beforeChange } = toRefs(props);
+
     watch(
       () => text.value,
       () => handleTextChange()
@@ -48,8 +50,6 @@ export default defineComponent({
       () => langConfig.value,
       () => handleTextChange()
     );
-
-    const { text, beforeChange } = toRefs(props);
 
     const handleTextChange = () => {
       const next = (text: string) => {
