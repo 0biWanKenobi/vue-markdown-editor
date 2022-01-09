@@ -1,4 +1,4 @@
-export const keyCodesToName = {
+export const keyCodesToName: Record<number, string | number> = {
   // Numbers and letters
   48: 0,
   49: 1,
