@@ -1,11 +1,13 @@
-import { Component } from 'vue';
-
 type Toolbar = {
   name: string;
   icon?: string;
-  title: (editor: Component) => string;
-  action?: (editor: Component) => void;
-  menus?: Array<any>;
+  text?: string;
+  active?: () => boolean;
+  preventNativeClick?: boolean;
+  title: () => string;
+  action?: () => void;
+  menus?: any;
+  slot?: boolean;
 };
 
 export default Toolbar;
