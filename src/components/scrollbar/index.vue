@@ -1,13 +1,13 @@
 <script lang="tsx">
 // Modified from https://github.com/ElemeFE/element/tree/dev/packages/scrollbar
 
-import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, toRefs } from 'vue';
+import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import scrollbarWidth from '@/utils/scrollbar-width';
 import { arraytoObject } from '@/utils/util';
 import Bar from './bar.vue';
-import smoothScroll from '@/utils/smooth-scroll';
-import VueTypes from 'vue-types';
+import VueTypes, { string } from 'vue-types';
+import useScrollbar from '@/modules/useScrollbar';
 
 export default defineComponent({
   name: 'scrollbar',
@@ -23,13 +23,13 @@ export default defineComponent({
     viewStyle: null,
     noresize: Boolean, // 如果 container 尺寸不会发生变化，最好设置它可以优化性能
     tag: VueTypes.string.def('div'),
+    type: string<'editor' | 'preview'>(),
   },
 
   emits: ['scroll'],
 
   setup(props, { emit, slots }) {
-    const wrapEl = ref();
-    const resizeEl = ref();
+    const { resizeEl, wrapEl } = useScrollbar(props.type);
 
     const sizeWidth = ref('0');
     const sizeHeight = ref('0');
@@ -42,34 +42,20 @@ export default defineComponent({
     onMounted(() => {
       if (native.value || disabled.value) return;
       nextTick(update);
-      !noresize.value && addResizeListener(resizeEl.value, update);
     });
+
+    watch(
+      () => resizeEl.value,
+      (r) => {
+        if (!r || !noresize.value) return;
+        addResizeListener(r, update);
+      }
+    );
 
     onBeforeUnmount(() => {
       if (native.value || disabled.value) return;
-      !noresize.value && removeResizeListener(resizeEl.value, update);
+      !noresize.value && !!resizeEl.value && removeResizeListener(resizeEl.value, update);
     });
-
-    const getScrollInfo = () => {
-      const el = wrapEl.value?.$el;
-
-      return {
-        left: el.scrollLeft,
-        top: el.scrollTop,
-        width: el.scrollWidth,
-        height: el.scrollHeight,
-        clientWidth: el.clientWidth,
-        clientHeight: el.clientHeight,
-      };
-    };
-
-    const scrollTo = (scrollTop: number) => {
-      const el = wrapEl.value?.$el;
-      smoothScroll({
-        scrollTarget: el,
-        scrollToTop: scrollTop,
-      });
-    };
 
     const handleScroll = () => {
       const el = wrapEl.value?.$el;
@@ -127,13 +113,13 @@ export default defineComponent({
         {
           class: ['scrollbar__view', viewClass.value],
           style: viewStyle.value,
-          ref: 'resize',
+          ref: 'resizeEl',
         },
         slots.default
       );
       const wrap = (
         <div
-          ref="wrap"
+          ref={wrapEl}
           style={style}
           onScroll={handleScroll}
           class={[
@@ -155,7 +141,7 @@ export default defineComponent({
         ];
       } else {
         nodes = [
-          <div ref="wrap" class={[wrapClass.value, 'scrollbar__wrap']} style={style}>
+          <div ref={wrapEl} class={[wrapClass.value, 'scrollbar__wrap']} style={style}>
             {[view]}
           </div>,
         ];
