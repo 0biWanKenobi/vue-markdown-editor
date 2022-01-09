@@ -4,7 +4,7 @@
     :style="{
       tabSize,
     }"
-    @click="(e) => handlePreviewClick($emit, e)"
+    @click="handlePreviewClick"
     ref="previewEl"
   >
     <div :class="[previewClass]" v-html="html" />
@@ -12,35 +12,44 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, toRefs, watch } from 'vue';
 import xss from '@/utils/xss/index';
-import { VMdParser } from '@/utils/v-md-parser';
 import usePreview from './modules/usePreview';
 import { previewProps, previewEmits } from '@/modules/preview';
 import useVMdParser from './modules/useVMdParser';
-
-const { previewEl, handlePreviewClick } = usePreview('preview');
-
-const vMdParser = new VMdParser();
-vMdParser.lang.config = reactive(vMdParser.lang.config);
-//component.vMdParser = new VMdParser();
+import VueTypes from 'vue-types';
+import useLang from '@/modules/useLang';
 
 export default defineComponent({
   name: 'v-md-preview',
   props: {
     ...previewProps,
-    text: {
-      type: String,
-      default: '',
-    },
+    text: VueTypes.string.def(''),
     theme: Object,
     beforeChange: Function,
   },
   emits: [...previewEmits, 'change'],
-  setup(props, { emit }) {
+  setup(props, ctx) {
+    const { emit } = ctx;
+    const { html, previewEl, handlePreviewClick } = usePreview(ctx);
+
     const vMdParser = useVMdParser();
+
+    const previewClass = computed(() => vMdParser.themeConfig?.previewClass);
+
+    watch(
+      () => text.value,
+      () => handleTextChange()
+    );
+
+    const { langConfig } = useLang();
+
+    watch(
+      () => langConfig.value,
+      () => handleTextChange()
+    );
+
     const { text, beforeChange } = toRefs(props);
-    const html = ref<string>();
 
     const handleTextChange = () => {
       const next = (text: string) => {
@@ -55,45 +64,16 @@ export default defineComponent({
         next(text.value);
       }
     };
-    watch(
-      () => text.value,
-      () => handleTextChange()
-    );
+
+    handleTextChange();
 
     return {
       html,
       previewEl,
+      previewClass,
       handleTextChange,
       handlePreviewClick,
     };
   },
-  data() {
-    return {
-      html: '',
-    };
-  },
-  watch: {
-    text() {
-      this.handleTextChange();
-    },
-    langConfig() {
-      this.handleTextChange();
-    },
-  },
-  computed: {
-    vMdParser() {
-      return this.$options.vMdParser;
-    },
-    previewClass() {
-      return this.vMdParser.themeConfig.previewClass;
-    },
-    langConfig() {
-      return this.vMdParser.lang.langConfig;
-    },
-  },
-  created() {
-    this.handleTextChange();
-  },
-  methods: {},
 });
 </script>
