@@ -7,14 +7,22 @@ import useVMdParser from '@/modules/useVMdParser';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
 
 export default function creator({ emojiJson, parser }: { emojiJson: any; parser: any }) {
-  const createEmojiPlugin: PluginCreatorFn = ({
-    name = 'emoji',
-    icon = 'v-md-icon-emoji',
-    text,
-    title = () => useLang().langConfig.value.emoji,
-    customEmoji,
-  }) => {
-    const toolbar = createToolbar({ commandName: name, title, text, icon, emojiJson });
+  const createEmojiPlugin: PluginCreatorFn = (
+    params = {
+      name: 'emoji',
+      icon: 'v-md-icon-emoji',
+      title: () => useLang().langConfig.value.emoji,
+      customEmoji: undefined,
+    }
+  ) => {
+    const { name, title, text, icon, customEmoji } = params;
+    const toolbar = createToolbar({
+      commandName: name!,
+      title: title!,
+      text,
+      icon: icon!,
+      emojiJson,
+    });
 
     return {
       install() {
@@ -23,7 +31,7 @@ export default function creator({ emojiJson, parser }: { emojiJson: any; parser:
         registerCommand(name!, commandHandler);
 
         const { registerToolbar } = useToolbar();
-        registerToolbar(name, toolbar);
+        registerToolbar(name!, toolbar);
 
         const lang = useLang();
         lang.add({
