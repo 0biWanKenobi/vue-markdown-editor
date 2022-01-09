@@ -4,7 +4,7 @@
     :style="{
       tabSize,
     }"
-    @click="(e) => handlePreviewClick($emit, e)"
+    @click="handlePreviewClick"
     ref="previewEl"
   >
     <div :class="[previewClass]" v-html="html" />
@@ -15,21 +15,18 @@
 import { defineComponent } from 'vue';
 import usePreview from './modules/usePreview';
 import { previewProps, previewEmits } from '@/modules/preview';
-
-const { previewEl, handlePreviewClick } = usePreview('htmlPreview');
+import VueTypes from 'vue-types';
 
 export default defineComponent({
   name: 'v-md-preview-html',
   props: {
     ...previewProps,
-    html: {
-      type: String,
-      default: '',
-    },
+    html: VueTypes.string.def(''),
     previewClass: String,
   },
   emits: previewEmits,
-  setup() {
+  setup(_, ctx) {
+    const { previewEl, handlePreviewClick } = usePreview(ctx);
     return {
       previewEl,
       handlePreviewClick,
