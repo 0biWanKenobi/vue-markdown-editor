@@ -139,8 +139,10 @@ export default defineComponent({
     setRightToolbarItems(props.rightToolbar);
     setCustomToolbarItems(customSlotButtons);
 
-    const { handleChange, handleBlur, handlePreviewImageClick, mode, currentMode } = useCommon(ctx);
-    mode.value = props.mode;
+    const { handleChange, handleBlur, handlePreviewImageClick, currentMode } = useCommon(
+      ctx,
+      props
+    );
 
     const { text } = useVModel();
     const { setContext, callLifeCycleHooks } = useEditor<BaseEditor>('base');
@@ -190,6 +192,7 @@ export default defineComponent({
       handleChange,
       getPreviewScrollContainer,
       handlePreviewImageClick,
+      textEditorMinHeight,
       customSlotButtons,
       currentMode,
       fullscreen,
@@ -199,12 +202,6 @@ export default defineComponent({
       text,
     };
   },
-  data() {
-    return {
-      textEditorMinHeight: '',
-    };
-  },
-  methods: {},
 });
 
 // createEditor(component);

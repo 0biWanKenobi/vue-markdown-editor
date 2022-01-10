@@ -25,12 +25,12 @@ const previewScrollTo = (scrollTop: number) => {
 };
 
 const scrollToLine = (lineIndex: number) => {
-  const { mode } = useCommon();
-  if (mode.value != EDITOR_MODE.PREVIEW) {
+  const { currentMode } = useCommon();
+  if (currentMode.value != EDITOR_MODE.PREVIEW) {
     editorScrollToLine(lineIndex);
   }
 
-  if (mode.value != EDITOR_MODE.EDIT) {
+  if (currentMode.value != EDITOR_MODE.EDIT) {
     const { ignoreSyncScroll } = useSyncScroll();
     ignoreSyncScroll.value = true;
     previewScrollToLine({

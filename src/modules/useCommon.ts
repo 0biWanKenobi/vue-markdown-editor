@@ -1,4 +1,4 @@
-import { computed, nextTick, ref, SetupContext, watch } from 'vue';
+import { computed, nextTick, ref, SetupContext, toRefs, watch } from 'vue';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useSyncScroll from './useSyncScroll';
 import EDITOR_MODE_TYPE from '@/types/editorMode';
@@ -9,14 +9,13 @@ import UploadConfig from '@/types/uploadConfigType';
 import useVModel from './useVModel';
 import usePreview from './usePreview';
 
+const currentMode = ref(EDITOR_MODE.EDITABLE);
 const useCommon = (
   ctx?: SetupContext<string[]> | SetupContext<Record<string, any>>,
   props?: Record<string, any>
 ) => {
   const uploadConfig = ref<UploadConfig>({});
 
-  const mode = ref<EDITOR_MODE_TYPE>();
-  const currentMode = ref(mode.value);
   let data = {};
 
   const isPreviewMode = computed(() => currentMode.value === EDITOR_MODE.PREVIEW);
@@ -24,8 +23,8 @@ const useCommon = (
   const isEditableMode = computed(() => currentMode.value === EDITOR_MODE.EDITABLE);
 
   watch(
-    () => mode.value,
-    (newValue) => (currentMode.value = newValue),
+    () => props?.mode,
+    (newValue) => newValue && (currentMode.value = newValue),
     {
       immediate: true,
     }
@@ -108,7 +107,6 @@ const useCommon = (
 
   return {
     data,
-    mode,
     currentMode,
     isPreviewMode,
     isEditMode,

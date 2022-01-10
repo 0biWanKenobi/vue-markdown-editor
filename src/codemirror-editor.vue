@@ -104,7 +104,7 @@ export default defineComponent({
     const { handleEditorScroll } = useSyncScroll();
     const { getPreviewScrollContainer } = useScroll();
     const { uploadConfig, handleChange, handleBlur, handlePreviewImageClick, currentMode } =
-      useCommon(ctx);
+      useCommon(ctx, props);
 
     watch(
       () => modelValue.value,

@@ -16,6 +16,6 @@ export default {
   active: () => useCommon().isEditableMode.value,
   action() {
     const { isEditableMode, currentMode } = useCommon();
-    currentMode.value = isEditableMode ? EDITOR_MODE.EDIT : EDITOR_MODE.EDITABLE;
+    currentMode.value = isEditableMode.value ? EDITOR_MODE.EDIT : EDITOR_MODE.EDITABLE;
   },
 };
