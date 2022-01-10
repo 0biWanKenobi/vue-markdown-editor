@@ -3,6 +3,8 @@ import Lang from '@/utils/lang';
 import zhCNConfig from '@/lang/zh-CN';
 
 const lang = ref<Lang>(new Lang());
+const configured = ref(false);
+
 const add = (val: Record<string, any>) => {
   lang.value.add(val);
 };
@@ -17,11 +19,13 @@ const langConfig = computed(() => {
 });
 
 export default () => {
-  lang.value = new Lang();
-  lang.value.config = reactive(lang.value.config);
-  lang.value.add({
-    'zh-CN': zhCNConfig,
-  });
+  if (!configured.value) lang.value.config = reactive(lang.value.config);
+  if (!lang.value) {
+    lang.value = new Lang();
+    lang.value.add({
+      'zh-CN': zhCNConfig,
+    });
+  }
 
   return {
     langConfig,
