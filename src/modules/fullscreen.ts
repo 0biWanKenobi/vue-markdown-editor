@@ -1,5 +1,5 @@
-export const propsFullscreen = {
+export const fullScreenProps = {
   defaultFullscreen: Boolean,
 };
 
-export const emitsFullscreen = ['fullscreen-change'];
+export const fullScreenEmits = ['fullscreen-change'];
