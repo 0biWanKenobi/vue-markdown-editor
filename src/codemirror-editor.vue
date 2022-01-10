@@ -65,6 +65,8 @@ import VMdContainer from '@/components/container.vue';
 import VMdUploadFile from '@/components/upload-file.vue';
 import Scrollbar from './components/scrollbar/index.vue';
 import '@/assets/css/font';
+import useToolbarItems from './modules/useToolbarItems';
+import useToolbar from './modules/useToolbar';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -175,6 +177,12 @@ export default defineComponent({
     const { fullscreen } = useFullscreen(ctx);
     const { handleNavClick, tocVisible, titles } = useToc();
     const customSlotButtons = Object.keys(toolbar.value).filter((btn) => toolbar.value[btn].slot);
+    const { setLeftToolbarItems, setRightToolbarItems, setCustomToolbarItems } = useToolbarItems();
+    const { registerToolbars } = useToolbar();
+    registerToolbars(props.toolbar);
+    setLeftToolbarItems(props.leftToolbar);
+    setRightToolbarItems(props.rightToolbar);
+    setCustomToolbarItems(customSlotButtons);
 
     const handleContainerResize = () => {
       if (!Codemirror) return;

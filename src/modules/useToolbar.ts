@@ -16,6 +16,7 @@ const addDefaultToolbars = () => {
 const registerToolbar = (name: string, config: Toolbar) => {
   addToolbar(config);
 };
+
 const handleToolbarItemClick = (itemName: string) => {
   const toolbarItem = toolbars[itemName];
   if (
@@ -26,10 +27,19 @@ const handleToolbarItemClick = (itemName: string) => {
     toolbarItem.action();
   }
 };
+
 const handleToolbarMenuClick = (menuName: string) => {
   const menu = toolbars[menuName];
   if (menu.action && typeof menu.action === 'function') {
     menu.action();
+  }
+};
+
+const registerToolbars = (toolbarConfig: Record<string, Toolbar>) => {
+  for (const key of Object.keys(toolbarConfig)) {
+    const toolbar = toolbarConfig[key];
+    toolbar.name = key;
+    addToolbar(toolbar);
   }
 };
 
@@ -39,6 +49,7 @@ export default () => {
     addToolbar,
     addDefaultToolbars,
     registerToolbar,
+    registerToolbars,
     handleToolbarItemClick,
     handleToolbarMenuClick,
   };

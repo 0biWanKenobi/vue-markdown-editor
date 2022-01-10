@@ -84,6 +84,7 @@ import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
 import '@/assets/css/font';
+import useToolbar from './modules/useToolbar';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -135,6 +136,8 @@ export default defineComponent({
 
     const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
     const { setLeftToolbarItems, setRightToolbarItems, setCustomToolbarItems } = useToolbarItems();
+    const { registerToolbars } = useToolbar();
+    registerToolbars(props.toolbar);
     setLeftToolbarItems(props.leftToolbar);
     setRightToolbarItems(props.rightToolbar);
     setCustomToolbarItems(customSlotButtons);
