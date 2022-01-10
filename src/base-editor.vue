@@ -56,6 +56,7 @@ import { editorProps, editorEmits, editorComponents, shouldInheritAttrs } from '
 import { toolbarProps } from './modules/toolbar';
 import { uploadImageProps } from './modules/upload-image';
 import { vModelProps, vModelEmits } from './modules/v-model';
+import { fullScreenEmits, fullScreenProps } from './modules/fullscreen';
 
 import { inBrowser } from '@/utils/util';
 import {
@@ -83,7 +84,6 @@ import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
 import '@/assets/css/font';
-import useEditorElements from './modules/useEditorElements';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -93,9 +93,10 @@ export default defineComponent({
     ...toolbarProps,
     ...vModelProps,
     ...uploadImageProps,
+    ...fullScreenProps,
     modelValue: String,
   },
-  emits: [...editorEmits, ...vModelEmits],
+  emits: [...editorEmits, ...vModelEmits, ...fullScreenEmits],
   components: {
     [TextareaEditor.name]: TextareaEditor,
     VMdContainer,
@@ -168,7 +169,7 @@ export default defineComponent({
     const { handleNavClick, tocVisible, titles } = useToc();
     const { handleEditorScroll } = useSyncScroll();
     const { getPreviewScrollContainer } = useScroll();
-    const { fullscreen } = useFullscreen(ctx);
+    const { fullscreen } = useFullscreen(ctx, { fullscreen: props.defaultFullscreen });
     const { langConfig } = useLang();
     const { uploadImageConfig, disabledMenus } = toRefs(props);
     const { handleDrop, handlePaste, hasUploadImage, uploadImgConfig } = useUploadImage(
