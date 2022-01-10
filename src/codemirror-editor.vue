@@ -82,7 +82,7 @@ export default defineComponent({
     ...uploadImageProps,
     codemirrorConfig: Object,
     codemirrorStyleReset: VueTypes.bool.def(true),
-    modelValue: String,
+    modelValue: VueTypes.string.def(''),
   },
   setup(props, ctx) {
     const {
@@ -218,6 +218,7 @@ export default defineComponent({
       hasUploadImage,
       uploadConfig,
       customSlotButtons,
+      codemirrorEditorEl,
       handleChange,
       handleNavClick,
       handlePreviewImageClick,
