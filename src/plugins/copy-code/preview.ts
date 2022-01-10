@@ -59,7 +59,7 @@ export default function createCopyCodePreview() {
 
       const beforeUnmount = () => {
         const { previewEl } = usePreview();
-        previewEl.value?.$el.removeEventListener('click', eventListener);
+        previewEl.value?.removeEventListener('click', eventListener);
       };
 
       setLifeCycleHooks(LifecycleStage.beforeUnmount, beforeUnmount);
