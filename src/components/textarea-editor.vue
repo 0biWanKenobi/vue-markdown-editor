@@ -46,8 +46,9 @@ export default defineComponent({
     historyMax: VueTypes.number.def(30),
   },
   emits: ['blur', 'paste', 'update:modelValue'],
-  setup(props, { emit }) {
-    const { triggerInputBySetHistory, hotkeysManager, textareaEl } = useTextarea();
+  setup(props, ctx) {
+    const { emit } = ctx;
+    const { triggerInputBySetHistory, hotkeysManager, textareaEl } = useTextarea(ctx);
 
     onMounted(() => {
       saveHistory();

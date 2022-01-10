@@ -84,7 +84,7 @@ const updateHistory = (index: number, data: any) => {
   Object.assign(history.range, data.range);
 };
 
-export default (_ctx?: SetupContext) => {
+export default (_ctx?: SetupContext<any>) => {
   if (_ctx) ctx.value = _ctx;
   return {
     triggerInputBySetHistory,
