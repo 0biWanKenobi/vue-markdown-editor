@@ -1,13 +1,7 @@
-import type { Ref } from 'vue';
-
 export type Install = { install: (opt?: any) => void };
 export type Option = (opt?: any) => void;
 
 interface IEditor {
-  editorEngineEl: Ref<any>;
-  previewScrollerEl: Ref<any>;
-  editorScrollerEl: Ref<any>;
-  previewEl: Ref<any>;
   editorFocusEnd: () => void;
   getCursorLineLeftText: () => string | null;
   editorRegisterHotkeys: (...arg: any[]) => void;

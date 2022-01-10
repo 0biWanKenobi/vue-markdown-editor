@@ -1,46 +1,34 @@
-import { ref, Ref } from 'vue';
 import IEditor, { Option, Install } from '@/interfaces/IEditor';
 import { HotKey } from '@/types/hotKeyType';
 import { smooth } from '@/utils/smooth-scroll';
 import useVModel from '@/modules/useVModel';
 import Hotkeys from '@/utils/hotkeys';
+import useEditorElements from '@/modules/useEditorElements';
 
 class CodemirrorEditor implements IEditor {
-  editorEngineEl: Ref<any>;
-  editorScrollerEl: Ref<any>;
-  previewScrollerEl: Ref<any>;
-  previewEl: Ref<any>;
-  codemirrorInstance: Ref<any>;
-
   hotkeysManager: Hotkeys;
 
   constructor() {
-    this.editorEngineEl = ref();
-    this.editorScrollerEl = ref();
-    this.previewScrollerEl = ref();
-    this.previewEl = ref();
-
-    this.codemirrorInstance = ref();
-
     this.hotkeysManager = new Hotkeys();
   }
 
   editorFocusEnd = () => {
     focus();
+    const { codemirrorInstance } = useEditorElements();
+    const lastLineIndex = codemirrorInstance.value.lastLine();
+    const lastLineContent = codemirrorInstance.value.getLine(lastLineIndex);
 
-    const lastLineIndex = this.codemirrorInstance.value.lastLine();
-    const lastLineContent = this.codemirrorInstance.value.getLine(lastLineIndex);
-
-    this.codemirrorInstance.value.setCursor({ line: lastLineIndex, ch: lastLineContent.length });
+    codemirrorInstance.value.setCursor({ line: lastLineIndex, ch: lastLineContent.length });
   };
 
   getCursorLineLeftText = () => {
-    const { line: startLine, ch: startCh } = this.codemirrorInstance.value.getCursor('from');
-    const { line: endLine, ch: endCh } = this.codemirrorInstance.value.getCursor('to');
+    const { codemirrorInstance } = useEditorElements();
+    const { line: startLine, ch: startCh } = codemirrorInstance.value.getCursor('from');
+    const { line: endLine, ch: endCh } = codemirrorInstance.value.getCursor('to');
 
     if (startLine !== endLine || startCh !== endCh) return;
 
-    return this.codemirrorInstance.value.getLine(startLine).slice(0, startCh);
+    return codemirrorInstance.value.getLine(startLine).slice(0, startCh);
   };
 
   editorRegisterHotkeys = (arg: HotKey) => {
@@ -53,40 +41,51 @@ class CodemirrorEditor implements IEditor {
     smooth({
       currentScrollTop,
       scrollToTop: scrollTop,
-      scrollFn: (scrollTop) => this.codemirrorInstance.value.scrollTo(0, scrollTop),
+      scrollFn: (scrollTop) => {
+        const { codemirrorInstance } = useEditorElements();
+        codemirrorInstance.value.scrollTo(0, scrollTop);
+      },
     });
   };
 
   getScrollInfo = () => {
-    return this.codemirrorInstance.value.getScrollInfo();
+    const { codemirrorInstance } = useEditorElements();
+    return codemirrorInstance.value.getScrollInfo();
   };
 
   heightAtLine = (...arg: any) => {
-    return this.codemirrorInstance.value.heightAtLine(...arg);
+    const { codemirrorInstance } = useEditorElements();
+    return codemirrorInstance.value.heightAtLine(...arg);
   };
 
   focus = () => {
-    this.codemirrorInstance.value.focus();
+    const { codemirrorInstance } = useEditorElements();
+    codemirrorInstance.value.focus();
   };
   // Must implement
   undo = () => {
-    this.codemirrorInstance.value.undo();
+    const { codemirrorInstance } = useEditorElements();
+    codemirrorInstance.value.undo();
   };
   // Must implement
   redo = () => {
-    this.codemirrorInstance.value.redo();
+    const { codemirrorInstance } = useEditorElements();
+    codemirrorInstance.value.redo();
   };
   // Must implement
   clear = () => {
-    this.codemirrorInstance.value.setValue('');
+    const { codemirrorInstance } = useEditorElements();
+    codemirrorInstance.value.setValue('');
   };
 
   replaceSelectionText = (text: string, type = 'around') => {
-    this.codemirrorInstance.value.replaceSelection(text, type);
+    const { codemirrorInstance } = useEditorElements();
+    codemirrorInstance.value.replaceSelection(text, type);
   };
 
   getCurrentSelectedStr = () => {
-    return this.codemirrorInstance.value.getSelection();
+    const { codemirrorInstance } = useEditorElements();
+    return codemirrorInstance.value.getSelection();
   };
 
   getIndexInInterval = (number: number, start: number, end: number) => {
@@ -97,11 +96,12 @@ class CodemirrorEditor implements IEditor {
 
   // Must implement
   changeSelectionTo = (selectedText: string) => {
-    const curStartLine = this.codemirrorInstance.value.getCursor('from');
-    const curEndLine = this.codemirrorInstance.value.getCursor('to');
+    const { codemirrorInstance } = useEditorElements();
+    const curStartLine = codemirrorInstance.value.getCursor('from');
+    const curEndLine = codemirrorInstance.value.getCursor('to');
 
     if (!selectedText) {
-      this.codemirrorInstance.value.setSelection(curEndLine);
+      codemirrorInstance.value.setSelection(curEndLine);
       return;
     }
     const { text } = useVModel();
@@ -148,7 +148,7 @@ class CodemirrorEditor implements IEditor {
         return start.ch !== null && end.ch !== null;
       });
 
-    this.codemirrorInstance.value.setSelection(end, start);
+    codemirrorInstance.value.setSelection(end, start);
   };
 
   use(optionsOrInstall: Option | Install, opt?: any) {
