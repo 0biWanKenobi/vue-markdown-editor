@@ -147,7 +147,8 @@ export default defineComponent({
       props
     );
 
-    const { text } = useVModel();
+    const { modelValue } = toRefs(props);
+    const { text } = useVModel(modelValue.value);
     const { setContext, callLifeCycleHooks } = useEditor<BaseEditor>('base');
 
     setContext(ctx);

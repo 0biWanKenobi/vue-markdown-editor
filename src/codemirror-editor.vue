@@ -92,7 +92,7 @@ export default defineComponent({
     const { Codemirror, codemirrorInstance } = useCodemirror();
 
     const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
-    const { text, handleInput } = useVModel();
+    const { text, handleInput } = useVModel(modelValue.value);
 
     const codemirrorEditorEl = ref();
 

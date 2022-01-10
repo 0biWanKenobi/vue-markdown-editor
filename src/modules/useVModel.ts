@@ -6,7 +6,8 @@ const handleInput = (val: string) => {
   text.value = val;
 };
 
-export default () => {
+export default (_text?: string) => {
+  if (_text) text.value = _text;
   return {
     text,
     handleInput,
