@@ -48,7 +48,7 @@ export default defineComponent({
 
     const calculateLayout = () => {
       // 容器右边框距离可视区域左侧的距离
-      const { right } = tooltip.value.$el.getBoundingClientRect();
+      const { right } = tooltip.value.getBoundingClientRect();
       const windowWidth = document.documentElement.clientWidth;
 
       if (windowWidth - right < 0) {

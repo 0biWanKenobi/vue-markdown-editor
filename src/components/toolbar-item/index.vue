@@ -137,10 +137,10 @@ export default defineComponent({
     });
 
     const showTooltip = (e: MouseEvent) => {
-      const selfEl = toolbarItemEl.value.$el;
+      const selfEl = toolbarItemEl.value;
       const { target } = e;
 
-      if ((target !== selfEl && target !== menuCtrlEl.value?.$el) || menuActive.value) {
+      if ((target !== selfEl && target !== menuCtrlEl.value) || menuActive.value) {
         handleHideTooltip();
 
         return;
