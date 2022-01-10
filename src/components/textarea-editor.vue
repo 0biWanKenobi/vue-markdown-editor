@@ -73,7 +73,7 @@ export default defineComponent({
       () => modelValue.value,
       () => {
         clearTheTimeout();
-        if (!triggerInputBySetHistory) {
+        if (!triggerInputBySetHistory.value) {
           timer.value = setTimeout(() => {
             saveHistory();
 

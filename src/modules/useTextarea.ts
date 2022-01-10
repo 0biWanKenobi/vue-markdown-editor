@@ -11,7 +11,7 @@ const hotkeysManager = new Hotkeys();
 const textareaEl = ref();
 const ctx = ref<SetupContext>();
 
-let triggerInputBySetHistory = false;
+const triggerInputBySetHistory = ref(false);
 
 const focus = () => {
   textareaEl.value?.focus();
@@ -25,10 +25,10 @@ const goHistory = (index: number) => {
   const { value, range } = historyStack.value[index];
 
   ctx.value?.emit('update:modelValue', value);
-  triggerInputBySetHistory = true;
+  triggerInputBySetHistory.value = true;
 
   nextTick(() => {
-    triggerInputBySetHistory = false;
+    triggerInputBySetHistory.value = false;
     setRange(range);
   });
 };
@@ -77,7 +77,7 @@ const updateCurrentHistoryRange = () => {
   }
 };
 
-const updateHistory = (index: number, data: any) => {
+const updateHistory = (index: number, data: Partial<EditHistory>) => {
   const history = historyStack.value[index];
 
   if ('value' in data) history.value = data.value;

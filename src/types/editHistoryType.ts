@@ -1,9 +1,11 @@
+export type EditRange = {
+  start: number;
+  end: number;
+};
+
 type EditHistory = {
   value: string | undefined;
-  range: {
-    start: any;
-    end: any;
-  };
+  range: EditRange;
 };
 
 export default EditHistory;
