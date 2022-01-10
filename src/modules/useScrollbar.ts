@@ -35,7 +35,7 @@ const _scrollTo = (el: any, scrollTop: number) => {
   });
 };
 
-export default (scrollbar?: string) => {
+export default (scrollbar?: 'editor' | 'preview') => {
   switch (scrollbar) {
     case 'editor':
       return {
