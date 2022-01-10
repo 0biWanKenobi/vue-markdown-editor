@@ -63,9 +63,8 @@ import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
 import VMdContainer from '@/components/container.vue';
 import VMdUploadFile from '@/components/upload-file.vue';
-import '@/assets/css/font';
-import useEditorElements from './modules/useEditorElements';
 import Scrollbar from './components/scrollbar/index.vue';
+import '@/assets/css/font';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -88,12 +87,11 @@ export default defineComponent({
       editor: { hotkeysManager },
     } = useEditor<CodemirrorEditor>('codemirror');
 
-    const { codemirrorInstance } = useEditorElements();
+    const { Codemirror, codemirrorInstance } = useCodemirror();
 
     const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
     const { text, handleInput } = useVModel();
 
-    const { Codemirror } = useCodemirror();
     const codemirrorEditorEl = ref();
 
     const { uploadImageConfig } = toRefs(props);

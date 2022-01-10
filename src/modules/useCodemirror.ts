@@ -3,6 +3,7 @@ import { ref } from 'vue';
 export type CodeMirror = { new (...args: any[]): any };
 
 const Codemirror = ref<CodeMirror>();
+const codemirrorInstance = ref();
 
 const setValue = (_Codemirror: CodeMirror) => {
   Codemirror.value = _Codemirror;
@@ -11,6 +12,7 @@ const setValue = (_Codemirror: CodeMirror) => {
 export default () => {
   return {
     Codemirror: Codemirror.value,
+    codemirrorInstance,
     setValue,
   };
 };
