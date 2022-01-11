@@ -9,7 +9,7 @@ import { nextTick } from 'vue';
 
 const { langConfig } = useLang();
 const { execCommand } = useCommand();
-const { uploadConfig } = useCommon();
+
 const { uploadImgConfig, emitUploadImage } = useUploadImage();
 
 export default {
@@ -32,6 +32,7 @@ export default {
       name: 'upload-image',
       text: () => langConfig.value.uploadImage.toolbar,
       action() {
+        const { uploadConfig } = useCommon();
         uploadConfig.value = uploadImgConfig.value;
         const { upload } = useUploadFile();
         nextTick(async () => {

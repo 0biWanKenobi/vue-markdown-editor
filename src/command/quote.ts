@@ -2,11 +2,11 @@ import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
 import { quote as name } from '@/utils/constants/command';
 
-const { insert } = useCommon();
-const { langConfig } = useLang();
-
 const command = () => {
+  const { insert } = useCommon();
+
   insert((selected) => {
+    const { langConfig } = useLang();
     const prefix = '>';
     const content = selected || langConfig.value.quote.placeholder;
 

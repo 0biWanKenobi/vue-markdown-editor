@@ -10,10 +10,6 @@ const enableSyncScroll = ref(true);
 const ignoreSyncScroll = ref(true);
 let scrollTimer: NodeJS.Timeout | undefined = undefined;
 
-const {
-  editor: { getScrollInfo, heightAtLine },
-} = useEditor();
-
 const toggleSyncScroll = (enabled = !syncScroll.value) => {
   syncScroll.value = enabled;
 };
@@ -25,6 +21,11 @@ const previewSyncScroll = () => {
   const previewScrollWrapper = wrapEl.value;
   const { previewEl } = usePreview();
   const previewLines = previewEl.value?.querySelectorAll(`[${LINE_MARKUP}]`) ?? [];
+
+  const {
+    editor: { getScrollInfo, heightAtLine },
+  } = useEditor();
+
   const {
     clientHeight: editorClientHeight,
     top: editorScrollTop,

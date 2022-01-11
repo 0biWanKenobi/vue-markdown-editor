@@ -15,10 +15,6 @@ const getPreviewScrollContainer = computed(() => {
   return propScrollContainer ? propScrollContainer() : defaultContainer;
 });
 
-const {
-  editor: { heightAtLine, editorScrollToTop },
-} = useEditor();
-
 const previewScrollTo = (scrollTop: number) => {
   const { scrollTo } = useScrollbar('preview');
   scrollTo(scrollTop);
@@ -43,6 +39,9 @@ const scrollToLine = (lineIndex: number) => {
 };
 
 const editorScrollToLine = (lineIndex: number) => {
+  const {
+    editor: { heightAtLine, editorScrollToTop },
+  } = useEditor();
   const offsetTop = heightAtLine(lineIndex - 1, 'local');
 
   editorScrollToTop(offsetTop);

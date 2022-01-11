@@ -3,10 +3,10 @@ import useLang from '@/modules/useLang';
 import { generatorText } from '@/utils/util';
 
 import { h2 as name } from '@/utils/constants/command';
-const { insert } = useCommon();
-const { langConfig } = useLang();
 
 const command = () => {
+  const { insert } = useCommon();
+  const { langConfig } = useLang();
   insert((selected) => {
     const prefix = '##';
     const { placeholder }: { placeholder: string } = langConfig.value.h2;

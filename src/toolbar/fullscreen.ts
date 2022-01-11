@@ -1,21 +1,20 @@
-import { fullscreen } from '@/utils/constants/command';
+import { fullscreen as name } from '@/utils/constants/command';
+import command from '@/command/fullscreen';
 import useLang from '@/modules/useLang';
-import useCommand from '@/modules/useCommand';
 import useFullscreen from '@/modules/useFullscreen';
 
 const { langConfig } = useLang();
-const { execCommand } = useCommand();
-const fsSetup = useFullscreen();
 
 export default {
-  name: fullscreen,
+  name: name,
   icon: 'v-md-icon-fullscreen',
   title: () => {
+    const { fullscreen } = useFullscreen();
     const fullscreenLang = langConfig.value.fullscreen;
-    return fsSetup.fullscreen.value ? fullscreenLang.disabled : fullscreenLang.enabled;
+    return fullscreen.value ? fullscreenLang.disabled : fullscreenLang.enabled;
   },
-  active: () => fsSetup.fullscreen.value,
+  active: () => useFullscreen().fullscreen.value,
   action() {
-    execCommand(fullscreen, !fsSetup.fullscreen.value);
+    command(!useFullscreen().fullscreen.value);
   },
 };

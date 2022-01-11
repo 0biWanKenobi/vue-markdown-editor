@@ -4,10 +4,9 @@ import { generatorText } from '@/utils/util';
 
 import { h1 as name } from '@/utils/constants/command';
 
-const { insert } = useCommon();
-const { langConfig } = useLang();
-
 const command = () => {
+  const { insert } = useCommon();
+  const { langConfig } = useLang();
   insert((selected) => {
     const prefix = '#';
     const { placeholder } = langConfig.value.h1;

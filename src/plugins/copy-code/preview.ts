@@ -34,10 +34,11 @@ function handleCopyCodeClick({ target }: Event, emit: Function) {
 }
 
 export default function createCopyCodePreview() {
-  const { emit, setLifeCycleHooks, installEmits } = useEditor();
-  const eventListener = (e: Event) => handleCopyCodeClick(e, emit);
   return {
     install() {
+      const { emit, setLifeCycleHooks, installEmits } = useEditor();
+      const eventListener = (e: Event) => handleCopyCodeClick(e, emit);
+
       installEmits('copy-code-success');
 
       const { previewEl } = usePreview();

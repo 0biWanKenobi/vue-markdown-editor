@@ -1,8 +1,6 @@
 import useCommon from '@/modules/useCommon';
 import { image as name } from '@/utils/constants/command';
 
-const { insert } = useCommon();
-
 type Image = {
   url?: string;
   desc?: string;
@@ -11,6 +9,7 @@ type Image = {
 };
 
 const command = ({ url, desc, width, height }: Image = {}) => {
+  const { insert } = useCommon();
   insert(() => {
     const urlPlaceholder = 'http://';
     const descPlaceholder = 'Description';

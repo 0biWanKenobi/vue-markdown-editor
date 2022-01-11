@@ -31,15 +31,19 @@ const onBeforeUnmount = () => {
   window.removeEventListener('keyup', handleWindowKeyup, false);
 };
 
-const { setLifeCycleHooks } = useEditor();
-setLifeCycleHooks(LifecycleStage.mounted, onMounted);
-setLifeCycleHooks(LifecycleStage.beforeUnmount, onBeforeUnmount);
+const areHooksSaved = ref(false);
 
 export default (
   ctx?: SetupContext<string[]> | SetupContext<Record<string, any>>,
   defaults?: { fullscreen: boolean }
 ) => {
   if (defaults) fullscreen.value = defaults.fullscreen;
+  if (!areHooksSaved.value) {
+    areHooksSaved.value = true;
+    const { setLifeCycleHooks } = useEditor();
+    setLifeCycleHooks(LifecycleStage.mounted, onMounted);
+    setLifeCycleHooks(LifecycleStage.beforeUnmount, onBeforeUnmount);
+  }
 
   watch(
     () => fullscreen.value,

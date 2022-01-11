@@ -4,10 +4,10 @@ import { generatorText } from '@/utils/util';
 
 import { bold as name } from '@/utils/constants/command';
 
-const { insert } = useCommon();
 const { langConfig } = useLang();
 
 const command = () => {
+  const { insert } = useCommon();
   insert((selected) => {
     const prefix = '**';
     const suffix = '**';

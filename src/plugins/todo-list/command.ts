@@ -2,11 +2,10 @@ import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
 import { generatorText } from '@/utils/util';
 
-const { insert } = useCommon();
-const { langConfig } = useLang();
-
 export default function commandHandler({ type = 'todo' } = {}) {
+  const { insert } = useCommon();
   insert((selected) => {
+    const { langConfig } = useLang();
     const { placeholder } = langConfig.value.task;
     const markup = type === 'todo' ? ' ' : 'x';
 

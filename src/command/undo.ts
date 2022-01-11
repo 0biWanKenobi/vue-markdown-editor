@@ -1,9 +1,8 @@
 import useEditor from '@/modules/useEditor';
 import { undo as name } from '@/utils/constants/command';
 
-const { editor } = useEditor();
-
 const command = () => {
+  const { editor } = useEditor();
   editor.undo();
 };
 

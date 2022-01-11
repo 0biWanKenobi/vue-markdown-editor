@@ -2,9 +2,8 @@ import useEditor from '@/modules/useEditor';
 
 import { redo as name } from '@/utils/constants/command';
 
-const { editor } = useEditor();
-
 const command = () => {
+  const { editor } = useEditor();
   editor.redo();
 };
 

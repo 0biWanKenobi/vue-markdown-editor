@@ -1,4 +1,5 @@
 import LifecycleStage from '@/types/lifecycleStage';
+import { ref } from 'vue';
 import useEditor from './useEditor';
 import useHotkeys from './useHotkeys';
 
@@ -8,17 +9,17 @@ const ul = /^\s*([-*])( \[[ xX]])? /;
 const ulSyntax = /([*-] |[\d]+\. )/;
 const olSyntax = /([\d])+\.( \[[ xX]])? /;
 
-const {
-  editor: { getCursorLineLeftText, replaceSelectionText },
-} = useEditor();
-const { registerHotkeys } = useHotkeys();
-
 const onMounted = () => {
+  const { registerHotkeys } = useHotkeys();
   registerHotkeys({
     key: 'enter',
     preventDefault: false,
     action: (_: any, e: any) => {
       if (e.isComposing) return;
+
+      const {
+        editor: { getCursorLineLeftText, replaceSelectionText },
+      } = useEditor();
 
       const cursorLineLeftText = getCursorLineLeftText();
       let suffix;
@@ -54,7 +55,13 @@ const onMounted = () => {
   });
 };
 
+const areHooksSaved = ref(false);
+
 export default () => {
-  const { setLifeCycleHooks } = useEditor();
-  setLifeCycleHooks(LifecycleStage.mounted, onMounted);
+  if (!areHooksSaved.value) {
+    areHooksSaved.value = true;
+
+    const { setLifeCycleHooks } = useEditor();
+    setLifeCycleHooks(LifecycleStage.mounted, onMounted);
+  }
 };

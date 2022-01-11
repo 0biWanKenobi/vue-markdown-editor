@@ -1,9 +1,8 @@
 import useCommon from '@/modules/useCommon';
 import { code as name } from '@/utils/constants/command';
 
-const { insert } = useCommon();
-
 const command = () => {
+  const { insert } = useCommon();
   insert((selected) => {
     const prefix = '``` language';
     const suffix = '```';

@@ -1,5 +1,5 @@
 import IEditor from '@/interfaces/IEditor';
-import { Ref, ref, SetupContext } from 'vue';
+import { ref, SetupContext } from 'vue';
 import EDITOR_TYPE, { BASE_EDITOR, CODEMIRROR_EDITOR } from '@/types/editorType';
 import BaseEditor from '@/classes/baseEditor';
 import CodemirrorEditor from '@/classes/codemirrorEditor';
@@ -46,8 +46,8 @@ const emit = (e: string, ...args: any[]) => {
   ctx.value?.emit(e, args);
 };
 
-const useEditor = <T extends IEditor>(editorType: EDITOR_TYPE = DEFAULT_EDITOR) => {
-  if (!currentEditor.value) currentEditor.value = editorMap[editorType]();
+const useEditor = <T extends IEditor>(editorType?: EDITOR_TYPE) => {
+  if (!currentEditor.value && editorType) currentEditor.value = editorMap[editorType]();
 
   return {
     editor: currentEditor.value as T,
