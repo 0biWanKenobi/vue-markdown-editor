@@ -135,10 +135,6 @@ export default defineComponent({
       historyIndex.value = historyStack.value.length - 1;
     };
 
-    const insertText = (text: string) => {
-      insertTextAtCursor(textareaEl.value, text);
-    };
-
     const { updateCurrentHistoryRange, undo, redo } = useTextarea();
 
     return {
