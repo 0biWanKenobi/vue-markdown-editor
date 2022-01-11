@@ -85,7 +85,7 @@ export default defineComponent({
     modelValue: VueTypes.string.def(''),
   },
   setup(props, ctx) {
-    useEditor<CodemirrorEditor>('codemirror');
+    useEditor<CodemirrorEditor>('codemirror', ctx);
 
     const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
 
