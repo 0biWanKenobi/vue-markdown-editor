@@ -45,7 +45,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import {
+  defineComponent,
+  markRaw,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRefs,
+  unref,
+  watch,
+} from 'vue';
 import VueTypes from 'vue-types';
 import { toolbarProps } from './modules/toolbar';
 import { editorComponents, editorProps } from './modules/common';
@@ -127,22 +137,24 @@ export default defineComponent({
           '1.5.0与2.1.0版本之后Codemirror将由用户自己配置，请配置Codemirror，如何配置请参考相关文档'
         );
       await nextTick();
-      codemirrorInstance.value = new Codemirror(codemirrorEditorEl.value, {
+      const instance = new Codemirror(codemirrorEditorEl.value, {
         lineNumbers: true,
         styleActiveLine: true,
         autoCloseTags: true,
         matchBrackets: true,
         indentWithTabs: true,
         autoCloseBrackets: true,
-        ...(codemirrorConfig.value ?? {}),
-        tabSize: tabSize.value,
-        indentUnit: tabSize.value,
-        value: text.value,
-        placeholder: placeholder.value,
+        ...(unref(codemirrorConfig) ?? {}),
+        tabSize: unref(tabSize),
+        indentUnit: unref(tabSize),
+        value: unref(text),
+        placeholder: unref(placeholder),
         mode: 'markdown',
         lineWrapping: true,
         scrollbarStyle: 'overlay',
       });
+
+      codemirrorInstance.value = markRaw(instance);
 
       codemirrorInstance.value.on('change', () => {
         const newValue = getValue();
@@ -194,16 +206,6 @@ export default defineComponent({
     // Must implement
     const delLineLeft = () => {
       codemirrorInstance.value.execCommand('delLineLeft');
-    };
-
-    // Must implement
-    const editorFocusEnd = () => {
-      focus();
-
-      const lastLineIndex = codemirrorInstance.value.lastLine();
-      const lastLineContent = codemirrorInstance.value.getLine(lastLineIndex);
-
-      codemirrorInstance.value.setCursor({ line: lastLineIndex, ch: lastLineContent.length });
     };
 
     return {
