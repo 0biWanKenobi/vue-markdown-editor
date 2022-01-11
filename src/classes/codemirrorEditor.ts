@@ -9,8 +9,9 @@ class CodemirrorEditor implements IEditor {
   constructor() {}
 
   editorFocusEnd = () => {
-    focus();
     const { codemirrorInstance } = useCodemirror();
+    codemirrorInstance.value.focus();
+
     const lastLineIndex = codemirrorInstance.value.lastLine();
     const lastLineContent = codemirrorInstance.value.getLine(lastLineIndex);
 
