@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import { defineComponent, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
 import { toolbarProps } from './modules/toolbar';
 import { editorComponents, editorProps } from './modules/common';
@@ -85,11 +85,9 @@ export default defineComponent({
     modelValue: VueTypes.string.def(''),
   },
   setup(props, ctx) {
-    const {
-      editor: { hotkeysManager },
-    } = useEditor<CodemirrorEditor>('codemirror');
+    useEditor<CodemirrorEditor>('codemirror');
 
-    const { Codemirror, codemirrorInstance } = useCodemirror();
+    const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
 
     const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
     const { text, handleInput } = useVModel(modelValue.value);
@@ -123,12 +121,12 @@ export default defineComponent({
       element?.remove?.();
     });
 
-    onMounted(() => {
+    onMounted(async () => {
       if (!Codemirror)
         return console.error(
           '1.5.0与2.1.0版本之后Codemirror将由用户自己配置，请配置Codemirror，如何配置请参考相关文档'
         );
-
+      await nextTick();
       codemirrorInstance.value = new Codemirror(codemirrorEditorEl.value, {
         lineNumbers: true,
         styleActiveLine: true,
@@ -136,7 +134,7 @@ export default defineComponent({
         matchBrackets: true,
         indentWithTabs: true,
         autoCloseBrackets: true,
-        ...codemirrorConfig,
+        ...(codemirrorConfig.value ?? {}),
         tabSize: tabSize.value,
         indentUnit: tabSize.value,
         value: text.value,

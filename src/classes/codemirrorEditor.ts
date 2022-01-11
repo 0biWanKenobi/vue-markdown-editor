@@ -2,15 +2,11 @@ import IEditor, { Option, Install } from '@/interfaces/IEditor';
 import { HotKey } from '@/types/hotKeyType';
 import { smooth } from '@/utils/smooth-scroll';
 import useVModel from '@/modules/useVModel';
-import Hotkeys from '@/utils/hotkeys';
+
 import useCodemirror from '@/modules/useCodemirror';
 
 class CodemirrorEditor implements IEditor {
-  hotkeysManager: Hotkeys;
-
-  constructor() {
-    this.hotkeysManager = new Hotkeys();
-  }
+  constructor() {}
 
   editorFocusEnd = () => {
     focus();
@@ -32,7 +28,8 @@ class CodemirrorEditor implements IEditor {
   };
 
   editorRegisterHotkeys = (arg: HotKey) => {
-    this.hotkeysManager.registerHotkeys(arg);
+    const { hotkeysManager } = useCodemirror();
+    hotkeysManager.registerHotkeys(arg);
   };
 
   editorScrollToTop = (scrollTop: number) => {
