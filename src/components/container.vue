@@ -76,7 +76,6 @@ import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import { computed, defineComponent, onBeforeUnmount, onMounted, toRefs, ref } from 'vue';
 import useToolbar from '@/modules/useToolbar';
-import useCommon from '@/modules/useCommon';
 import useToolbarItems from '@/modules/useToolbarItems';
 import VueTypes from 'vue-types';
 
