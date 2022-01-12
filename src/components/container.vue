@@ -95,7 +95,7 @@ export default defineComponent({
     leftAreaWidth: VueTypes.string.def('200px'),
     mode: VueTypes.string.def(EDITOR_MODE.EDITABLE),
   },
-  emits: ['resize'],
+  emits: ['resize', 'editor-wrapper-click'],
   setup(props, { emit }) {
     const toolbarHeight = ref(0);
 
@@ -133,10 +133,12 @@ export default defineComponent({
     const editorWrapper = ref();
     const toolbarWrapper = ref();
 
-    const { setFocusEnd: handleEditorWrapperClick } = useCommon();
-
     const handleResize = () => {
       emit('resize');
+    };
+
+    const handleEditorWrapperClick = (e: Event) => {
+      emit('editor-wrapper-click', e);
     };
 
     const handleToolbarWrapperResize = () => {

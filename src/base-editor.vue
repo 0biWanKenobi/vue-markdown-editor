@@ -7,6 +7,7 @@
     :left-area-title="langConfig.toc.title"
     :left-area-reverse="tocNavPositionRight"
     :mode="currentMode"
+    @editor-wrapper-click="handleEditorWrapperClick"
     ref="container"
   >
     <template v-for="button of customSlotButtons" #[button]="slotData">
@@ -142,16 +143,17 @@ export default defineComponent({
     setRightToolbarItems(props.rightToolbar);
     setCustomToolbarItems(customSlotButtons);
 
-    const { handleChange, handleBlur, handlePreviewImageClick, currentMode } = useCommon(
-      ctx,
-      props
-    );
+    const {
+      handleChange,
+      handleBlur,
+      handlePreviewImageClick,
+      setFocusEnd: handleEditorWrapperClick,
+      currentMode,
+    } = useCommon(ctx, props);
 
     const { modelValue } = toRefs(props);
     const { text } = useVModel(modelValue.value);
-    const { setContext, callLifeCycleHooks } = useEditor<BaseEditor>('base');
-
-    setContext(ctx);
+    const { callLifeCycleHooks } = useEditor<BaseEditor>('base', ctx);
 
     onBeforeMount(() => {
       callLifeCycleHooks(LifecycleStage.beforeMount);
@@ -195,6 +197,7 @@ export default defineComponent({
       handleBlur,
       handleChange,
       getPreviewScrollContainer,
+      handleEditorWrapperClick,
       handlePreviewImageClick,
       textEditorMinHeight,
       customSlotButtons,
