@@ -58,7 +58,7 @@ export default defineComponent({
     });
 
     const handleScroll = () => {
-      const el = wrapEl.value?.$el;
+      const el = wrapEl.value;
 
       moveY.value = (el.scrollTop * 100) / el.clientHeight;
       moveX.value = (el.scrollLeft * 100) / el.clientWidth;
@@ -67,7 +67,7 @@ export default defineComponent({
     };
 
     const update = () => {
-      const el = wrapEl.value?.$el;
+      const el = wrapEl.value;
       if (!el) return;
 
       const heightPercentage = (el.clientHeight * 100) / el.scrollHeight;
