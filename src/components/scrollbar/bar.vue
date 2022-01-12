@@ -1,5 +1,6 @@
 <script lang="tsx">
 // Modified from https://github.com/ElemeFE/element/tree/dev/packages/scrollbar
+import useScrollbar from '@/modules/useScrollbar';
 import { computed, defineComponent, toRefs, onUnmounted, ref } from 'vue';
 import VueTypes, { string } from 'vue-types';
 import { renderThumbStyle, BAR_MAP } from './util';
@@ -10,16 +11,17 @@ export default defineComponent({
     vertical: Boolean,
     size: string().isRequired,
     move: VueTypes.number.isRequired,
+    type: string<'editor' | 'preview'>(),
   },
   setup(props) {
-    const { vertical, size, move } = toRefs(props);
+    const { vertical, size, move, type } = toRefs(props);
     const bar = computed(() => BAR_MAP[vertical ? 'vertical' : 'horizontal']);
 
     const rootEl = ref();
     const thumbEl = ref();
 
-    //  return this.$parent.wrap;
-    const wrap = computed(() => rootEl.value?.$parent.wrap);
+    //  return this.$parent.wrapEl;
+    const { wrapEl } = useScrollbar(type.value);
 
     const axes: {
       ['X']?: any;
@@ -44,13 +46,13 @@ export default defineComponent({
       const offset =
         htmlTarget &&
         Math.abs(htmlTarget.getBoundingClientRect()[bar.value.direction] - e[bar.value.client]);
-      const thumbHalf = thumbEl.value.$el[bar.value.offset] / 2;
+      const thumbHalf = thumbEl.value[bar.value.offset] / 2;
       const thumbPositionPercentage =
-        offset && ((offset - thumbHalf) * 100) / rootEl.value.$el[bar.value.offset];
+        offset && ((offset - thumbHalf) * 100) / rootEl.value[bar.value.offset];
 
       thumbPositionPercentage &&
-        (wrap.value[bar.value.scroll] =
-          (thumbPositionPercentage * wrap.value[bar.value.scrollSize]) / 100);
+        (wrapEl.value[bar.value.scroll] =
+          (thumbPositionPercentage * wrapEl.value[bar.value.scrollSize]) / 100);
     };
 
     let cursorDown = false;
@@ -71,13 +73,13 @@ export default defineComponent({
       if (!prevPage) return;
 
       const offset =
-        (rootEl.value.$el.getBoundingClientRect()[bar.value.direction] - e[bar.value.client]) * -1;
-      const thumbClickPosition = thumbEl.value.$el[bar.value.offset] - prevPage;
+        (rootEl.value.getBoundingClientRect()[bar.value.direction] - e[bar.value.client]) * -1;
+      const thumbClickPosition = thumbEl.value[bar.value.offset] - prevPage;
       const thumbPositionPercentage =
-        ((offset - thumbClickPosition) * 100) / rootEl.value.$el[bar.value.offset];
+        ((offset - thumbClickPosition) * 100) / rootEl.value[bar.value.offset];
 
-      wrap.value[bar.value.scroll] =
-        (thumbPositionPercentage * wrap.value[bar.value.scrollSize]) / 100;
+      wrapEl.value[bar.value.scroll] =
+        (thumbPositionPercentage * wrapEl.value[bar.value.scrollSize]) / 100;
     };
 
     const mouseUpDocumentHandler = () => {

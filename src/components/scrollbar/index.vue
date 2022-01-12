@@ -36,7 +36,7 @@ export default defineComponent({
     const moveX = ref(0);
     const moveY = ref(0);
 
-    const { native, disabled, wrapStyle, wrapClass, viewClass, viewStyle, noresize, tag } =
+    const { native, disabled, wrapStyle, wrapClass, viewClass, viewStyle, noresize, tag, type } =
       toRefs(props);
 
     onMounted(() => {
@@ -113,7 +113,7 @@ export default defineComponent({
         {
           class: ['scrollbar__view', viewClass.value],
           style: viewStyle.value,
-          ref: 'resizeEl',
+          ref: resizeEl,
         },
         slots.default && slots.default()
       );
@@ -137,8 +137,8 @@ export default defineComponent({
       if (!native.value) {
         nodes = [
           wrap,
-          <Bar move={moveX.value} size={sizeWidth.value}></Bar>,
-          <Bar vertical move={moveY.value} size={sizeHeight.value}></Bar>,
+          <Bar type={type.value} move={moveX.value} size={sizeWidth.value}></Bar>,
+          <Bar type={type.value} vertical move={moveY.value} size={sizeHeight.value}></Bar>,
         ];
       } else {
         nodes = [
