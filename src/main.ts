@@ -63,8 +63,9 @@ const mdEditorPlugin: Plugin = {
       Codemirror,
       plugins = [],
     } = config;
-    useLang(langConfig.lang, langConfig.langConfig);
-    addLang(zhCNConfig);
+
+    langConfig && useLang(langConfig.lang, langConfig.langConfig);
+    addLang(CN);
 
     if (!editor) return;
 

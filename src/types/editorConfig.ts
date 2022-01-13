@@ -26,7 +26,7 @@ export type ThemeConfigOption = {
  * @property themeConfig: theme Configuration
  */
 type EditorConfig = {
-  langConfig: LangClassConfig;
+  langConfig?: LangClassConfig;
   /**
    * @property editor: Either `BaseEditor` or `CodeMirrorEditor`.
    *
