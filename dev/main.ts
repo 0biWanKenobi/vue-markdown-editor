@@ -3,19 +3,16 @@ import { createApp } from 'vue';
 import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml, Languages } from '../src/main';
 import { VuepressTheme } from '../src/theme';
 
-import createEmojiPlugin from '../src/plugins/emoji/full';
-import '../src/plugins/emoji/emoji';
-import createKatexPlugin from '../src/plugins/katex/cdn';
-import createTodoListPlugin from '../src/plugins/todo-list/index';
-import '../src/plugins/todo-list/todo-list';
-import createLineNumberPlugin from '../src/plugins/line-number/index';
-import createCopyCodePlugin from '../src/plugins/copy-code/index';
-import '../src/plugins/copy-code/copy-code';
-import createHighLinesPlugin from '../src/plugins/highlight-lines/';
-import '../src/plugins/highlight-lines/highlight-lines';
-import createMermaidPlugin from '../src/plugins/mermaid/cdn';
-
-import createCreateCopyCodePreview from '../src/plugins/copy-code/preview';
+import {
+  CreateEmojiPlugin,
+  CreateKatexPluginCdn,
+  CreateTodoListPlugin,
+  CreateLineNumberPlugin,
+  CreateCopyCodePlugin,
+  CreateHighlightLinesPlugin,
+  CreateMermaidPluginCdn,
+  CreateCopyCodePreviewPlugin,
+} from '../src/plugins';
 
 // import vuepressTheme from '../src/theme/vuepress';
 
@@ -67,14 +64,14 @@ app.use(VueMarkdownEditor, <EditorConfig>{
     theme: VuepressTheme,
   },
   plugins: [
-    { plugin: createCreateCopyCodePreview() },
-    { plugin: createEmojiPlugin() },
-    { plugin: createKatexPlugin() },
-    { plugin: createTodoListPlugin() },
-    { plugin: createLineNumberPlugin() },
-    { plugin: createCopyCodePlugin() },
-    { plugin: createHighLinesPlugin() },
-    { plugin: createMermaidPlugin() },
+    { plugin: CreateCopyCodePreviewPlugin() },
+    { plugin: CreateEmojiPlugin() },
+    { plugin: CreateKatexPluginCdn() },
+    { plugin: CreateTodoListPlugin() },
+    { plugin: CreateLineNumberPlugin() },
+    { plugin: CreateCopyCodePlugin() },
+    { plugin: CreateHighlightLinesPlugin() },
+    { plugin: CreateMermaidPluginCdn() },
   ],
 });
 
