@@ -6,8 +6,6 @@ import CodemirrorEditor from '@/classes/codemirrorEditor';
 import { editorEmits } from './common';
 import LifecycleStage from '@/types/lifecycleStage';
 
-const DEFAULT_EDITOR = BASE_EDITOR;
-
 const editorMap: Record<string, () => IEditor> = {
   [BASE_EDITOR]: () => new BaseEditor(),
   [CODEMIRROR_EDITOR]: () => new CodemirrorEditor(),
@@ -23,10 +21,6 @@ const lifeCycleHooks: Record<string, Function[]> = {
 const currentEditor = ref<IEditor>();
 
 const ctx = ref<SetupContext<string[]>>();
-
-const setContext = (_ctx: SetupContext<string[]>) => {
-  ctx.value = _ctx;
-};
 
 const setLifeCycleHooks = (stage: LifecycleStage, ...hooks: Function[]) => {
   lifeCycleHooks[stage].push(...hooks);
@@ -46,15 +40,15 @@ const emit = (e: string, ...args: any[]) => {
   ctx.value?.emit(e, args);
 };
 
-const useEditor = <T extends IEditor>(editorType?: EDITOR_TYPE) => {
+const useEditor = <T extends IEditor>(editorType?: EDITOR_TYPE, _ctx?: SetupContext<any>) => {
   if (!currentEditor.value && editorType) currentEditor.value = editorMap[editorType]();
+  if (_ctx && !ctx.value) ctx.value = _ctx;
 
   return {
     editor: currentEditor.value as T,
     setLifeCycleHooks,
     callLifeCycleHooks,
     installEmits,
-    setContext,
     emit,
   };
 };
