@@ -12,7 +12,7 @@
       @copy-code-success="handleCopyCodeSuccess"
       ref="editor"
       :toolbar="customToolbar"
-      left-toolbar="undo redo | myButton my2ndButton"
+      left-toolbar="undo redo clear | h bold italic quote | ul ol table hr | link image | save | myButton my2ndButton"
     >
       <template #myButton>
         <select name="opts">
@@ -41,7 +41,7 @@
 
 <script lang="ts">
 import text from './text';
-import html from './html';
+// import html from './html';
 import { defineComponent } from '@vue/runtime-core';
 
 export default defineComponent({
@@ -84,7 +84,7 @@ export default defineComponent({
 
     return {
       text,
-      html,
+      // html,
       customToolbar,
       handleFullscreenChange,
       handleUploadImage,
