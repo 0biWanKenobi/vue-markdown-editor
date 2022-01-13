@@ -1,18 +1,6 @@
-import BaseEditor from './base-editor.vue';
-import CodeMirrorEditor from './codemirror-editor.vue';
-
-export { BaseEditor, CodeMirrorEditor };
-
-import Preview from './preview.vue';
-import PreviewHtml from './preview-html.vue';
-
-export { Preview, PreviewHtml };
-
 import type { Plugin } from 'vue';
 import useLangModule from './modules/useLang';
 import { CN } from '@/lang/index';
-
-export * as Languages from '@/lang/index';
 
 import useToolbar from '@/modules/useToolbar';
 
@@ -24,15 +12,11 @@ import useCommand from './modules/useCommand';
 import useEditor from './modules/useEditor';
 
 export { default as EditorConfig } from '@/types/editorConfig';
-
 export * as EditorType from '@/types/editorType';
-const { use: useLang, add: addLang } = useLangModule();
-
-/** PLUGINS */
-
 export * as PluginCreatorParams from '@/types/pluginCreationFnParams';
 export * as PluginCreatorFn from '@/types/pluginCreatorFn';
-export * as Plugins from '@/plugins';
+
+const { use: useLang, add: addLang } = useLangModule();
 
 const configTheme = (configOption: ThemeConfigOption) => {
   const vMdParser = useVMdParser();

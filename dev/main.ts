@@ -1,7 +1,10 @@
 import App from './App.vue';
 import { createApp } from 'vue';
-import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml, Languages } from '../src/main';
-import { VuepressTheme } from '../src/theme';
+import VueMarkdownEditor, { EditorConfig } from '@/main';
+import { BaseEditor } from '@/editor';
+import { PreviewHtml } from '@/preview';
+import { VuepressTheme } from '@/theme';
+import { US } from '@/lang';
 
 import {
   CreateEmojiPlugin,
@@ -12,7 +15,7 @@ import {
   CreateHighlightLinesPlugin,
   CreateMermaidPluginCdn,
   CreateCopyCodePreviewPlugin,
-} from '../src/plugins';
+} from '@/plugins';
 
 // import vuepressTheme from '../src/theme/vuepress';
 
@@ -50,7 +53,7 @@ app.use(VueMarkdownEditor, <EditorConfig>{
   },
   langConfig: {
     lang: 'en-US',
-    langConfig: Languages.US,
+    langConfig: US,
   },
   preview: PreviewHtml,
   Codemirror: CodeMirror,
