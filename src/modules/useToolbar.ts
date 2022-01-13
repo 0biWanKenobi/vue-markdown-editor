@@ -1,5 +1,6 @@
 import Toolbar from '@/types/toolbarType';
 import * as DefaultToolbarItems from '@/toolbar';
+import Menu from '@/types/toolbarItemMenu';
 
 const toolbars: Record<string, Toolbar> = {};
 
@@ -24,8 +25,7 @@ const handleToolbarItemClick = (itemName: string) => {
   }
 };
 
-const handleToolbarMenuClick = (menuName: string) => {
-  const menu = toolbars[menuName];
+const handleToolbarMenuClick = (menu: Menu) => {
   if (menu.action && typeof menu.action === 'function') {
     menu.action();
   }

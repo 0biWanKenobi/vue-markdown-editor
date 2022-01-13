@@ -19,7 +19,7 @@
         >
           <v-md-render :render-fn="item.render" v-if="item.render" />
           <template v-else>
-            {{ item.text }}
+            {{ getText(item.text) }}
           </template>
         </li>
       </template>
@@ -46,16 +46,11 @@
 
 <script lang="ts">
 import VMdRender from '@/components/render.vue';
+import Menu from '@/types/toolbarItemMenu';
 import MENU_MODE from '@/utils/constants/menu-mode';
 import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
 import VueTypes, { array } from 'vue-types';
 
-type Menu = {
-  name: string;
-  class: string;
-  render: Function;
-  text: string;
-};
 export default defineComponent({
   name: 'v-md-menu',
   components: {
@@ -86,7 +81,7 @@ export default defineComponent({
 
     const calculateLayout = () => {
       // 容器右边框距离可视区域左侧的距离
-      const { right } = menuEl.value?.$el.getBoundingClientRect();
+      const { right } = menuEl.value.getBoundingClientRect();
       const windowWidth = document.documentElement.clientWidth;
 
       if (windowWidth - right < 0) style.value = { right: 0 };
@@ -97,6 +92,14 @@ export default defineComponent({
       const start = end - rowNum.value;
 
       return menus.value.slice(start, end);
+    };
+
+    const getText = (text: string | (() => string)) => {
+      if (typeof text === 'function') {
+        return text();
+      }
+
+      return text;
     };
 
     const hide = () => {
@@ -122,6 +125,7 @@ export default defineComponent({
       isListMode,
       menuEl,
       handleClick,
+      getText,
       getRowMenus,
     };
   },
