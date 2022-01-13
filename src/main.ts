@@ -10,7 +10,9 @@ export { Preview, PreviewHtml };
 
 import { Plugin } from 'vue';
 import useLangModule from './modules/useLang';
-import zhCNConfig from '@/lang/zh-CN';
+import { CN } from '@/lang/index';
+
+export * as Languages from '@/lang/index';
 
 import useToolbar from '@/modules/useToolbar';
 
