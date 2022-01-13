@@ -46,29 +46,6 @@ import CodeMirror from 'codemirror';
 
 const app = createApp(App);
 
-// PreviewHtml.use(createCreateCopyCodePreview());
-
-// VueMarkdownEditor.lang.use('en-US', enUS);
-
-// VueMarkdownEditor.use(vuepressTheme, {
-//   Prism,
-//   codeHighlightExtensionMap: {
-//     vue: 'markup',
-//   },
-// });
-
-// VueMarkdownEditor.use(createEmojiPlugin())
-//   .use(createKatexPlugin())
-//   .use(createTodoListPlugin())
-//   .use(createLineNumberPlugin())
-//   .use(createCopyCodePlugin())
-//   .use(createHighLinesPlugin())
-//   .use(createMermaidPlugin());
-
-// VueMarkdownEditor.Codemirror = Codemirror;
-
-// app.use(PreviewHtml);
-
 app.use(VueMarkdownEditor, <EditorConfig>{
   editor: {
     instance: BaseEditor,
