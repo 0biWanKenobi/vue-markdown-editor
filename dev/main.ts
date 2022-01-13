@@ -1,6 +1,7 @@
 import App from './App.vue';
 import { createApp } from 'vue';
 import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml, Languages } from '../src/main';
+import { VuepressTheme } from '../src/theme';
 
 import createEmojiPlugin from '../src/plugins/emoji/full';
 import '../src/plugins/emoji/emoji';
@@ -63,7 +64,7 @@ app.use(VueMarkdownEditor, <EditorConfig>{
         vue: 'markup',
       },
     },
-    theme: 'vuepress',
+    theme: VuepressTheme,
   },
   plugins: [
     { plugin: createCreateCopyCodePreview() },

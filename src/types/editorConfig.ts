@@ -4,9 +4,12 @@ import { DefineComponent } from 'vue';
 import PluginCreatorParams from './pluginCreationFnParams';
 import LangClassConfig from './langClassConfig';
 import { Install } from '@/interfaces/IEditor';
+import ThemeInstallFn from './themeInstallFnType';
 
 export type ThemeConfigOption = {
-  theme: 'vuepress' | 'github';
+  theme: {
+    install: ThemeInstallFn;
+  };
   config: Partial<ThemeConfig>;
 };
 
