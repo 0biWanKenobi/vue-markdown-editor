@@ -13,10 +13,6 @@ const addDefaultToolbars = () => {
   }
 };
 
-const registerToolbar = (name: string, config: Toolbar) => {
-  addToolbar(config);
-};
-
 const handleToolbarItemClick = (itemName: string) => {
   const toolbarItem = toolbars[itemName];
   if (
@@ -48,7 +44,6 @@ export default () => {
     toolbars,
     addToolbar,
     addDefaultToolbars,
-    registerToolbar,
     registerToolbars,
     handleToolbarItemClick,
     handleToolbarMenuClick,

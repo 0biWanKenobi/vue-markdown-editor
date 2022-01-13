@@ -73,9 +73,9 @@ const createTipPlugin: PluginCreatorFn = (
     install() {
       // if (VMdEditor.name === 'v-md-') {
       const { registerCommand } = useCommand();
-      const { registerToolbar } = useToolbar();
+      const { addToolbar } = useToolbar();
       registerCommand(name!, commandHandler);
-      registerToolbar(name!, toolbar);
+      addToolbar(toolbar);
       const lang = useLang();
 
       lang.add({

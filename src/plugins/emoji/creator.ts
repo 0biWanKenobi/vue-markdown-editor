@@ -30,8 +30,8 @@ export default function creator({ emojiJson, parser }: { emojiJson: any; parser:
         const { registerCommand } = useCommand();
         registerCommand(name!, commandHandler);
 
-        const { registerToolbar } = useToolbar();
-        registerToolbar(name!, toolbar);
+        const { addToolbar } = useToolbar();
+        addToolbar(toolbar);
 
         const lang = useLang();
         lang.add({

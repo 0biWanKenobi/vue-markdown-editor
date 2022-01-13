@@ -29,12 +29,12 @@ const createTodoListPlugin: PluginCreatorFn = (
     install() {
       //if (VMdEditor.name === 'v-md-editor') {
       const { registerCommand, execCommand } = useCommand();
-      const { registerToolbar } = useToolbar();
+      const { addToolbar } = useToolbar();
       const { registerHotkeys } = useHotkeys();
       const lang = useLang();
 
       registerCommand(name!, commandHandler);
-      registerToolbar(name!, toolbar);
+      addToolbar(toolbar);
       registerHotkeys({
         modifier: 'ctrlShift',
         key: 'u',
