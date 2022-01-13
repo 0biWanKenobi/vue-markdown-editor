@@ -1,5 +1,6 @@
 export { default as CreateAlignPlugin } from '@/plugins/align';
 export { default as CreateCopyCodePlugin } from '@/plugins/copy-code';
+export { default as CreateCopyCodePreviewPlugin } from '@/plugins/copy-code/preview';
 export { default as CreateEmojiPlugin } from '@/plugins/emoji';
 export { default as CreateHighlightLinesPlugin } from '@/plugins/highlight-lines';
 export { default as CreateKatexPluginCdn } from '@/plugins/katex/cdn';
