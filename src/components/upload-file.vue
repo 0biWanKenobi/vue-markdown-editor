@@ -24,10 +24,11 @@ export default defineComponent({
     }>().isRequired,
   },
   setup() {
-    const { key, handleUpload } = useUploadFile();
+    const { key, handleUpload, fileInputEl } = useUploadFile();
 
     return {
       key,
+      fileInputEl,
       handleUpload,
     };
   },

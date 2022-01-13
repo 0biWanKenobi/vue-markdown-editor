@@ -1,12 +1,11 @@
 import { ref } from 'vue';
 
 type HandleUpload = (e: Event) => void;
+const fileInputEl = ref();
+const handleUpload = ref<HandleUpload>((_) => {});
 
 export default () => {
   const key = ref(0);
-  let handleUpload = ref<HandleUpload>((_) => {});
-
-  const fileInputEl = ref();
 
   const upload = async () => {
     const event = await chooseFile();
@@ -23,7 +22,7 @@ export default () => {
         key.value++;
       };
 
-      fileInputEl.value?.$el.click();
+      fileInputEl.value?.click();
     });
   };
 
