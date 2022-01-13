@@ -1,6 +1,6 @@
 import App from './App.vue';
 import { createApp } from 'vue';
-import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml } from '../src/main';
+import VueMarkdownEditor, { BaseEditor, EditorConfig, PreviewHtml, Languages } from '../src/main';
 
 import createEmojiPlugin from '../src/plugins/emoji/full';
 import '../src/plugins/emoji/emoji';
@@ -17,7 +17,6 @@ import createMermaidPlugin from '../src/plugins/mermaid/cdn';
 import createCreateCopyCodePreview from '../src/plugins/copy-code/preview';
 
 // import vuepressTheme from '../src/theme/vuepress';
-import enUS from '../src/lang/en-US';
 
 import Prism from 'prismjs';
 
@@ -53,7 +52,7 @@ app.use(VueMarkdownEditor, <EditorConfig>{
   },
   langConfig: {
     lang: 'en-US',
-    langConfig: enUS,
+    langConfig: Languages.US,
   },
   preview: PreviewHtml,
   Codemirror: CodeMirror,
