@@ -8,7 +8,7 @@ import PreviewHtml from './preview-html.vue';
 
 export { Preview, PreviewHtml };
 
-import { Plugin } from 'vue';
+import type { Plugin } from 'vue';
 import useLangModule from './modules/useLang';
 import { CN } from '@/lang/index';
 
@@ -18,8 +18,7 @@ import useToolbar from '@/modules/useToolbar';
 
 import EditorConfig, { ThemeConfigOption } from '@/types/editorConfig';
 import useCodemirror from '@/modules/useCodemirror';
-import vuepressTheme from '@/theme/vuepress';
-import githubTheme from '@/theme/github';
+
 import useVMdParser from './modules/useVMdParser';
 import useCommand from './modules/useCommand';
 import useEditor from './modules/useEditor';
@@ -27,7 +26,7 @@ import useEditor from './modules/useEditor';
 export { default as EditorConfig } from '@/types/editorConfig';
 
 export * as EditorType from '@/types/editorType';
-export const { use: useLang, add: addLang } = useLangModule();
+const { use: useLang, add: addLang } = useLangModule();
 
 /** PLUGINS */
 
@@ -37,17 +36,7 @@ export * as Plugins from '@/plugins';
 
 const configTheme = (configOption: ThemeConfigOption) => {
   const vMdParser = useVMdParser();
-  switch (configOption.theme) {
-    case 'github':
-      githubTheme.install(vMdParser, configOption.config);
-      return true;
-    case 'vuepress':
-      vuepressTheme.install(vMdParser, configOption.config);
-      return true;
-    default:
-      console.error('Missing theme! Cannot configure');
-      return false;
-  }
+  configOption.theme.install(vMdParser, configOption.config);
 };
 
 const mdEditorPlugin: Plugin = {
@@ -76,7 +65,8 @@ const mdEditorPlugin: Plugin = {
 
     const VmdEditor = useEditor(editorType);
 
-    if (!themeConfig || !configTheme(themeConfig)) return;
+    if (!themeConfig) return;
+    configTheme(themeConfig);
 
     const { addDefaultCommands } = useCommand();
     addDefaultCommands();

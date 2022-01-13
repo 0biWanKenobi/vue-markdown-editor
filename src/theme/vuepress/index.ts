@@ -8,9 +8,9 @@ import '@/assets/css/theme/vuepress-markdown';
 // tip plugin style
 import '@/plugins/tip/tip.css';
 import useEditor from '@/modules/useEditor';
-import type { VMdParser } from '@/utils/v-md-parser';
+import ThemeInstallFn from '@/types/themeInstallFnType';
 
-const install = function (vMdParser: VMdParser, options: Record<string, any> | undefined) {
+const install: ThemeInstallFn = function (vMdParser, options) {
   const tipPlugin = createTipPlugin();
   const { editor: vMdEditor } = useEditor();
 

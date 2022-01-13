@@ -3,9 +3,9 @@ import parser from './parser';
 // style
 import '@/assets/css/theme/base';
 import '@/assets/css/theme/github-markdown';
-import type { VMdParser } from '@/utils/v-md-parser';
+import ThemeInstallFn from '@/types/themeInstallFnType';
 
-const install = function (vMdParser: VMdParser, options: Record<string, any> | undefined) {
+const install: ThemeInstallFn = function (vMdParser, options) {
   vMdParser.use(parser, options);
 };
 
