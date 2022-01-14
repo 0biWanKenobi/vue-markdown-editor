@@ -19,6 +19,10 @@ module.exports = {
   configureWebpack: {
     target: 'web',
     devtool: 'source-map',
+    // allow to access default export from src/main.ts direcly, w/out typing VMdEditor.default
+    output: {
+      libraryExport: 'default',
+    },
     resolve: {
       extensions: ['.js', '.ts', '.vue', '.css'],
       alias: {
