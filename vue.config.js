@@ -1,6 +1,7 @@
 var path = require('path');
 
 module.exports = {
+  outputDir: path.join(__dirname, './lib'),
   chainWebpack: (config) => {
       if (process.env.NODE_ENV == 'development') {
       config.plugin('html').tap((args) => {
