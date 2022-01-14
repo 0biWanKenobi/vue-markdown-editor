@@ -1,6 +1,7 @@
 import App from './App.vue';
 import { createApp } from 'vue';
-import VueMarkdownEditor, { EditorConfig } from '@/main';
+import VueMarkdownEditor from '@/main';
+import { EditorConfig } from '@/types';
 import { BaseEditor } from '@/editor';
 import { PreviewHtml } from '@/preview';
 import { VuepressTheme } from '@/theme';

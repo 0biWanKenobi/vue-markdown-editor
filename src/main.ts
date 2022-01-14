@@ -11,11 +11,6 @@ import useVMdParser from './modules/useVMdParser';
 import useCommand from './modules/useCommand';
 import useEditor from './modules/useEditor';
 
-export { default as EditorConfig } from '@/types/editorConfig';
-export * as EditorType from '@/types/editorType';
-export * as PluginCreatorParams from '@/types/pluginCreationFnParams';
-export * as PluginCreatorFn from '@/types/pluginCreatorFn';
-
 const { use: useLang, add: addLang } = useLangModule();
 
 const configTheme = (configOption: ThemeConfigOption) => {
