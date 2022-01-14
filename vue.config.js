@@ -1,5 +1,9 @@
 var path = require('path');
 
+/**
+ *  @typedef { import("@vue/cli-service").ProjectOptions } Options
+ *  @type { Options }
+ */
 module.exports = {
   outputDir: path.join(__dirname, './lib'),
   chainWebpack: (config) => {
