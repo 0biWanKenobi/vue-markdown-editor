@@ -71,16 +71,4 @@ declare global {
   }
 }
 
-// auto install
-
-let GlobalVue: any = null;
-if (typeof window !== 'undefined' && window.Vue) {
-  GlobalVue = window.Vue;
-} else if (typeof global !== 'undefined' && global.Vue) {
-  GlobalVue = global.Vue;
-}
-if (GlobalVue) {
-  GlobalVue.use(mdEditorPlugin);
-}
-
 export default mdEditorPlugin;
