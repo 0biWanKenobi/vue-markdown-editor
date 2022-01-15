@@ -41,16 +41,16 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve dev/main.ts",
-    "dev": "webpack-dev-server --config build/webpack.dev.js",
+    "build": "vue-cli-service build --modern && npx vue-tsc --project prod.tsconfig.json",
+    "build:cli-orig": "vue-cli-service build --target lib --name VMdEditor src/main.ts",
+    "build:theme": "webpack --config build/webpack.theme.js",
+    "build:pkg": "webpack --config build/webpack.pkg.js && npm run build:theme && npm run build:utils",
     "lint-staged": "lint-staged",
     "lint": "eslint ./src --ext .js,.vue,.ts,.tsx --fix && stylelint \"src/**/*.vue\" --fix",
     "test-cdn-pkg": "http-server -o ./dev/test-cdn.html",
-    "build:utils": "node build/build-utils.js",
-    "build:theme": "webpack --config build/webpack.theme.js",
-    "build:pkg": "webpack --config build/webpack.pkg.js && npm run build:theme && npm run build:utils",
+    "test-cdn-cli": "http-server -o ./dev/test-cdn-cli.html",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "commit": "git-cz",
-    "release": "node build/release.js"
+    "commit": "git-cz"
   },
   "husky": {
     "hooks": {
@@ -72,7 +72,11 @@
     ]
   },
   "peerDependencies": {
-    "@vue/compiler-sfc": "^3.0.0"
+    "@vue/compiler-sfc": "^3.2.21",
+    "vue": "^3.2.21"
+  },
+  "resolutions": {
+    "acorn": "npm:acorn-with-stage3"
   },
   "dependencies": {
     "@babel/runtime": "^7.14.0",
@@ -91,6 +95,7 @@
     "prismjs": "^1.23.0",
     "resize-observer-polyfill": "^1.5.1",
     "vue": "^3.2.26",
+    "vue-loader": "^17.0.0",
     "vue-types": "^4.1.1",
     "xss": "^1.0.9"
   },
@@ -106,10 +111,13 @@
     "@types/mermaid": "^8.2.7",
     "@types/node": "^17.0.6",
     "@types/prismjs": "^1.16.6",
+    "@types/webpack-chain": "^5.2.0",
     "@vue/cli-plugin-babel": "^4.5.15",
     "@vue/cli-plugin-typescript": "^4.5.15",
     "@vue/cli-service": "^4.5.15",
     "@vue/compiler-sfc": "^3.2.26",
+    "acorn-with-stage3": "^1.0.2",
+    "clean-webpack-plugin": "^4.0.0",
     "commitizen": "^4.0.3",
     "conventional-changelog-cli": "^2.0.31",
     "cz-conventional-changelog": "^3.1.0",
@@ -121,6 +129,7 @@
     "less-loader": "7.3.0",
     "lint-staged": "^10.1.2",
     "module": "^1.2.5",
+    "optimize-css-assets-webpack-plugin": "^6.0.1",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.0.3",
@@ -130,11 +139,11 @@
     "stylus": "^0.56.0",
     "typescript": "^4.5.4",
     "vue-template-compiler": "^2.6.14",
+    "webpack-cli": "^4.9.1",
     "webpack-node-externals": "^3.0.0"
   },
   "browserslist": [
-    "Android >= 4.0",
-    "iOS >= 8"
+    "last 1 version, not dead, ie >= 11"
   ],
   "config": {
     "commitizen": {
