@@ -7,13 +7,18 @@ module.exports = function getBaseConfig(config = {}) {
 
   const defaultConfig = {
     resolve: {
-      extensions: ['.js', '.vue', '.css'],
+      extensions: ['.js', '.ts', '.vue', '.css'],
       alias: {
         '@': path.join(__dirname, '../src'),
       },
     },
     module: {
       rules: [
+        {
+          test: /\.tsx?$/,
+          loader: 'ts-loader',
+          exclude: /node_modules/,
+        },
         {
           test: /\.css/,
           sideEffects: true,
