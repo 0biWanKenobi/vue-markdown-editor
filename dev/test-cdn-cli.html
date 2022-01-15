@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+    <title>vue-markdown-editor</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+    <link href="../lib/js/app.js" rel="modulepreload" as="script" />
+    <link href="../lib/js/editor.js" rel="modulepreload" as="script" />
+    <link href="../lib/js/lang.js" rel="modulepreload" as="script" />
+    <link href="../lib/js/preview.js" rel="modulepreload" as="script" />
+    <!-- <link href="../lib/js/theme.js" rel="modulepreload" as="script" /> -->
+    <link href="../lib/js/plugins.js" rel="modulepreload" as="script" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
+      integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      window.Promise ||
+        document.write('<script src="//img.yzcdn.cn/huiyi/build/h5/js/pinkie.min.js"><\/script>');
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="../lib/js/app.js"></script>
+    <script type="module" src="../lib/js/preview.js"></script>
+    <script type="module" src="../lib/js/editor.js"></script>
+    <script type="module" src="../lib/js/lang.js"></script>
+    <!-- <script type="module" src="../lib/js/theme.js"></script> -->
+    <script type="module" src="../lib/js/plugins.js"></script>
+    <script type="module">
+      // import * as Langs from '../lib/js/lang.js';
+      // import * as Editors from '../lib/js/editor.js';
+      // import * as Previews from '../lib/js/preview.js';
+      // import * as Themes from '../lib/js/theme.js';
+
+      const {
+        app: { default: EditorPlugin },
+        editor: { BaseEditor },
+        lang: { US },
+        preview: { PreviewHtml },
+        // theme: { VuepressTheme },
+        plugins: {
+          CreateEmojiPlugin,
+          CreateKatexPluginCdn,
+          CreateTodoListPlugin,
+          CreateLineNumberPlugin,
+          CreateCopyCodePlugin,
+          CreateHighlightLinesPlugin,
+          CreateMermaidPluginCdn,
+          CreateCopyCodePreviewPlugin,
+        },
+      } = VMdEditor;
+
+      window.onload = function () {
+        const vm = Vue.createApp({
+          template: `<v-md-editor v-model="text" height="400px"></v-md-editor>`,
+          data() {
+            return {
+              text: 'v-md-editor',
+            };
+          },
+        });
+        /*vm.use(EditorPlugin, {
+          editor: {
+            type: 'base',
+            instance: BaseEditor,
+          },
+          langConfig: {
+            lang: 'en-US',
+            langConfig: US,
+          },
+          preview: PreviewHtml,
+          themeConfig: {
+            config: {
+              Prism,
+              codeHighlightExtensionMap: {
+                vue: 'markup',
+              },
+            },
+            theme: VuepressTheme,
+          },
+          plugins: [
+            { plugin: CreateCopyCodePreviewPlugin() },
+            { plugin: CreateEmojiPlugin() },
+            { plugin: CreateKatexPluginCdn() },
+            { plugin: CreateTodoListPlugin() },
+            { plugin: CreateLineNumberPlugin() },
+            { plugin: CreateCopyCodePlugin() },
+            { plugin: CreateHighlightLinesPlugin() },
+            { plugin: CreateMermaidPluginCdn() },
+          ],
+        });*/
+        vm.mount('#app');
+      };
+    </script>
+  </body>
+</html>
