@@ -23,7 +23,6 @@ module.exports = merge(getBaseConfig({ useCssExtract: true }), {
     path: path.join(__dirname, '../lib/theme'),
     umdNamedDefine: true,
     filename: '[name].js',
-    globalObject: "typeof self !== 'undefined' ? self : this",
   },
   optimization: {
     minimize: true,
