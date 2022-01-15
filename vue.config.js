@@ -10,19 +10,11 @@ module.exports = {
   outputDir: path.join(__dirname, './lib'),
   filenameHashing: false,
   chainWebpack: (config) => {
-    config.plugin('fork-ts-checker').tap((args) => {
-      args[0].typescript.configFile = './app.tsconfig.json';
-      return args;
-    });
-
-    config.module
-      .rule('ts')
-      .use('ts-loader')
-      .merge({
-        options: {
-          configFile: TSCONFIG_PATH,
-        },
-      });
+    config.externals([
+      {
+        consolidate: 'commonjs consolidate',
+      },
+    ]);
 
     if (process.env.NODE_ENV == 'development') {
       config.plugin('html').tap((args) => {
@@ -32,6 +24,33 @@ module.exports = {
         return args;
       });
     } else {
+      config.plugin('fork-ts-checker').tap((args) => {
+        args[0].typescript.configFile = './app.tsconfig.json';
+        return args;
+      });
+
+      let externals = config.get('externals');
+      config.externals([
+        ...externals,
+        {
+          vue: {
+            root: 'Vue',
+            commonjs: 'vue',
+            commonjs2: 'vue',
+            amd: 'vue',
+          },
+        },
+      ]);
+
+      config.module
+        .rule('ts')
+        .use('ts-loader')
+        .merge({
+          options: {
+            configFile: TSCONFIG_PATH,
+          },
+        });
+
       config.optimization.splitChunks(false).minimize(false);
       // allow to access default export from src/main.ts direcly, w/out typing VMdEditor.default
 
@@ -60,18 +79,5 @@ module.exports = {
         '@': path.join(__dirname, './src'),
       },
     },
-    externals: [
-      {
-        consolidate: 'commonjs consolidate',
-      },
-      {
-        vue: {
-          root: 'Vue',
-          commonjs: 'vue',
-          commonjs2: 'vue',
-          amd: 'vue',
-        },
-      },
-    ],
   },
 };
