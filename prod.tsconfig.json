@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ES6",
+    "module": "CommonJS",
     "declaration": true,
     "strict": true,
     "jsx": "preserve",
@@ -12,18 +12,24 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "outDir": "lib",
+    "emitDeclarationOnly": true,
+    "rootDir": "src",
+    "declarationDir": "lib/@types/js",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@vuepress/shared-utils/lib/slugify.js": [
-        "./node_modules/@vuepress/shared-utils/types/slugify.d.ts"
-      ],
-      "@vuepress/markdown/lib/lineNumbers.js": ["./src/lineNumbers.d.ts"]
+      "@/*": ["src/*"]
     },
     "types": ["node", "webpack-env"],
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "lib/**/*.d.ts", "dev"],
-  "exclude": ["node_modules", "build"]
+  "include": [
+    "src/types/editorConfig.ts",
+    "src/types/editorType.ts",
+    "src/types/pluginCreationFnParams.ts",
+    "src/types/pluginCreatorFn.ts",
+    "src/main.ts",
+    "src/preview.ts",
+    "src/editor.ts"
+  ],
+  "exclude": ["node_modules", "lib", "build"]
 }
