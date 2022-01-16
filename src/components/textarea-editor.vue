@@ -30,7 +30,6 @@
 </template>
 
 <script lang="ts">
-import insertTextAtCursor from 'insert-text-at-cursor';
 import { isKorean } from '@/utils/util';
 import { defineComponent, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';

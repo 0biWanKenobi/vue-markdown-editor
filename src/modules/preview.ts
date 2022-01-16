@@ -1,4 +1,4 @@
-import VueTypes, { object } from 'vue-types';
+import VueTypes from 'vue-types';
 
 export const previewProps = {
   tabSize: VueTypes.number.def(2),

@@ -20,7 +20,6 @@ export default function (md: MarkdownIt, options: Options = defaults) {
 
   function attrSet(token: Token, name: string, value: string) {
     const index = token.attrIndex(name);
-    const attr = [name, value];
 
     if (index < 0) {
       token.attrPush([name, value]);

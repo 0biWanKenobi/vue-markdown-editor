@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject } from 'vue';
+import { computed, defineComponent } from 'vue';
 import ToolbarItem from '@/components/toolbar-item/index.vue';
 import useToolbar from '@/modules/useToolbar';
 import Toolbar from '@/types/toolbarType';
@@ -70,7 +70,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/styles/var';
+@import 'styles/var';
 
 .v-md-editor {
   &__toolbar {

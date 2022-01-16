@@ -46,7 +46,6 @@ const math_inline: RuleInline = (state, silent) => {
   let token;
   let res;
   let pos;
-  let esc_count;
 
   if (state.src[state.pos] !== '$') {
     return false;
