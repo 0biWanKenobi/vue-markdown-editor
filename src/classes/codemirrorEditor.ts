@@ -6,8 +6,6 @@ import useVModel from '@/modules/useVModel';
 import useCodemirror from '@/modules/useCodemirror';
 
 class CodemirrorEditor implements IEditor {
-  constructor() {}
-
   editorFocusEnd = () => {
     const { codemirrorInstance } = useCodemirror();
     codemirrorInstance.value.focus();

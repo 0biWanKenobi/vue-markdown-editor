@@ -101,8 +101,6 @@ class BaseEditor implements IEditor {
     }
     return this;
   }
-
-  constructor() {}
 }
 
 export default BaseEditor;
