@@ -44,6 +44,12 @@ const baseConfig = {
       'process.env.NODE_ENV': JSON.stringify('production'),
     },
     vue: {
+      preprocessStyles: true,
+      preprocessOptions: {
+        scss: {
+          includePaths: ['src/', 'src/styles/'],
+        },
+      },
     },
     postVue: [
       resolve({

@@ -29,7 +29,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/styles/var';
+@import 'styles/var';
 
 .v-md-editor {
   &__toc-nav {

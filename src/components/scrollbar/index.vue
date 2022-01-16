@@ -154,7 +154,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/styles/var';
+@import 'styles/var';
 
 .scrollbar {
   height: 100%;
