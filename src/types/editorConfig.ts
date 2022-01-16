@@ -36,6 +36,7 @@ type EditorConfig = {
    * You should `import {BaseEditor} from '@kangc/v-md-editor`, or `import {CodeMirrorEditor} from '@kangc/v-md-editor`
    **/
   editor: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
     instance: DefineComponent<{}, {}, any>;
     type: 'base' | 'codemirror';
   };
@@ -44,6 +45,7 @@ type EditorConfig = {
    *
    * You should `import {Preview} from '@kangc/v-md-editor`, or `import {HtmlPreview} from '@kangc/v-md-editor`
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
   preview: DefineComponent<{}, {}, any>;
 
   plugins?: Array<{
@@ -57,6 +59,7 @@ type EditorConfig = {
    *
    * @property themeConfig: theme Configuration
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Codemirror?: any;
   /**
    * @property themeConfig: theme Configuration
