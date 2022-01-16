@@ -12,10 +12,12 @@
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "newLine": "lf",
+    "newLine": "crlf",
     "types": ["node", "vue"],
+    "jsx": "preserve",
     "paths": {
       "@/*": ["src/*"],
       "@vuepress/shared-utils/lib/slugify.js": [
@@ -31,5 +33,6 @@
     ],
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
   "exclude": ["node_modules", "dist"]
 }
