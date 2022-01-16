@@ -2,8 +2,8 @@ import parser from './parser';
 import createTipPlugin from '@/plugins/tip/index';
 
 // style
-import '@/assets/css/theme/base';
-import '@/assets/css/theme/vuepress-markdown';
+import '@/assets/css/theme/base.css';
+import '@/assets/css/theme/vuepress-markdown.css';
 
 // tip plugin style
 import '@/plugins/tip/tip.css';
