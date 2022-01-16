@@ -35,7 +35,7 @@ export default function (
     const code = rawCode.slice(rawCode.indexOf('<code>'), rawCode.indexOf('</code>'));
     const highlightLinesCode = code
       .split('\n')
-      .map((split, index) => {
+      .map((_split, index) => {
         const lineNumber = index + 1;
         const inRange = token.lineNumbers.some(([start, end]: [start: number, end: number]) => {
           if (start && end) {

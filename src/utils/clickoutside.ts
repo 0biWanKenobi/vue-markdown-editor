@@ -41,7 +41,7 @@ function createDocumentHandler(el: any, binding: any, vnode: any) {
   };
 }
 
-export const ssrTransformClickoutside: DirectiveTransform = (dir, node, context) => {
+export const ssrTransformClickoutside: DirectiveTransform = (_dir, _node, _context) => {
   return {
     // do nothing
     props: [],

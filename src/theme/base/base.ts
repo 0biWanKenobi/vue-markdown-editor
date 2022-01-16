@@ -41,7 +41,7 @@ export default function createBaseTheme(params: BaseThemeParams = defaultParam) 
       allowedAttributes: ['width', 'height', ...attrs?.allowedAttributes],
     })
     .use(markdownItHeadingTag, {
-      getMarks(title, level, unique) {
+      getMarks(title, _level, unique) {
         return [
           {
             attr: HEADING_MARKUP,

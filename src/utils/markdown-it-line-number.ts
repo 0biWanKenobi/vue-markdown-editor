@@ -2,7 +2,7 @@ import MarkdownIt from 'markdown-it';
 import { RenderRule } from 'markdown-it/lib/renderer';
 
 export default function (md: MarkdownIt, { lineMarkup = 'data-line' } = {}) {
-  const defaultRender: RenderRule = function (tokens, idx, options, env, self) {
+  const defaultRender: RenderRule = function (tokens, idx, options, _env, self) {
     return self.renderToken(tokens, idx, options);
   };
 

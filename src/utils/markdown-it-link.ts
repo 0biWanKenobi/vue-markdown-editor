@@ -12,7 +12,7 @@ export default function (
 ) {
   let hasOpenExternalLink = false;
 
-  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+  md.renderer.rules.link_open = (tokens, idx, options, _env, self) => {
     const token = tokens[idx];
     const hrefIndex = token.attrIndex('href');
 
@@ -34,7 +34,7 @@ export default function (
     return self.renderToken(tokens, idx, options);
   };
 
-  md.renderer.rules.link_close = (tokens, idx, options, env, self) => {
+  md.renderer.rules.link_close = (tokens, idx, options, _env, self) => {
     if (hasOpenExternalLink) {
       hasOpenExternalLink = false;
 
