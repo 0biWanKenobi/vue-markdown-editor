@@ -4,8 +4,8 @@ import Hotkeys from '@/utils/hotkeys';
 import insertTextAtCursor from 'insert-text-at-cursor';
 
 const timer = ref<NodeJS.Timeout>();
-let historyStack = ref<Array<EditHistory>>([]);
-let historyIndex = ref(0);
+const historyStack = ref<Array<EditHistory>>([]);
+const historyIndex = ref(0);
 
 const hotkeysManager = new Hotkeys();
 const textareaEl = ref();

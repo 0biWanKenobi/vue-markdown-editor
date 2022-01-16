@@ -15,7 +15,7 @@ const onMounted = () => {
     editor: { editorRegisterHotkeys },
   } = useEditor();
 
-  for (let hotKey of Object.values(Hotkeys)) editorRegisterHotkeys(hotKey);
+  for (const hotKey of Object.values(Hotkeys)) editorRegisterHotkeys(hotKey);
   for (const hotKey of hotkeys) {
     editorRegisterHotkeys(hotKey);
   }

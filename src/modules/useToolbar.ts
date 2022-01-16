@@ -9,7 +9,7 @@ const addToolbar = (toolbar: Toolbar) => {
 };
 
 const addDefaultToolbars = () => {
-  for (let defaultToolbar of Object.values(DefaultToolbarItems)) {
+  for (const defaultToolbar of Object.values(DefaultToolbarItems)) {
     toolbars[defaultToolbar.name] = defaultToolbar;
   }
 };

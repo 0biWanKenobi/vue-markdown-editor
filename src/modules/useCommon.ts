@@ -77,7 +77,7 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
 
   const uploadConfig = ref<UploadConfig>({});
 
-  let data = {};
+  const data = {};
 
   watch(
     () => props?.mode,

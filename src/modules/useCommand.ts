@@ -3,7 +3,7 @@ import * as DefaultCommands from '../command';
 const commands: Record<string, Function> = {};
 
 const addDefaultCommands = () => {
-  for (let command of Object.values(DefaultCommands)) registerCommand(command.name, command);
+  for (const command of Object.values(DefaultCommands)) registerCommand(command.name, command);
 };
 
 const registerCommand = (name: string, callback: Function) => {
