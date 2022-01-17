@@ -203,11 +203,6 @@ export default defineComponent({
       return codemirrorInstance.value.getValue();
     };
 
-    // Must implement
-    const delLineLeft = () => {
-      codemirrorInstance.value.execCommand('delLineLeft');
-    };
-
     return {
       text,
       fullscreen,
