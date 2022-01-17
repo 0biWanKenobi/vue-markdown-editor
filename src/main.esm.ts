@@ -1,4 +1,5 @@
 import type { Plugin } from 'vue';
+import '@/assets/css/font.css';
 import useLangModule from './modules/useLang';
 import { CN } from '@/lang/index';
 
@@ -63,12 +64,5 @@ const mdEditorPlugin: Plugin = {
     }
   },
 };
-
-declare global {
-  var Vue: any;
-  interface Window {
-    Vue: any;
-  }
-}
 
 export default mdEditorPlugin;
