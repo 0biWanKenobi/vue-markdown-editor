@@ -84,7 +84,6 @@ import useUploadImage from './modules/useUploadImage';
 import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
-import '@/assets/css/font';
 import useToolbar from './modules/useToolbar';
 
 export default defineComponent({

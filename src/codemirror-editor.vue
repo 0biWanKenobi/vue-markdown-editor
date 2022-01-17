@@ -74,7 +74,6 @@ import type CodemirrorEditor from './classes/codemirrorEditor';
 import VMdContainer from '@/components/container.vue';
 import VMdUploadFile from '@/components/upload-file.vue';
 import Scrollbar from './components/scrollbar/index.vue';
-import '@/assets/css/font';
 import useToolbarItems from './modules/useToolbarItems';
 import useToolbar from './modules/useToolbar';
 
