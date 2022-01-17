@@ -13,7 +13,7 @@ const defaults = {
   listItemClass: 'table-of-content-list-item',
   markerPattern: /^\[\[toc\]\]/im,
   listType: 'ul',
-  getAnchorAttrs: (title: string, level: number, unique: number | '') =>
+  getAnchorAttrs: (_title: string, _level: number, _unique: number | '') =>
     <{ attr: string; value: string }[]>[],
   format: undefined,
   forceFullToc: false,
