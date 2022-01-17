@@ -65,7 +65,7 @@ export default defineComponent({
       console.log(v);
     };
 
-    const handleUploadImage = (e: Event, insertImage: Function, files: File[]) => {
+    const handleUploadImage = (_e: Event, insertImage: Function, files: File[]) => {
       console.log(files);
 
       insertImage({
