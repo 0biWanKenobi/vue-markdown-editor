@@ -1,5 +1,5 @@
-import IEditor from '@/interfaces/IEditor';
 import { ref, SetupContext } from 'vue';
+import IEditor from '@/interfaces/IEditor';
 import EDITOR_TYPE, { BASE_EDITOR, CODEMIRROR_EDITOR } from '@/types/editorType';
 import BaseEditor from '@/classes/baseEditor';
 import CodemirrorEditor from '@/classes/codemirrorEditor';
