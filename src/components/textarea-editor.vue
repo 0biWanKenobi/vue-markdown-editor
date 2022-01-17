@@ -86,8 +86,8 @@ export default defineComponent({
       isComposing.value = true;
     };
     const handleCompositionUpdate = (event: CompositionEvent) => {
-      const text = (<HTMLInputElement>event.target)?.value;
-      const lastCharacter = text[text.length - 1] || '';
+      const text = (<HTMLInputElement | undefined>event.target)?.value;
+      const lastCharacter = text ? text[text.length - 1] : '';
       isComposing.value = !isKorean(lastCharacter);
     };
 
@@ -154,7 +154,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import '@/styles/var';
+@import 'styles/var';
 
 @mixin common {
   box-sizing: border-box;
