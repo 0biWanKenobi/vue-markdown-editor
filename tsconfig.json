@@ -20,10 +20,9 @@
     "jsx": "preserve",
     "paths": {
       "@/*": ["src/*"],
-      "@vuepress/shared-utils/lib/slugify.js": [
-        "./node_modules/@vuepress/shared-utils/types/slugify.d.ts"
-      ],
-      "@vuepress/markdown/lib/lineNumbers.js": ["./src/lineNumbers.d.ts"]
+      "@vuepress/*": ["node_modules/@vuepress/*"],
+      "@vuepress/shared-utils/lib/slugify.js": ["src/slugify.d.ts"],
+      "@vuepress/markdown/lib/lineNumbers.js": ["src/lineNumbers.d.ts"]
     },
     "plugins": [
       {
@@ -33,6 +32,6 @@
     ],
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/**/*.vue", "dev"],
   "exclude": ["node_modules", "dist"]
 }
