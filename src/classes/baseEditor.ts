@@ -2,6 +2,8 @@ import IEditor, { Install, Option } from '@/interfaces/IEditor';
 import useVModel from '@/modules/useVModel';
 import useScrollbar from '@/modules/useScrollbar';
 import useTextarea from '@/modules/useTextarea';
+import { HotKey } from '@/types/hotKeyType';
+import Hotkeys from '@/utils/hotkeys';
 
 class BaseEditor implements IEditor {
   editorFocusEnd = () => {
@@ -21,9 +23,9 @@ class BaseEditor implements IEditor {
     return start === end ? text.value?.slice(0, start).split('\n').pop() ?? null : null;
   };
 
-  editorRegisterHotkeys = (...arg: any[]) => {
+  editorRegisterHotkeys = (...hotkeys: HotKey[]) => {
     const { registerHotkeys } = useTextarea();
-    registerHotkeys(arg);
+    for (let hotKey of hotkeys) registerHotkeys(hotKey);
   };
 
   editorScrollToTop = (scrollTop: number) => {

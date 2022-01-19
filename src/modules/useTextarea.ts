@@ -2,6 +2,7 @@ import { nextTick, ref, SetupContext } from 'vue';
 import EditHistory from '@/types/editHistoryType';
 import Hotkeys from '@/utils/hotkeys';
 import insertTextAtCursor from 'insert-text-at-cursor';
+import { HotKey } from '@/types/hotKeyType';
 
 const timer = ref<NodeJS.Timeout>();
 const historyStack = ref<Array<EditHistory>>([]);
@@ -47,7 +48,7 @@ const redo = () => {
   }
 };
 
-const registerHotkeys = (config: any) => {
+const registerHotkeys = (config: HotKey) => {
   hotkeysManager.registerHotkeys(config);
 };
 
