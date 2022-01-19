@@ -3,17 +3,18 @@ import useScroll from './useScroll';
 import { LINE_MARKUP } from '@/utils/constants/markup';
 import useVModel from '@/modules/useVModel';
 import type TocTitle from '@/types/tocTitleType';
+import usePreview from './usePreview';
 
 const tocVisible = ref(false);
 const titles = ref<TocTitle[]>([]);
-const tocIncludeLevel = ref<string[]>();
+const tocIncludeLevel = ref<number[]>([2, 3]);
 
 const { text } = useVModel();
 
 let updateTocNavTimer: NodeJS.Timeout;
 
 watch(
-  () => text,
+  () => text.value,
   (_, oldVal) => {
     // render in the first time
     if (typeof oldVal === 'undefined') {
@@ -27,7 +28,7 @@ watch(
   }
 );
 
-const previewEl = ref();
+const { previewEl } = usePreview();
 
 const anchorsSelector = computed(() =>
   tocIncludeLevel.value?.map((level) => `h${level}`).join(',')
@@ -60,10 +61,11 @@ const updateTocNav = () => {
 const { scrollToLine } = useScroll();
 
 const handleNavClick = ({ lineIndex }: { lineIndex: number }) => {
-  scrollToLine(lineIndex);
+  scrollToLine(parseInt(lineIndex.toString()));
 };
 
-export default () => {
+export default (_tocIncludeLevel?: number[]) => {
+  if (_tocIncludeLevel) tocIncludeLevel.value = _tocIncludeLevel;
   return {
     tocVisible,
     titles,

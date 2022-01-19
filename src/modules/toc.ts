@@ -1,6 +1,5 @@
+import { array } from 'vue-types';
+
 export const tocProps = {
-  includeLevel: {
-    type: Array,
-    default: () => [2, 3],
-  },
+  includeLevel: array<number>().def([2, 3]),
 };
