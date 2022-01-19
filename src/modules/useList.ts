@@ -1,4 +1,3 @@
-import LifecycleStage from '@/types/lifecycleStage';
 import { ref } from 'vue';
 import useEditor from './useEditor';
 import useHotkeys from './useHotkeys';
@@ -9,12 +8,12 @@ const ul = /^\s*([-*])( \[[ xX]])? /;
 const ulSyntax = /([*-] |[\d]+\. )/;
 const olSyntax = /([\d])+\.( \[[ xX]])? /;
 
-const onMounted = () => {
+const doRegisterHotkeys = () => {
   const { registerHotkeys } = useHotkeys();
   registerHotkeys({
     key: 'enter',
     preventDefault: false,
-    action: (_: any, e: any) => {
+    action: (e: any) => {
       if (e.isComposing) return;
 
       const {
@@ -55,13 +54,17 @@ const onMounted = () => {
   });
 };
 
-const areHooksSaved = ref(false);
+// const areHooksSaved = ref(false);
+const isHotkeyRegistered = ref(false);
 
 export default () => {
-  if (!areHooksSaved.value) {
-    areHooksSaved.value = true;
+  if (isHotkeyRegistered.value) return;
+  isHotkeyRegistered.value = true;
+  doRegisterHotkeys();
+  // if (!areHooksSaved.value) {
+  //   areHooksSaved.value = true;
 
-    const { setLifeCycleHooks } = useEditor();
-    setLifeCycleHooks(LifecycleStage.mounted, onMounted);
-  }
+  //   const { setLifeCycleHooks } = useEditor();
+  //   setLifeCycleHooks(LifecycleStage.mounted, onMounted);
+  // }
 };
