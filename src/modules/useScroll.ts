@@ -59,8 +59,8 @@ const previewScrollToLine = ({
   lineIndex: number;
   onScrollEnd: Function;
 }) => {
-  const { previewEl } = usePreview();
-  previewEl.value?.scrollToLine({ lineIndex, onScrollEnd });
+  const { scrollToLine } = usePreview();
+  scrollToLine({ lineIndex, onScrollEnd });
 };
 
 let propScrollContainer: () => Element;

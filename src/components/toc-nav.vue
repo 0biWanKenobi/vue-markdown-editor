@@ -15,6 +15,8 @@
 
 <script lang="ts">
 import TocTitle from '@/types/tocTitleType';
+import { tocProps } from '@/modules/toc';
+import useToc from '@/modules/useToc';
 import { defineComponent } from 'vue';
 import VueTypes, { array } from 'vue-types';
 
@@ -23,8 +25,12 @@ export default defineComponent({
   props: {
     titles: array<TocTitle>(),
     indent: VueTypes.number.def(16),
+    ...tocProps,
   },
   emits: ['nav-click'],
+  setup(props) {
+    useToc(props.includeLevel);
+  },
 });
 </script>
 

@@ -2,9 +2,9 @@ import { ref, SetupContext } from 'vue';
 import { LINE_MARKUP, HEADING_MARKUP, ANCHOR_MARKUP } from '@/utils/constants/markup';
 import { getScrollTop } from '@/utils/scroll-top';
 import smoothScroll from '@/utils/smooth-scroll';
+import useScroll from './useScroll';
 
 const previewEl = ref<any>();
-const previewScrollContainer = ref<Function>(() => window);
 const previewTop = ref<number>(0);
 const html = ref<string>();
 const ctx = ref<SetupContext<string[]>>();
@@ -54,9 +54,11 @@ type ScrollToTargetParams = {
   top?: number;
 };
 
+const { getPreviewScrollContainer } = useScroll();
+
 const scrollToTarget = ({
   target,
-  scrollContainer = previewScrollContainer.value(),
+  scrollContainer = getPreviewScrollContainer.value,
   top = previewTop.value,
   onScrollEnd = undefined,
 }: ScrollToTargetParams) => {
@@ -84,7 +86,6 @@ export default (_ctx?: SetupContext<string[]>) => {
     html,
     previewEl,
     previewTop,
-    previewScrollContainer,
     handlePreviewClick,
     scrollToTarget,
     scrollToLine,
