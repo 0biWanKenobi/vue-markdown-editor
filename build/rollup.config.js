@@ -4,6 +4,7 @@ import path from 'path';
 import vue from 'rollup-plugin-vue';
 import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
@@ -45,7 +46,7 @@ const baseConfig = {
   },
   plugins: {
     scss: {
-      output: 'dist/bundle.css',
+      output: 'dist/assets/css/bundle.css',
     },
     preVue: [
       alias({
@@ -92,6 +93,12 @@ const baseConfig = {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
       plugins: ['@vue/babel-plugin-jsx'],
       babelHelpers: 'bundled',
+    },
+    copy: {
+      targets: [
+        { src: 'src/assets/font/*', dest: 'dist/assets/font' },
+        { src: 'build/package.json', dest: 'dist/' },
+      ],
     },
   },
 };
@@ -157,6 +164,13 @@ if (!argv.format || argv.format === 'es') {
           ],
         ],
       }),
+      copy({
+        targets: [
+          ...baseConfig.plugins.copy.targets,
+          { src: 'build/index/index.esm.mjs', dest: 'dist' },
+          { src: 'build/index/index.esm.d.ts', dest: 'dist/types' },
+        ],
+      }),
     ],
   };
   buildFormats.push(esConfig);
@@ -180,33 +194,12 @@ if (!argv.format || argv.format === 'cjs') {
       vue(baseConfig.plugins.vue),
       ...baseConfig.plugins.postVue,
       babel(baseConfig.plugins.babel),
+      copy({
+        targets: [
+          ...baseConfig.plugins.copy.targets,
+          { src: 'build/index/index.cjs', dest: 'dist' },
+          { src: 'build/index/index.d.ts', dest: 'dist/types' },
     ],
-  };
-  buildFormats.push(umdConfig);
-}
-
-if (!argv.format || argv.format === 'iife') {
-  const unpkgConfig = {
-    ...baseConfig,
-    external,
-    output: {
-      compact: true,
-      file: 'dist/v-md-editor.min.js',
-      format: 'iife',
-      name: 'VMdEditor',
-      exports: 'auto',
-      globals,
-    },
-    plugins: [
-      replace(baseConfig.plugins.replace),
-      ...baseConfig.plugins.preVue,
-      vue(baseConfig.plugins.vue),
-      ...baseConfig.plugins.postVue,
-      babel(baseConfig.plugins.babel),
-      terser({
-        output: {
-          ecma: 5,
-        },
       }),
     ],
   };

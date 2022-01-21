@@ -1,7 +1,7 @@
 {
   "name": "@kangc/v-md-editor",
-  "version": "2.3.13-beta.1",
-  "description": "A markdown editor built on Vue",
+  "version": "3.0.0",
+  "description": "A markdown editor built on Vue 3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/code-farmer-i/vue-markdown-editor.git"
@@ -12,7 +12,43 @@
     "url": "https://github.com/code-farmer-i/vue-markdown-editor/issues"
   },
   "homepage": "https://github.com/code-farmer-i/vue-markdown-editor#readme",
-  "main": "lib/main.js",
+  "types": "types/index.esm.d.ts",
+  "files": [
+    "*.cjs",
+    "package.json",
+    "*.css",
+    "font/**/*"
+  ],
+  "main": "./index.cjs",
+  "module": "./index.esm.mjs",
+  "exports": {
+    ".": {
+      "import": {
+        "node": "./index.esm.mjs",
+        "default": "./index.cjs"
+      },
+      "require": "./index.cjs",
+      "types": "./types/index.esm.d.ts"
+    },
+    "./editor": {
+      "import": "./editor/index.esm.mjs"
+    },
+    "./preview": {
+      "import": "./preview/index.esm.mjs"
+    },
+    "./theme": {
+      "import": "./theme/index.esm.mjs"
+    },
+    "./lang": {
+      "import": "./lang/index.esm.mjs"
+    },
+    "./typings": {
+      "import": "./typings/index.esm.mjs"
+    },
+    "./package.json": {
+      "import": "./package.json"
+    }
+  },
   "keywords": [
     "javascript",
     "vue3",
@@ -29,48 +65,7 @@
     "vue3-editor",
     "markdown-editor"
   ],
-  "unpkg": "lib/base-editor.js",
-  "files": [
-    "src",
-    "lib",
-    "es",
-    "types"
-  ],
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
-  "scripts": {
-    "serve": "vue-cli-service serve dev/serve.ts",
-    "prebuild": "rimraf ./dist",
-    "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
-    "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
-    "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
-    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife",
-    "postbuild": "rimraf ./dist/types/dev ./dist/types/src/entry.d.ts",
-    "lint-staged": "lint-staged",
-    "lint": "eslint ./src --ext .vue,.ts,.tsx --fix && stylelint \"src/**/*.vue\" --fix",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "commit": "git-cz"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
-    }
-  },
-  "lint-staged": {
-    "*.md": [
-      "prettier --write"
-    ],
-    "src/**/*.{js,vue}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "src/**/*.{vue,css,scss}": [
-      "stylelint --fix",
-      "git add"
-    ]
-  },
+  "unpkg": "lib/base-editor.cjs",
   "peerDependencies": {
     "@vue/compiler-sfc": "^3.2.21",
     "vue": "^3.2.21"
@@ -81,7 +76,7 @@
     "codemirror": "^5.61.1",
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.20.2",
-    "highlight.js": "^10.7.2",
+    "highlight.cjs": "^10.7.2",
     "insert-text-at-cursor": "^0.3.0",
     "katex": "^0.13.11",
     "markdown-it": "^12.0.6",
@@ -146,7 +141,6 @@
     "prettier": "^2.0.3",
     "rimraf": "^3.0.2",
     "rollup": "^2.64.0",
-    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-scss": "^3.0.0",
     "rollup-plugin-terser": "^7.0.2",
@@ -160,11 +154,5 @@
     "tslib": "^2.3.1",
     "ttypescript": "^1.5.13",
     "typescript": "^4.5.4"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
-  "postinstall": "patch-package"
+  }
 }
