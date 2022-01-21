@@ -15,6 +15,8 @@ import { terser } from 'rollup-plugin-terser';
 import ttypescript from 'ttypescript';
 import typescript from 'rollup-plugin-typescript2';
 import minimist from 'minimist';
+import clean from './cleanupDeclarationsPlugin';
+import generate from './generatePackageJsonPlugin';
 
 // https://github.com/rollup/rollup/issues/2688
 
@@ -100,6 +102,53 @@ const baseConfig = {
         { src: 'build/package.json', dest: 'dist/' },
       ],
     },
+    clean: {
+      targets: [
+        path.resolve(projectRoot, 'dist/types/classes'),
+        path.resolve(projectRoot, 'dist/types/command'),
+        path.resolve(projectRoot, 'dist/types/components'),
+        path.resolve(projectRoot, 'dist/types/hotkeys'),
+        path.resolve(projectRoot, 'dist/types/interfaces'),
+        path.resolve(projectRoot, 'dist/types/toolbar'),
+        path.resolve(projectRoot, 'dist/types/utils'),
+      ],
+    },
+    /** @type import("generatePackageJsonPlugin").GeneratePluginOptions */
+    generate: {
+      outDir: path.resolve(projectRoot, 'dist'),
+      packages: [
+        {
+          savePath: 'editor',
+          module: 'index.esm.mjs',
+          types: '../types/editor.d.ts',
+        },
+        {
+          savePath: 'lang',
+          module: 'index.esm.mjs',
+          types: '../types/lang/index.d.ts',
+        },
+        {
+          savePath: 'plugins',
+          module: 'index.esm.mjs',
+          types: '../types/plugins/index.d.ts',
+        },
+        {
+          savePath: 'preview',
+          module: 'index.esm.mjs',
+          types: '../types/preview.d.ts',
+        },
+        {
+          savePath: 'theme',
+          module: 'index.esm.mjs',
+          types: '../types/theme/index.d.ts',
+        },
+        {
+          savePath: 'typings',
+          module: 'index.esm.mjs',
+          types: '../types/types.d.ts',
+        },
+      ],
+    },
   },
 };
 
@@ -171,6 +220,8 @@ if (!argv.format || argv.format === 'es') {
           { src: 'build/index/index.esm.d.ts', dest: 'dist/types' },
         ],
       }),
+      clean(baseConfig.plugins.clean),
+      generate(baseConfig.plugins.generate),
     ],
   };
   buildFormats.push(esConfig);
@@ -201,6 +252,7 @@ if (!argv.format || argv.format === 'cjs') {
           { src: 'build/index/index.d.ts', dest: 'dist/types' },
     ],
       }),
+      clean(baseConfig.plugins.clean),
     ],
   };
   buildFormats.push(unpkgConfig);
