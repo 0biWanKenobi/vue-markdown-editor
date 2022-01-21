@@ -3,7 +3,6 @@ import useVModel from '@/modules/useVModel';
 import useScrollbar from '@/modules/useScrollbar';
 import useTextarea from '@/modules/useTextarea';
 import { HotKey } from '@/types/hotKeyType';
-import Hotkeys from '@/utils/hotkeys';
 
 class BaseEditor implements IEditor {
   editorFocusEnd = () => {
