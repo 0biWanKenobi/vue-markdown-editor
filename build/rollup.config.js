@@ -11,7 +11,6 @@ import replace from '@rollup/plugin-replace';
 import babel from '@rollup/plugin-babel';
 import scss from 'rollup-plugin-scss';
 import PostCSS from 'rollup-plugin-postcss';
-import { terser } from 'rollup-plugin-terser';
 import ttypescript from 'ttypescript';
 import typescript from 'rollup-plugin-typescript2';
 import minimist from 'minimist';
@@ -38,13 +37,13 @@ const projectRoot = path.resolve(__dirname, '..');
 
 const baseConfig = {
   input: {
-    index: 'src/main.ts',
-    editor: 'src/editor.ts',
-    preview: 'src/preview.ts',
-    lang: 'src/lang/index.ts',
-    types: 'src/types.ts',
-    theme: 'src/theme/index.ts',
-    plugins: 'src/plugins/index.ts',
+    main: 'src/main.ts',
+    'editor/index': 'src/editor.ts',
+    'preview/index': 'src/preview.ts',
+    'lang/index': 'src/lang/index.ts',
+    'typings/index': 'src/types.ts',
+    'theme/index': 'src/theme/index.ts',
+    'plugins/index': 'src/plugins/index.ts',
   },
   plugins: {
     scss: {
@@ -175,14 +174,14 @@ if (!argv.format || argv.format === 'es') {
     ...baseConfig,
     input: {
       ...baseConfig.input,
-      index: 'src/main.esm.ts',
+      main: 'src/main.esm.ts',
     },
     external,
     output: {
       dir: 'dist',
       // file: 'dist/v-md-editor.esm.js',
-      entryFileNames: '[name].esm.js',
-      chunkFileNames: '[name]-[hash].esm.js',
+      entryFileNames: '[name].esm.mjs',
+      chunkFileNames: '[name]-[hash].esm.mjs',
       format: 'esm',
       exports: 'named',
     },
@@ -197,6 +196,7 @@ if (!argv.format || argv.format === 'es') {
       // do actual js transformations
       typescript({
         typescript: ttypescript,
+        tsconfig: `${path.resolve(__dirname, '../tsconfig.build.json')}`,
         useTsconfigDeclarationDir: true,
         emitDeclarationOnly: true,
         abortOnError: false,
@@ -230,32 +230,47 @@ if (!argv.format || argv.format === 'es') {
 if (!argv.format || argv.format === 'cjs') {
   const umdConfig = {
     ...baseConfig,
+    input: {
+      main: 'src/main.cjs.ts',
+    },
     external,
     output: {
       compact: true,
-      file: 'dist/v-md-editor.ssr.js',
+      dir: 'dist',
+      // file: 'dist/v-md-editor.esm.js',
+      entryFileNames: '[name].cjs',
+      chunkFileNames: '[name]-[hash].cjs',
       format: 'cjs',
       name: 'VMdEditor',
-      exports: 'auto',
+      exports: 'named',
       globals,
     },
     plugins: [
       replace(baseConfig.plugins.replace),
+      json(),
       ...baseConfig.plugins.preVue,
+      scss(baseConfig.plugins.scss),
       vue(baseConfig.plugins.vue),
       ...baseConfig.plugins.postVue,
+      typescript({
+        typescript: ttypescript,
+        tsconfig: `${path.resolve(__dirname, '../tsconfig.build.json')}`,
+        useTsconfigDeclarationDir: true,
+        emitDeclarationOnly: true,
+        abortOnError: false,
+      }),
       babel(baseConfig.plugins.babel),
       copy({
         targets: [
           ...baseConfig.plugins.copy.targets,
           { src: 'build/index/index.cjs', dest: 'dist' },
           { src: 'build/index/index.d.ts', dest: 'dist/types' },
-    ],
+        ],
       }),
       clean(baseConfig.plugins.clean),
     ],
   };
-  buildFormats.push(unpkgConfig);
+  buildFormats.push(umdConfig);
 }
 
 // Export config
