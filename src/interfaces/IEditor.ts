@@ -1,5 +1,5 @@
-export type Install = { install: (opt?: any) => void };
-export type Option = (opt?: any) => void;
+import Option from '@/types/OptionType';
+import Install from '@/types/installType';
 
 interface IEditor {
   editorFocusEnd: () => void;
