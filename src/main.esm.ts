@@ -29,7 +29,6 @@ const mdEditorPlugin: Plugin = {
     const {
       langConfig,
       editor: { instance: editor, type: editorType },
-      preview,
       themeConfig,
       Codemirror,
       plugins = [],
@@ -40,7 +39,6 @@ const mdEditorPlugin: Plugin = {
 
     if (!editor) return;
 
-    vue.component(preview.name, preview);
     vue.component(editor.name, editor);
 
     const VmdEditor = useEditor(editorType);

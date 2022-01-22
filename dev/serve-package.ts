@@ -20,7 +20,6 @@ import { createApp } from 'vue';
 import VueMarkdownEditor from '@kangc/v-md-editor';
 import { EditorConfig } from '@kangc/v-md-editor/typings';
 import { BaseEditor } from '@kangc/v-md-editor/editor';
-import { PreviewHtml } from '@kangc/v-md-editor/preview';
 import { US } from '@kangc/v-md-editor/lang';
 import {
   CreateEmojiPlugin,
@@ -72,7 +71,6 @@ app.use(VueMarkdownEditor, <EditorConfig>{
     lang: 'en-US',
     langConfig: US,
   },
-  preview: PreviewHtml,
   Codemirror: CodeMirror,
   themeConfig: {
     config: {

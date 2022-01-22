@@ -40,13 +40,6 @@ type EditorConfig = {
     instance: DefineComponent<{}, {}, any>;
     type: 'base' | 'codemirror';
   };
-  /**
-   * @property preview:  Either `Preview` or `HtmlPreview`.
-   *
-   * You should `import {Preview} from '@kangc/v-md-editor`, or `import {HtmlPreview} from '@kangc/v-md-editor`
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-  preview: DefineComponent<{}, {}, any>;
 
   plugins?: Array<{
     plugin: Install;
