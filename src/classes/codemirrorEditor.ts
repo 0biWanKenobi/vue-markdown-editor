@@ -1,4 +1,6 @@
-import IEditor, { Option, Install } from '@/interfaces/IEditor';
+import IEditor from '@/interfaces/IEditor';
+import Option from '@/types/OptionType';
+import Install from '@/types/installType';
 import { HotKey } from '@/types/hotKeyType';
 import { smooth } from '@/utils/smooth-scroll';
 import useVModel from '@/modules/useVModel';

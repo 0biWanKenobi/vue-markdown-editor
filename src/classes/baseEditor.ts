@@ -1,4 +1,6 @@
-import IEditor, { Install, Option } from '@/interfaces/IEditor';
+import IEditor from '@/interfaces/IEditor';
+import Option from '@/types/OptionType';
+import Install from '@/types/installType';
 import useVModel from '@/modules/useVModel';
 import useScrollbar from '@/modules/useScrollbar';
 import useTextarea from '@/modules/useTextarea';

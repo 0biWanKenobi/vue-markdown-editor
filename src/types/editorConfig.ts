@@ -3,7 +3,7 @@ import ThemeConfig from './themeConfigType';
 import { DefineComponent } from 'vue';
 import PluginCreatorParams from './pluginCreationFnParams';
 import LangClassConfig from './langClassConfig';
-import { Install } from '@/interfaces/IEditor';
+import Install from './installType';
 import ThemeInstallFn from './themeInstallFnType';
 
 export type ThemeConfigOption = {
