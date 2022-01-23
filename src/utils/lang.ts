@@ -27,7 +27,16 @@ export default class Lang {
     if (this.options.afterUse) this.options.afterUse(lang, config);
   }
 
-  add(config = {}) {
+  select(lang: string) {
+    if (!(lang in this.config.langConfig)) {
+      console.error(`The "${lang}" language has not been added yet!`);
+      return;
+    }
+    this.config.lang = lang;
+    if (this.options.afterUse) this.options.afterUse(lang, this.config.langConfig);
+  }
+
+  add(config: LangConfig = {}) {
     deepAssign(this.config.langConfig, config);
   }
 }

@@ -5,10 +5,27 @@ import zhCNConfig from '@/lang/zh-CN';
 const lang = ref<Lang>(new Lang());
 const configured = ref(false);
 
+/**
+ * Adds a new language, without using it for the UI
+ * @param val the language configuration
+ */
 const add = (val: Record<string, any>) => {
   lang.value.add(val);
 };
 
+/**
+ * Sets a language active by its name. The language has to be already installed.
+ * @param name the language name
+ */
+const select = (name: string) => {
+  lang.value.select(name);
+};
+
+/**
+ * Adds a new language and uses it for the UI
+ * @param name the language name
+ * @param val the language configuration
+ */
 const use = (name: string, val: Record<string, any>) => {
   lang.value.use(name, val);
 };
@@ -30,6 +47,7 @@ export default () => {
   return {
     langConfig,
     add,
+    select,
     use,
   };
 };
