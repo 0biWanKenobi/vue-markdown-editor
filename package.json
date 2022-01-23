@@ -12,7 +12,6 @@
     "url": "https://github.com/code-farmer-i/vue-markdown-editor/issues"
   },
   "homepage": "https://github.com/code-farmer-i/vue-markdown-editor#readme",
-  "main": "lib/main.js",
   "keywords": [
     "javascript",
     "vue3",
@@ -29,7 +28,6 @@
     "vue3-editor",
     "markdown-editor"
   ],
-  "unpkg": "lib/base-editor.js",
   "files": [
     "src",
     "lib",
@@ -41,11 +39,12 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve dev/serve.ts",
+    "serve:esm": "vue-cli-service serve dev/serve-package.ts",
+    "serve:cjs": "cross-env MODULE=cjs vue-cli-service serve dev/serve-cjs-package.ts",
     "prebuild": "rimraf ./dist",
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
-    "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
+    "build:cjs": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
-    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife",
     "postbuild": "rimraf ./dist/types/dev ./dist/types/src/entry.d.ts",
     "lint-staged": "lint-staged",
     "lint": "eslint ./src --ext .vue,.ts,.tsx --fix && stylelint \"src/**/*.vue\" --fix",
