@@ -7,15 +7,13 @@ const Codemirror = ref<CodeMirror>();
 const codemirrorInstance = ref();
 const hotkeysManager = new Hotkeys();
 
-const setValue = (_Codemirror: CodeMirror) => {
-  Codemirror.value = _Codemirror;
-};
-
-export default () => {
+export default (_Codemirror?: CodeMirror) => {
+  if (!Codemirror.value && !!_Codemirror) {
+    Codemirror.value = _Codemirror;
+  }
   return {
     Codemirror: Codemirror.value,
     codemirrorInstance,
     hotkeysManager,
-    setValue,
   };
 };

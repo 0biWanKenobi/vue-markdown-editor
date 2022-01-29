@@ -57,8 +57,7 @@ const mdEditorPlugin: Plugin = {
     }
 
     if (Codemirror) {
-      const codeMirrorSetup = useCodemirror();
-      codeMirrorSetup.setValue(Codemirror);
+    useCodemirror(Codemirror);
     }
   },
 };
