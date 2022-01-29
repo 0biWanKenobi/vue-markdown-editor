@@ -68,7 +68,6 @@ import useSyncScroll from './modules/useSyncScroll';
 import useCommon from './modules/useCommon';
 import useFullscreen from './modules/useFullscreen';
 import useToc from './modules/useToc';
-import useScroll from './modules/useScroll';
 import useLang from './modules/useLang';
 import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
@@ -77,6 +76,8 @@ import VMdUploadFile from '@/components/upload-file.vue';
 import Scrollbar from './components/scrollbar/index.vue';
 import useToolbarItems from './modules/useToolbarItems';
 import useToolbar from './modules/useToolbar';
+import useEditorMode from './modules/useEditorMode';
+import usePreview from './modules/usePreview';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -112,9 +113,13 @@ export default defineComponent({
     );
 
     const { handleEditorScroll } = useSyncScroll();
-    const { getPreviewScrollContainer } = useScroll();
-    const { uploadConfig, handleChange, handleBlur, handlePreviewImageClick, currentMode } =
-      useCommon(ctx, props);
+    const { getPreviewScrollContainer } = usePreview();
+    const { uploadConfig, handleChange, handleBlur, handlePreviewImageClick } = useCommon(
+      ctx,
+      props
+    );
+
+    const { currentMode } = useEditorMode();
 
     watch(
       () => modelValue.value,

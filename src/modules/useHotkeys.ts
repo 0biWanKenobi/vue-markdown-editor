@@ -1,14 +1,14 @@
 import LifecycleStage from '@/types/lifecycleStage';
 import * as Hotkeys from '../hotkeys';
-import useCommon from './useCommon';
 import useEditor from './useEditor';
 import { HotKey } from '@/types/hotKeyType';
 import { ref } from 'vue';
+import useEditorMode from './useEditorMode';
 
 const hotkeys: HotKey[] = [];
 
 const onMounted = () => {
-  const { isPreviewMode } = useCommon();
+  const { isPreviewMode } = useEditorMode();
   if (isPreviewMode.value) return;
 
   const {
@@ -23,12 +23,6 @@ const onMounted = () => {
 
 const registerHotkeys = (hotkey: HotKey) => {
   hotkeys.push(hotkey);
-  // editorRegisterHotkeys({
-  //   modifier,
-  //   key,
-  //   preventDefault,
-  //   action,
-  // });
 };
 
 const areHooksSaved = ref(false);

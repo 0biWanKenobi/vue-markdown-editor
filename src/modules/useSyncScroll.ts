@@ -1,6 +1,5 @@
 import { ref } from 'vue';
 import useEditor from './useEditor';
-import useScroll from './useScroll';
 import { LINE_MARKUP } from '@/utils/constants/markup';
 import usePreview from './usePreview';
 import useScrollbar from './useScrollbar';
@@ -13,8 +12,6 @@ let scrollTimer: NodeJS.Timeout | undefined = undefined;
 const toggleSyncScroll = (enabled = !syncScroll.value) => {
   syncScroll.value = enabled;
 };
-
-const { previewScrollTo } = useScroll();
 
 const previewSyncScroll = () => {
   const { wrapEl } = useScrollbar('preview');
@@ -35,6 +32,8 @@ const previewSyncScroll = () => {
   if (editorClientHeight + editorScrollTop === editorScrollHeight) {
     const { clientHeight } = previewScrollWrapper;
     const { scrollHeight } = previewScrollWrapper;
+
+    const { previewScrollTo } = usePreview();
 
     previewScrollTo(scrollHeight - clientHeight);
   } else {
@@ -83,6 +82,7 @@ const previewSyncScroll = () => {
 
     const newScrollTop = newLineTop + (newNextLineTop - newLineTop) * percent;
 
+    const { previewScrollTo } = usePreview();
     previewScrollTo(newScrollTop);
   }
 };

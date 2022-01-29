@@ -1,5 +1,4 @@
 import { computed, Ref, ref, SetupContext } from 'vue';
-import imageToolbar from '@/toolbar/image';
 import { filesFilter, getFilesFromClipboardData } from '@/utils/file';
 import { image } from '@/utils/constants/command';
 import useCommand from './useCommand';
@@ -20,9 +19,7 @@ const uploadImgConfig = computed(() => {
   };
 });
 
-const hasUploadImage = computed(
-  () => !disabledMenus.value.includes(`${imageToolbar.name}/upload-image`)
-);
+const hasUploadImage = computed(() => !disabledMenus.value.includes(`${image}/upload-image`));
 
 const handleDrop = (e: DragEvent) => {
   if (!e.dataTransfer) return;

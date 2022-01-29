@@ -1,6 +1,6 @@
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useLang from '@/modules/useLang';
-import useCommon from '@/modules/useCommon';
+import useEditorMode from '@/modules/useEditorMode';
 
 const { langConfig } = useLang();
 
@@ -9,13 +9,13 @@ export default {
   icon: 'v-md-icon-preview',
   title: () => {
     const previewLang = langConfig.value.preview;
-    const { isEditableMode } = useCommon();
+    const { isEditableMode } = useEditorMode();
 
     return isEditableMode.value ? previewLang.disabled : previewLang.enabled;
   },
-  active: () => useCommon().isEditableMode.value,
+  active: () => useEditorMode().isEditableMode.value,
   action() {
-    const { isEditableMode, currentMode } = useCommon();
+    const { isEditableMode, currentMode } = useEditorMode();
     currentMode.value = isEditableMode.value ? EDITOR_MODE.EDIT : EDITOR_MODE.EDITABLE;
   },
 };

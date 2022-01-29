@@ -1,18 +1,12 @@
-import { computed, nextTick, ref, SetupContext, watch } from 'vue';
+import { nextTick, ref, SetupContext, watch } from 'vue';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useSyncScroll from './useSyncScroll';
 import useEditor from './useEditor';
-import useScroll from './useScroll';
 import LifecycleStage from '@/types/lifecycleStage';
 import UploadConfig from '@/types/uploadConfigType';
 import useVModel from './useVModel';
 import usePreview from './usePreview';
-
-const currentMode = ref(EDITOR_MODE.EDITABLE);
-
-const isPreviewMode = computed(() => currentMode.value === EDITOR_MODE.PREVIEW);
-const isEditMode = computed(() => currentMode.value === EDITOR_MODE.EDIT);
-const isEditableMode = computed(() => currentMode.value === EDITOR_MODE.EDITABLE);
+import useEditorMode from './useEditorMode';
 
 const ctx = ref<SetupContext<any>>();
 
@@ -21,7 +15,7 @@ const setFocusEnd = () => {
     editor: { editorFocusEnd, editorScrollToTop },
   } = useEditor();
 
-  const { previewScrollTo } = useScroll();
+  const { previewScrollTo } = usePreview();
 
   editorFocusEnd();
   editorScrollToTop(9999);
@@ -79,6 +73,8 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
 
   const data = {};
 
+  const { currentMode } = useEditorMode();
+
   watch(
     () => props?.mode,
     (newValue) => newValue && (currentMode.value = newValue),
@@ -116,10 +112,6 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
 
   return {
     data,
-    currentMode,
-    isPreviewMode,
-    isEditMode,
-    isEditableMode,
     uploadConfig,
     setFocusEnd,
     handleChange,

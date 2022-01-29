@@ -1,32 +1,15 @@
-import useCommon from './useCommon';
 import useSyncScroll from './useSyncScroll';
-import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useEditor from './useEditor';
-import { computed } from 'vue';
+import useEditorMode from './useEditorMode';
 import usePreview from './usePreview';
-import useScrollbar from './useScrollbar';
-
-const getPreviewScrollContainer = computed(() => {
-  const { wrapEl } = useScrollbar('preview');
-  const { isPreviewMode } = useCommon();
-  const previewScrollContainer = wrapEl.value;
-  const defaultContainer = isPreviewMode.value ? window : previewScrollContainer;
-
-  return propScrollContainer ? propScrollContainer() : defaultContainer;
-});
-
-const previewScrollTo = (scrollTop: number) => {
-  const { scrollTo } = useScrollbar('preview');
-  scrollTo(scrollTop);
-};
 
 const scrollToLine = (lineIndex: number) => {
-  const { currentMode } = useCommon();
-  if (currentMode.value != EDITOR_MODE.PREVIEW) {
+  const { isPreviewMode, isEditMode } = useEditorMode();
+  if (isPreviewMode) {
     editorScrollToLine(lineIndex);
   }
 
-  if (currentMode.value != EDITOR_MODE.EDIT) {
+  if (!isEditMode) {
     const { ignoreSyncScroll } = useSyncScroll();
     ignoreSyncScroll.value = true;
     previewScrollToLine({
@@ -47,11 +30,6 @@ const editorScrollToLine = (lineIndex: number) => {
   editorScrollToTop(offsetTop);
 };
 
-const previewScrollToTarget = (...arg: any[]) => {
-  const { previewEl } = usePreview();
-  previewEl.value?.scrollToTarget(...arg);
-};
-
 const previewScrollToLine = ({
   lineIndex,
   onScrollEnd,
@@ -63,16 +41,10 @@ const previewScrollToLine = ({
   scrollToLine({ lineIndex, onScrollEnd });
 };
 
-let propScrollContainer: () => Element;
-
 export default () => {
   return {
-    propScrollContainer,
-    previewScrollTo,
     scrollToLine,
     editorScrollToLine,
-    previewScrollToTarget,
     previewScrollToLine,
-    getPreviewScrollContainer,
   };
 };

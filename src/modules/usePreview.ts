@@ -1,13 +1,20 @@
-import { ref, SetupContext } from 'vue';
+import { computed, ref, SetupContext } from 'vue';
 import { LINE_MARKUP, HEADING_MARKUP, ANCHOR_MARKUP } from '@/utils/constants/markup';
 import { getScrollTop } from '@/utils/scroll-top';
 import smoothScroll from '@/utils/smooth-scroll';
-import useScroll from './useScroll';
+import ScrollToTargetParams from '@/types/scrollToTargetParams';
+import useScrollbar from './useScrollbar';
+import useEditorMode from './useEditorMode';
 
 const previewEl = ref<any>();
 const previewTop = ref<number>(0);
 const html = ref<string>();
 const ctx = ref<SetupContext<string[]>>();
+
+const previewScrollTo = (scrollTop: number) => {
+  const { scrollTo } = useScrollbar('preview');
+  scrollTo(scrollTop);
+};
 
 const handlePreviewClick = (e: any) => {
   const { target } = e;
@@ -47,14 +54,16 @@ const getOffsetTop = (target: Element, container: Element | Window) => {
   return rect.top - (<Element>container).getBoundingClientRect().top;
 };
 
-type ScrollToTargetParams = {
-  target: Element;
-  scrollContainer?: any;
-  onScrollEnd?: any;
-  top?: number;
-};
+let propScrollContainer: () => Element;
 
-const { getPreviewScrollContainer } = useScroll();
+const getPreviewScrollContainer = computed(() => {
+  const { wrapEl } = useScrollbar('preview');
+  const { isPreviewMode } = useEditorMode();
+  const previewScrollContainer = wrapEl.value;
+  const defaultContainer = isPreviewMode.value ? window : previewScrollContainer;
+
+  return propScrollContainer ? propScrollContainer() : defaultContainer;
+});
 
 const scrollToTarget = ({
   target,
@@ -87,8 +96,10 @@ export default (_ctx?: SetupContext<string[]>) => {
     previewEl,
     previewTop,
     handlePreviewClick,
+    previewScrollTo,
     scrollToTarget,
     scrollToLine,
     getOffsetTop,
+    getPreviewScrollContainer,
   };
 };

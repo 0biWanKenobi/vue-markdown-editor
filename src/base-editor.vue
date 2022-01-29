@@ -78,7 +78,6 @@ import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
 import useEditor from './modules/useEditor';
 import useToc from './modules/useToc';
-import useScroll from './modules/useScroll';
 import useFullscreen from './modules/useFullscreen';
 import useLang from './modules/useLang';
 import useUploadImage from './modules/useUploadImage';
@@ -86,6 +85,8 @@ import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
 import useToolbar from './modules/useToolbar';
+import useEditorMode from './modules/useEditorMode';
+import usePreview from './modules/usePreview';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -148,8 +149,9 @@ export default defineComponent({
       handleBlur,
       handlePreviewImageClick,
       setFocusEnd: handleEditorWrapperClick,
-      currentMode,
     } = useCommon(ctx, props);
+
+    const { currentMode } = useEditorMode();
 
     const { modelValue } = toRefs(props);
     const { text } = useVModel(modelValue.value);
@@ -176,7 +178,7 @@ export default defineComponent({
     useList();
     const { handleNavClick, tocVisible, titles } = useToc();
     const { handleEditorScroll } = useSyncScroll();
-    const { getPreviewScrollContainer } = useScroll();
+    const { getPreviewScrollContainer } = usePreview();
     const { fullscreen } = useFullscreen(ctx, { fullscreen: props.defaultFullscreen });
     const { langConfig } = useLang();
     const { uploadImageConfig, disabledMenus } = toRefs(props);
