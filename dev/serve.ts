@@ -5,6 +5,7 @@ import { EditorConfig } from '@/types';
 import { BaseEditor } from '@/editor';
 import { PreviewHtml } from '@/preview';
 import { VuepressTheme } from '@/theme';
+// import { GithubTheme } from '@/theme';
 import { US } from '@/lang';
 
 import {
@@ -18,13 +19,8 @@ import {
   CreateCopyCodePreviewPlugin,
 } from '@/plugins';
 
-// import vuepressTheme from '../src/theme/vuepress';
-
 import Prism from 'prismjs';
 
-// codemirror 编辑器的相关资源
-//import Codemirror from 'codemirror';
-// mode
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/css/css';
@@ -67,6 +63,15 @@ app.use(VueMarkdownEditor, <EditorConfig>{
     },
     theme: VuepressTheme,
   },
+  // themeConfig: {
+  //   config: {
+  //     Hljs,
+  //     codeHighlightExtensionMap: {
+  //       vue: 'xml',
+  //     },
+  //   },
+  //   theme: GithubTheme,
+  // },
   plugins: [
     { plugin: CreateCopyCodePreviewPlugin() },
     { plugin: CreateEmojiPlugin() },
