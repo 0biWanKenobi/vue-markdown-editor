@@ -25,6 +25,7 @@
     ".": {
       "import": {
         "node": "./index.esm.mjs",
+        "import": "./index.esm.mjs",
         "default": "./index.cjs"
       },
       "require": "./index.cjs",
@@ -44,6 +45,10 @@
     },
     "./typings": {
       "import": "./typings/index.esm.mjs"
+    },
+    "./assets/css/bundle.css": {
+      "import": "./assets/css/bundle.css",
+      "require": "./assets/css/bundle.css"
     },
     "./package.json": {
       "import": "./package.json"

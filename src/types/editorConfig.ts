@@ -1,6 +1,6 @@
 import ThemeConfig from './themeConfigType';
+import type { BaseEditor, CodeMirrorEditor } from '@/editor';
 
-import { DefineComponent } from 'vue';
 import PluginCreatorParams from './pluginCreationFnParams';
 import LangClassConfig from './langClassConfig';
 import Install from './installType';
@@ -37,7 +37,7 @@ type EditorConfig = {
    **/
   editor: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-    instance: DefineComponent<{}, {}, any>;
+    instance: typeof BaseEditor | typeof CodeMirrorEditor;
     type: 'base' | 'codemirror';
   };
 

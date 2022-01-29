@@ -1,3 +1,3 @@
 import './assets/css/bundle.css';
 
-export { default } from './main.esm.mjs';
+export { default, configure } from './main.esm.mjs';

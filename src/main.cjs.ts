@@ -1,4 +1,4 @@
-export { default } from './main.esm';
+export { default, configure } from './main.esm';
 export * from './editor';
 export * from './preview';
 export * from './theme';

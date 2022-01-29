@@ -1,2 +1,2 @@
 import '../assets/css/bundle.css';
-export { default } from './main.esm';
+export { default, configure } from './main.esm';
