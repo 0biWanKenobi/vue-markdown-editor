@@ -58,7 +58,8 @@ import {
 } from 'vue';
 import VueTypes from 'vue-types';
 import { toolbarProps } from './modules/toolbar';
-import { editorComponents, editorProps } from './modules/common';
+import { editorProps } from './modules/common';
+import { editorComponents } from './modules/editor/editorComponents';
 import { uploadImageProps } from './modules/upload-image';
 import useVModel from './modules/useVModel';
 import useCodemirror from './modules/useCodemirror';

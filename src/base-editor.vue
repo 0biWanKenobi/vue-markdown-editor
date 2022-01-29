@@ -53,7 +53,8 @@
 import TextareaEditor from '@/components/textarea-editor.vue';
 import VMdContainer from '@/components/container.vue';
 import VMdUploadFile from '@/components/upload-file.vue';
-import { editorProps, editorEmits, editorComponents, shouldInheritAttrs } from './modules/common';
+import { editorProps, editorEmits, shouldInheritAttrs } from './modules/common';
+import { editorComponents } from './modules/editor/editorComponents';
 import { toolbarProps } from './modules/toolbar';
 import { uploadImageProps } from './modules/upload-image';
 import { vModelProps, vModelEmits } from './modules/v-model';
