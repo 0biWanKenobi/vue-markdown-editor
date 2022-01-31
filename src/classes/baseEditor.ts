@@ -8,9 +8,9 @@ import { HotKey } from '@/types/hotKeyType';
 
 class BaseEditor implements IEditor {
   editorFocusEnd = () => {
+    const { focus, setRange } = useTextarea();
     focus();
     const { text } = useVModel();
-    const { setRange } = useTextarea();
     setRange({
       start: text.value?.length ?? 0,
       end: text.value?.length ?? 0,
