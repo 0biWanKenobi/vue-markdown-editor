@@ -1,4 +1,4 @@
-import { ref, SetupContext } from 'vue';
+import { ref, SetupContext, provide } from 'vue';
 import IEditor from '@/interfaces/IEditor';
 import EDITOR_TYPE, { BASE_EDITOR, CODEMIRROR_EDITOR } from '@/types/editorType';
 import BaseEditor from '@/classes/baseEditor';
@@ -38,6 +38,10 @@ const installEmits = (...ee: string[]) => {
 
 const emit = (e: string, ...args: any[]) => {
   ctx.value?.emit(e, args);
+};
+
+export const provideEditor = <T extends IEditor>(editor: T) => {
+  provide<T>('Editor', editor);
 };
 
 const useEditor = <T extends IEditor>(editorType?: EDITOR_TYPE, _ctx?: SetupContext<any>) => {

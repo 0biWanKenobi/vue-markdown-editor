@@ -27,14 +27,17 @@ const registerHotkeys = (hotkey: HotKey) => {
 
 const areHooksSaved = ref(false);
 
-export default () => {
+const scheduleOnMounted = () => {
   if (!areHooksSaved.value) {
     areHooksSaved.value = true;
     const { setLifeCycleHooks } = useEditor();
     setLifeCycleHooks(LifecycleStage.mounted, onMounted);
   }
+};
 
+export default () => {
   return {
     registerHotkeys,
+    scheduleOnMounted,
   };
 };
