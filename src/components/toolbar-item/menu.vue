@@ -133,8 +133,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import 'styles/var';
-@import 'styles/mixins';
+@import '../../styles/var';
+@import '../../styles/mixins';
 
 .v-md-editor {
   &__menu {

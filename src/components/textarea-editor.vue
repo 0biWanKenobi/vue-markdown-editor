@@ -154,7 +154,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import 'styles/var';
+@import '../styles/var';
 
 @mixin common {
   box-sizing: border-box;

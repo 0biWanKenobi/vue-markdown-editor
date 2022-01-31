@@ -195,7 +195,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import 'styles/var';
+@import '../../styles/var';
 
 $item-height: 28px;
 
