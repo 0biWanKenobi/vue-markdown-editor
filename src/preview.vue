@@ -4,7 +4,7 @@
     :style="{
       tabSize,
     }"
-    @click="handlePreviewClick"
+    @click="onPreviewClick"
     ref="previewEl"
   >
     <div :class="[previewClass]" v-html="html" />
@@ -31,7 +31,12 @@ export default defineComponent({
   emits: [...previewEmits, 'change'],
   setup(props, ctx) {
     const { emit } = ctx;
-    const { html, previewEl, handlePreviewClick } = usePreview(ctx);
+    const { html, previewEl, handlePreviewClick } = usePreview();
+
+    const onPreviewClick = (e: Event) => {
+      const result = handlePreviewClick(e);
+      if (result) emit('image-click', result);
+    };
 
     const vMdParser = useVMdParser();
 
@@ -72,7 +77,7 @@ export default defineComponent({
       previewEl,
       previewClass,
       handleTextChange,
-      handlePreviewClick,
+      onPreviewClick,
     };
   },
 });

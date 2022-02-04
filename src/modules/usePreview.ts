@@ -1,4 +1,4 @@
-import { computed, ref, SetupContext } from 'vue';
+import { computed, ref } from 'vue';
 import { LINE_MARKUP, HEADING_MARKUP, ANCHOR_MARKUP } from '@/utils/constants/markup';
 import { getScrollTop } from '@/utils/scroll-top';
 import smoothScroll from '@/utils/smooth-scroll';
@@ -9,7 +9,6 @@ import useEditorMode from './useEditorMode';
 const previewEl = ref<any>();
 const previewTop = ref<number>(0);
 const html = ref<string>();
-const ctx = ref<SetupContext<string[]>>();
 
 const previewScrollTo = (scrollTop: number) => {
   const { scrollTo } = useScrollbar('preview');
@@ -23,15 +22,13 @@ const handlePreviewClick = (e: any) => {
   if (target.tagName === 'IMG') {
     const src = target.getAttribute('src');
 
-    if (!src) return;
+    if (!src) return [];
 
     const imageEls = Array.from(previewEl.value?.querySelectorAll('img') ?? []);
     const images = imageEls.map((el: any) => el.getAttribute('src')).filter((src) => src);
     const imagePreviewInitIndex = imageEls.indexOf(target);
 
-    ctx.value?.emit('image-click', images, imagePreviewInitIndex);
-
-    return;
+    return [images, imagePreviewInitIndex];
   }
 
   const scrollTargetId = target.getAttribute(ANCHOR_MARKUP);
@@ -42,6 +39,8 @@ const handlePreviewClick = (e: any) => {
       target: scrollTarget,
     });
   }
+
+  return false;
 };
 
 const getOffsetTop = (target: Element, container: Element | Window) => {
@@ -89,8 +88,7 @@ const scrollToLine = ({ lineIndex, onScrollEnd }: { lineIndex: number; onScrollE
   }
 };
 
-export default (_ctx?: SetupContext<string[]>) => {
-  ctx.value = _ctx;
+export default () => {
   return {
     html,
     previewEl,
