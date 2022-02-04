@@ -46,13 +46,10 @@ const insert = (
   getInsertContent: (v: string | undefined) => { text: string; selected?: string }
 ) => {
   const {
-    editor: { focus },
+    editor: { getCurrentSelectedStr, replaceSelectionText, changeSelectionTo, focus },
   } = useEditor();
-  focus();
 
-  const {
-    editor: { getCurrentSelectedStr, replaceSelectionText, changeSelectionTo },
-  } = useEditor();
+  focus();
 
   const currentSelectedStr = getCurrentSelectedStr();
   const { selected, text } = getInsertContent(currentSelectedStr);
