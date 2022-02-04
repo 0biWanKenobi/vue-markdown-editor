@@ -6,22 +6,22 @@ import usePreview from './usePreview';
 const scrollToLine = (lineIndex: number) => {
   const { isPreviewMode, isEditMode } = useEditorMode();
   if (isPreviewMode) {
-    editorScrollToLine(lineIndex);
+    _editorScrollToLine(lineIndex);
   }
 
-  if (!isEditMode) {
-    const { ignoreSyncScroll } = useSyncScroll();
-    ignoreSyncScroll.value = true;
-    previewScrollToLine({
-      lineIndex,
-      onScrollEnd: () => {
-        ignoreSyncScroll.value = false;
-      },
-    });
-  }
+  if (isEditMode) return;
+
+  const { ignoreSyncScroll } = useSyncScroll();
+  ignoreSyncScroll.value = true;
+  _previewScrollToLine({
+    lineIndex,
+    onScrollEnd: () => {
+      ignoreSyncScroll.value = false;
+    },
+  });
 };
 
-const editorScrollToLine = (lineIndex: number) => {
+const _editorScrollToLine = (lineIndex: number) => {
   const {
     editor: { heightAtLine, editorScrollToTop },
   } = useEditor();
@@ -30,7 +30,7 @@ const editorScrollToLine = (lineIndex: number) => {
   editorScrollToTop(offsetTop);
 };
 
-const previewScrollToLine = ({
+const _previewScrollToLine = ({
   lineIndex,
   onScrollEnd,
 }: {
@@ -44,7 +44,5 @@ const previewScrollToLine = ({
 export default () => {
   return {
     scrollToLine,
-    editorScrollToLine,
-    previewScrollToLine,
   };
 };
