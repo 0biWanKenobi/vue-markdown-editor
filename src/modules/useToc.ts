@@ -1,34 +1,12 @@
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import useScroll from './useScroll';
 import { LINE_MARKUP } from '@/utils/constants/markup';
-import useVModel from '@/modules/useVModel';
 import type TocTitle from '@/types/tocTitleType';
 import usePreview from './usePreview';
 
 const tocVisible = ref(false);
 const titles = ref<TocTitle[]>([]);
 const tocIncludeLevel = ref<number[]>([2, 3]);
-
-const { text } = useVModel();
-
-let updateTocNavTimer: NodeJS.Timeout;
-
-watch(
-  () => text.value,
-  (_, oldVal) => {
-    // render in the first time
-    if (typeof oldVal === 'undefined') {
-      nextTick(updateTocNav);
-      return;
-    }
-
-    if (updateTocNavTimer) clearTimeout(updateTocNavTimer);
-
-    updateTocNavTimer = setTimeout(updateTocNav, 800);
-  }
-);
-
-const { previewEl } = usePreview();
 
 const anchorsSelector = computed(() =>
   tocIncludeLevel.value?.map((level) => `h${level}`).join(',')
@@ -38,7 +16,9 @@ const toggleToc = (visible = !tocVisible.value) => {
   tocVisible.value = visible;
 };
 
+/** used by toc-nav.vue only */
 const updateTocNav = () => {
+  const { previewEl } = usePreview();
   if (!previewEl.value) return;
 
   const anchors: HTMLElement[] = previewEl.value.querySelectorAll(anchorsSelector.value);
@@ -58,9 +38,8 @@ const updateTocNav = () => {
   }));
 };
 
-const { scrollToLine } = useScroll();
-
 const handleNavClick = ({ lineIndex }: { lineIndex: number }) => {
+  const { scrollToLine } = useScroll();
   scrollToLine(parseInt(lineIndex.toString()));
 };
 

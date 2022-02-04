@@ -14,11 +14,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, nextTick, watch } from 'vue';
+import VueTypes, { array } from 'vue-types';
 import TocTitle from '@/types/tocTitleType';
 import { tocProps } from '@/modules/toc';
 import useToc from '@/modules/useToc';
-import { defineComponent } from 'vue';
-import VueTypes, { array } from 'vue-types';
+import useVModel from '@/modules/useVModel';
 
 export default defineComponent({
   name: 'toc-nav',
@@ -29,7 +30,26 @@ export default defineComponent({
   },
   emits: ['nav-click'],
   setup(props) {
-    useToc(props.includeLevel);
+    const { updateTocNav } = useToc(props.includeLevel);
+
+    const { text } = useVModel();
+
+    let updateTocNavTimer: NodeJS.Timeout;
+
+    watch(
+      () => text.value,
+      (_, oldVal) => {
+        // render in the first time
+        if (typeof oldVal === 'undefined') {
+          nextTick(updateTocNav);
+          return;
+        }
+
+        if (updateTocNavTimer) clearTimeout(updateTocNavTimer);
+
+        updateTocNavTimer = setTimeout(updateTocNav, 800);
+      }
+    );
   },
 });
 </script>
