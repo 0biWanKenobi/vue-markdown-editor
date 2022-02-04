@@ -15,7 +15,7 @@
     </template>
     <template #left-area>
       <scrollbar>
-        <toc-nav :titles="titles" @nav-click="handleNavClick" />
+        <toc-nav />
       </scrollbar>
     </template>
     <template #editor>
@@ -190,7 +190,7 @@ export default defineComponent({
 
     const { toolbar } = toRefs(props);
     const { fullscreen } = useFullscreen(ctx);
-    const { handleNavClick, tocVisible, titles } = useToc();
+    const { tocVisible } = useToc();
     const customSlotButtons = Object.keys(toolbar.value).filter((btn) => toolbar.value[btn].slot);
     const { setLeftToolbarItems, setRightToolbarItems, setCustomToolbarItems } = useToolbarItems();
     const { registerToolbars } = useToolbar();
@@ -212,7 +212,6 @@ export default defineComponent({
       text,
       fullscreen,
       tocVisible,
-      titles,
       currentMode,
       langConfig,
       hasUploadImage,
@@ -220,7 +219,6 @@ export default defineComponent({
       customSlotButtons,
       codemirrorEditorEl,
       handleChange,
-      handleNavClick,
       handlePreviewImageClick,
       handleContainerResize,
       getPreviewScrollContainer,

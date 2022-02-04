@@ -4,7 +4,7 @@
       :style="{
         paddingLeft: `${indent * item.indent}px`,
       }"
-      @click="$emit('nav-click', item)"
+      @click="handleNavClick(item)"
       class="v-md-editor__toc-nav-item"
       v-for="item in titles"
     >
@@ -14,26 +14,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, watch } from 'vue';
-import VueTypes, { array } from 'vue-types';
+import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
+import VueTypes from 'vue-types';
+import { LINE_MARKUP } from '@/utils/constants/markup';
 import TocTitle from '@/types/tocTitleType';
 import { tocProps } from '@/modules/toc';
-import useToc from '@/modules/useToc';
 import useVModel from '@/modules/useVModel';
+import usePreview from '@/modules/usePreview';
+import useScroll from '@/modules/useScroll';
 
 export default defineComponent({
   name: 'toc-nav',
   props: {
-    titles: array<TocTitle>(),
     indent: VueTypes.number.def(16),
     ...tocProps,
   },
   emits: ['nav-click'],
   setup(props) {
-    const { updateTocNav } = useToc(props.includeLevel);
+    const { includeLevel: tocIncludeLevel } = toRefs(props);
 
     const { text } = useVModel();
-
     let updateTocNavTimer: NodeJS.Timeout;
 
     watch(
@@ -50,6 +50,43 @@ export default defineComponent({
         updateTocNavTimer = setTimeout(updateTocNav, 800);
       }
     );
+
+    const titles = ref<TocTitle[]>([]);
+
+    const anchorsSelector = computed(() =>
+      tocIncludeLevel.value?.map((level) => `h${level}`).join(',')
+    );
+
+    const updateTocNav = () => {
+      const { previewEl } = usePreview();
+      if (!previewEl.value) return;
+
+      const anchors: HTMLElement[] = previewEl.value.querySelectorAll(anchorsSelector.value);
+      const filteredTitles = Array.from(anchors).filter((title) => !!title.innerText.trim());
+
+      if (!filteredTitles.length) {
+        titles.value = [];
+        return;
+      }
+
+      const hTags = Array.from(new Set(filteredTitles.map((title) => title.tagName))).sort();
+
+      titles.value = filteredTitles.map((el) => ({
+        title: el.innerText,
+        lineIndex: el.getAttribute(LINE_MARKUP),
+        indent: hTags.indexOf(el.tagName),
+      }));
+    };
+
+    const handleNavClick = ({ lineIndex }: TocTitle) => {
+      const { scrollToLine } = useScroll();
+      lineIndex && scrollToLine(parseInt(lineIndex.toString()));
+    };
+
+    return {
+      titles,
+      handleNavClick,
+    };
   },
 });
 </script>

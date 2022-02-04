@@ -15,7 +15,7 @@
     </template>
     <template #left-area>
       <scrollbar>
-        <toc-nav :titles="titles" @nav-click="handleNavClick" />
+        <toc-nav />
       </scrollbar>
     </template>
     <template #editor>
@@ -176,7 +176,7 @@ export default defineComponent({
     const { handleInput } = useVModel();
 
     useList();
-    const { handleNavClick, tocVisible, titles } = useToc();
+    const { tocVisible } = useToc();
     const { handleEditorScroll } = useSyncScroll();
     const { getPreviewScrollContainer } = usePreview();
     const { fullscreen } = useFullscreen(ctx, { fullscreen: props.defaultFullscreen });
@@ -189,7 +189,6 @@ export default defineComponent({
     );
 
     return {
-      handleNavClick,
       handleEditorScroll,
       handleInput,
       handleDrop,
@@ -206,7 +205,6 @@ export default defineComponent({
       currentMode,
       fullscreen,
       tocVisible,
-      titles,
       langConfig,
       text,
     };
