@@ -3,7 +3,7 @@ import Option from '@/types/OptionType';
 import Install from '@/types/installType';
 import { HotKey } from '@/types/hotKeyType';
 import { smooth } from '@/utils/smooth-scroll';
-import useVModel from '@/modules/useVModel';
+import useText from '@/modules/useText';
 
 import useCodemirror from '@/modules/useCodemirror';
 
@@ -102,7 +102,7 @@ class CodemirrorEditor implements IEditor {
       codemirrorInstance.value.setSelection(curEndLine);
       return;
     }
-    const { text } = useVModel();
+    const { text } = useText();
     const lines = text.value?.split('\n').slice(curStartLine.line, curEndLine.line + 1);
     const startIndex = lines && lines.join('\n').indexOf(selectedText, curStartLine.ch);
     const endIndex = startIndex && startIndex + selectedText.length;

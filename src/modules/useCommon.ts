@@ -4,7 +4,7 @@ import useSyncScroll from './useSyncScroll';
 import useEditor from './useEditor';
 import LifecycleStage from '@/types/lifecycleStage';
 import UploadConfig from '@/types/uploadConfigType';
-import useVModel from './useVModel';
+import useText from './useText';
 import usePreview from './usePreview';
 import useEditorMode from './useEditorMode';
 
@@ -36,7 +36,7 @@ const handlePreviewImageClick = (images: Array<any>, currentIndex: number) => {
 };
 
 const save = () => {
-  const { text } = useVModel();
+  const { text } = useText();
   const { html } = usePreview();
   // emit('save', this.text, this.$refs.preview.html);
   ctx.value?.emit('save', text.value, html.value);

@@ -1,7 +1,7 @@
 import IEditor from '@/interfaces/IEditor';
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
-import useVModel from '@/modules/useVModel';
+import useText from '@/modules/useText';
 import useScrollbar from '@/modules/useScrollbar';
 import useTextarea from '@/modules/useTextarea';
 import { HotKey } from '@/types/hotKeyType';
@@ -10,7 +10,7 @@ class BaseEditor implements IEditor {
   editorFocusEnd = () => {
     const { focus, setRange } = useTextarea();
     focus();
-    const { text } = useVModel();
+    const { text } = useText();
     setRange({
       start: text.value?.length ?? 0,
       end: text.value?.length ?? 0,
@@ -20,7 +20,7 @@ class BaseEditor implements IEditor {
   getCursorLineLeftText = () => {
     const { getRange } = useTextarea();
     const { start, end } = getRange();
-    const { text } = useVModel();
+    const { text } = useText();
     return start === end ? text.value?.slice(0, start).split('\n').pop() ?? null : null;
   };
 
@@ -61,7 +61,7 @@ class BaseEditor implements IEditor {
 
   clear = () => {
     focus();
-    const { handleInput } = useVModel();
+    const { handleInput } = useText();
     handleInput('');
   };
 
@@ -73,7 +73,7 @@ class BaseEditor implements IEditor {
   getCurrentSelectedStr = () => {
     const { getRange } = useTextarea();
     const { start, end } = getRange();
-    const { text } = useVModel();
+    const { text } = useText();
     return end > start ? text.value?.slice(start, end) ?? undefined : undefined;
   };
 
@@ -84,7 +84,7 @@ class BaseEditor implements IEditor {
 
     if (!selectedText || selectedIndexOfStr === -1) return;
 
-    const { text } = useVModel();
+    const { text } = useText();
     const textSliced = text.value?.slice(0, cursorEndIndex) ?? '';
     const insertTextIndex = textSliced.length - insertText.length;
     const rangeStartIndex = insertTextIndex + selectedIndexOfStr;

@@ -73,7 +73,7 @@ import {
   toRefs,
 } from 'vue';
 import useToolbarItems from './modules/useToolbarItems';
-import useVModel from './modules/useVModel';
+import useVModel from './modules/useText';
 import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
 import useEditor from './modules/useEditor';

@@ -19,7 +19,7 @@ import VueTypes from 'vue-types';
 import { LINE_MARKUP } from '@/utils/constants/markup';
 import TocTitle from '@/types/tocTitleType';
 import { tocProps } from '@/modules/toc';
-import useVModel from '@/modules/useVModel';
+import useVModel from '@/modules/useText';
 import usePreview from '@/modules/usePreview';
 import useScroll from '@/modules/useScroll';
 

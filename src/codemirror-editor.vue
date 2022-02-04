@@ -61,7 +61,7 @@ import { toolbarProps } from './modules/toolbar';
 import { editorProps } from './modules/common';
 import { editorComponents } from './modules/editor/editorComponents';
 import { uploadImageProps } from './modules/upload-image';
-import useVModel from './modules/useVModel';
+import useVModel from './modules/useText';
 import useCodemirror from './modules/useCodemirror';
 import useUploadImage from './modules/useUploadImage';
 import useSyncScroll from './modules/useSyncScroll';
