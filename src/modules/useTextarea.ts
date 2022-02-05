@@ -35,17 +35,17 @@ const goHistory = (index: number) => {
 };
 
 const undo = () => {
-  if (historyIndex.value > 0) {
-    historyIndex.value--;
-    goHistory(historyIndex.value);
-  }
+  if (historyIndex.value <= 0) return;
+
+  historyIndex.value--;
+  goHistory(historyIndex.value);
 };
 
 const redo = () => {
-  if (historyIndex.value < historyStack.value.length - 1) {
-    historyIndex.value++;
-    goHistory(historyIndex.value);
-  }
+  if (historyIndex.value >= historyStack.value.length - 1) return;
+
+  historyIndex.value++;
+  goHistory(historyIndex.value);
 };
 
 const registerHotkeys = (config: HotKey) => {
@@ -71,11 +71,11 @@ const setRange = ({ start, end }: { start: number; end: number }) => {
 };
 
 const updateCurrentHistoryRange = () => {
-  if (!timer.value) {
-    updateHistory(historyIndex.value, {
-      range: getRange(),
-    });
-  }
+  if (timer.value) return;
+
+  updateHistory(historyIndex.value, {
+    range: getRange(),
+  });
 };
 
 const updateHistory = (index: number, data: Partial<EditHistory>) => {
