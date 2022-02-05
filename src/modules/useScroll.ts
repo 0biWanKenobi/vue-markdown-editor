@@ -5,11 +5,11 @@ import usePreview from './usePreview';
 
 const scrollToLine = (lineIndex: number) => {
   const { isPreviewMode, isEditMode } = useEditorMode();
-  if (isPreviewMode) {
+  if (isPreviewMode.value) {
     _editorScrollToLine(lineIndex);
   }
 
-  if (isEditMode) return;
+  if (isEditMode.value) return;
 
   const { ignoreSyncScroll } = useSyncScroll();
   ignoreSyncScroll.value = true;

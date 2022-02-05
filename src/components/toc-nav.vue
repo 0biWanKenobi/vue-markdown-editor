@@ -38,16 +38,20 @@ export default defineComponent({
 
     watch(
       () => text.value,
-      (_, oldVal) => {
+      async (_, oldVal) => {
         // render in the first time
         if (typeof oldVal === 'undefined') {
-          nextTick(updateTocNav);
+          await nextTick();
+          updateTocNav();
           return;
         }
 
         if (updateTocNavTimer) clearTimeout(updateTocNavTimer);
 
         updateTocNavTimer = setTimeout(updateTocNav, 800);
+      },
+      {
+        immediate: true,
       }
     );
 
