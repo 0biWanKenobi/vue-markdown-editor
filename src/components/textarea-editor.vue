@@ -16,6 +16,7 @@
       @click="updateCurrentHistoryRange"
       @paste="handlePaste"
       @blur="handleBlur"
+      @keydown="handleKeydown"
       @keydown.tab.prevent
       @keydown.ctrl.z.prevent.exact="undo"
       @keydown.meta.z.prevent.exact="undo"
@@ -31,7 +32,7 @@
 
 <script lang="ts">
 import { isKorean } from '@/utils/util';
-import { defineComponent, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import { defineComponent, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
 import useTextarea from '@/modules/useTextarea';
 
@@ -51,12 +52,6 @@ export default defineComponent({
 
     onMounted(() => {
       saveHistory();
-
-      textareaEl.value?.addEventListener('keydown', handleKeydown, false);
-    });
-
-    onBeforeUnmount(() => {
-      textareaEl.value?.removeEventListener('keydown', handleKeydown, false);
     });
 
     const handleKeydown = (e: KeyboardEvent) => {
@@ -139,6 +134,7 @@ export default defineComponent({
     return {
       isComposing,
       textareaEl,
+      handleKeydown,
       handleCompositionStart,
       handleCompositionUpdate,
       handleCompositionEnd,
