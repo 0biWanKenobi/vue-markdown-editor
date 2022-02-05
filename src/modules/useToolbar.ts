@@ -1,6 +1,5 @@
 import Toolbar from '@/types/toolbarType';
 import * as DefaultToolbarItems from '@/toolbar';
-import Menu from '@/types/toolbarItemMenu';
 
 const toolbars: Record<string, Toolbar> = {};
 
@@ -14,21 +13,8 @@ const addDefaultToolbars = () => {
   }
 };
 
-const handleToolbarItemClick = (itemName: string) => {
-  const toolbarItem = toolbars[itemName];
-  if (
-    toolbarItem.action &&
-    !toolbarItem.menus?.length &&
-    typeof toolbarItem.action === 'function'
-  ) {
-    toolbarItem.action();
-  }
-};
-
-const handleToolbarMenuClick = (menu: Menu) => {
-  if (menu.action && typeof menu.action === 'function') {
-    menu.action();
-  }
+const getToolbarItem = (itemName: string) => {
+  return toolbars[itemName];
 };
 
 const registerToolbars = (toolbarConfig: Record<string, Toolbar>) => {
@@ -45,7 +31,6 @@ export default () => {
     addToolbar,
     addDefaultToolbars,
     registerToolbars,
-    handleToolbarItemClick,
-    handleToolbarMenuClick,
+    getToolbarItem,
   };
 };

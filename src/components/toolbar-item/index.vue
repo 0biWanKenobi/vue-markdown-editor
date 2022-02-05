@@ -79,9 +79,27 @@ export default defineComponent({
   setup(props, { emit }) {
     const menuActive = ref(false);
     const { name, menus, disabledMenus, preventNativeClick } = toRefs(props);
-    const { handleToolbarItemClick, handleToolbarMenuClick } = useToolbar();
+    const { getToolbarItem } = useToolbar();
 
     const isMenusObject = 'items' in (menus.value ?? {});
+
+    const toolbarItem = getToolbarItem(name.value);
+
+    const handleToolbarItemClick = () => {
+      if (
+        toolbarItem.action &&
+        !toolbarItem.menus?.length &&
+        typeof toolbarItem.action === 'function'
+      ) {
+        toolbarItem.action();
+      }
+    };
+
+    const handleToolbarMenuClick = (menu: Menu) => {
+      if (menu.action && typeof menu.action === 'function') {
+        menu.action();
+      }
+    };
 
     const getMenuItems = (menus: Menu[] | undefined) => {
       return (
@@ -126,7 +144,7 @@ export default defineComponent({
         showTooltip(e);
       }
 
-      handleToolbarItemClick(name.value);
+      handleToolbarItemClick();
     };
 
     const handleMenuClick = (m: Menu) => {
