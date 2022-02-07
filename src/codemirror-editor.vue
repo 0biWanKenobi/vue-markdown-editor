@@ -1,6 +1,5 @@
 <template>
   <v-md-container
-    :disabled-menus="disabledMenus"
     :height="height"
     :fullscreen="fullscreen"
     :left-area-visible="tocVisible"
@@ -10,13 +9,22 @@
     @resize="handleContainerResize"
     ref="container"
   >
-    <template v-for="button of customSlotButtons" #[button]="slotData">
-      <slot :name="button" v-bind="slotData" />
-    </template>
     <template #left-area>
       <scrollbar>
         <toc-nav />
       </scrollbar>
+    </template>
+    <template #toolbars>
+      <v-md-editor-toolbars
+        :disabled-menus="disabledMenus"
+        :toolbar="toolbar"
+        :left-toolbar="leftToolbar"
+        :right-toolbar="rightToolbar"
+      >
+        <template v-for="button of customSlotButtons" #[button]="slotData">
+          <slot :name="button" v-bind="slotData" />
+        </template>
+      </v-md-editor-toolbars>
     </template>
     <template #editor>
       <div
@@ -71,11 +79,10 @@ import useToc from './modules/useToc';
 import useLang from './modules/useLang';
 import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
+import VMdEditorToolbars from '@/components/editor-toolbars.vue';
 import VMdContainer from '@/components/container.vue';
 import VMdUploadFile from '@/components/upload-file.vue';
 import Scrollbar from './components/scrollbar/index.vue';
-import useToolbarItems from './modules/useToolbarItems';
-import useToolbar from './modules/useToolbar';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
 
@@ -83,6 +90,7 @@ export default defineComponent({
   name: 'v-md-editor',
   components: {
     VMdContainer,
+    VMdEditorToolbars,
     VMdUploadFile,
     ...editorComponents(),
     Scrollbar,
@@ -192,12 +200,6 @@ export default defineComponent({
     const { fullscreen } = useFullscreen(ctx);
     const { tocVisible } = useToc();
     const customSlotButtons = Object.keys(toolbar.value).filter((btn) => toolbar.value[btn].slot);
-    const { setLeftToolbarItems, setRightToolbarItems, setCustomToolbarItems } = useToolbarItems();
-    const { registerToolbars } = useToolbar();
-    registerToolbars(props.toolbar);
-    setLeftToolbarItems(props.leftToolbar);
-    setRightToolbarItems(props.rightToolbar);
-    setCustomToolbarItems(customSlotButtons);
 
     const handleContainerResize = () => {
       if (!Codemirror) return;

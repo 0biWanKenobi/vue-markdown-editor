@@ -12,6 +12,7 @@
         :menus="getConfig(itemName, 'menus')"
         :prevent-native-click="getConfig(itemName, 'preventNativeClick')"
         :disabled-menus="disabledMenus"
+        @click="onItemClick(itemName)"
       >
         <template #icon>
           <slot :name="itemName" />
@@ -23,12 +24,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 import ToolbarItem from '@/components/toolbar-item/index.vue';
 import useToolbar from '@/modules/useToolbar';
 import Toolbar from '@/types/toolbarType';
-import useToolbarItems from '@/modules/useToolbarItems';
-import { string } from 'vue-types';
+import { array } from 'vue-types';
 
 export default defineComponent({
   name: 'editor-toolbar',
@@ -37,11 +37,14 @@ export default defineComponent({
   },
   props: {
     disabledMenus: Array,
-    toolbarType: string<'left' | 'right'>().isRequired,
+    groups: array<string[]>().isRequired,
   },
-  setup(props) {
+  setup() {
+    const onItemClick = (n: string) => {
+      console.log(n);
+    };
+
     const { toolbars } = useToolbar();
-    const { getToolbarItems } = useToolbarItems();
 
     const getConfig = (itemName: string, configName: keyof Toolbar) => {
       const toolbarConfig = toolbars[itemName];
@@ -50,20 +53,9 @@ export default defineComponent({
       return typeof value === 'function' ? value() : value;
     };
 
-    const toolbarItems = getToolbarItems(props.toolbarType);
-    const getToolbarConfig = (toolbarStr: string) => {
-      return toolbarStr
-        .split('|')
-        .map((group) =>
-          group.split(' ').filter((toolbarName) => toolbarName && toolbars[toolbarName])
-        );
-    };
-    const groups = computed(() => getToolbarConfig(toolbarItems));
-
     return {
-      toolbars,
-      groups,
       getConfig,
+      onItemClick,
     };
   },
 });

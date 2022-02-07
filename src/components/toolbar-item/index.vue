@@ -76,7 +76,8 @@ export default defineComponent({
     disabledMenus: Array,
     preventNativeClick: VueTypes.bool.def(true),
   },
-  setup(props, { emit }) {
+  emits: ['click-item'],
+  setup(props) {
     const menuActive = ref(false);
     const { name, menus, disabledMenus, preventNativeClick } = toRefs(props);
     const { getToolbarItem } = useToolbar();
@@ -135,7 +136,6 @@ export default defineComponent({
 
     const handleItemClick = (e: MouseEvent) => {
       if (preventNativeClick.value) e.stopPropagation();
-      emit('click');
       menuActive.value ? hideMenu() : showMenu();
 
       if (hasMenu.value) {

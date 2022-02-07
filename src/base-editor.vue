@@ -1,6 +1,5 @@
 <template>
   <v-md-container
-    :disabled-menus="disabledMenus"
     :height="height"
     :fullscreen="fullscreen"
     :left-area-visible="tocVisible"
@@ -10,13 +9,22 @@
     @editor-wrapper-click="handleEditorWrapperClick"
     ref="container"
   >
-    <template v-for="button of customSlotButtons" #[button]="slotData">
-      <slot :name="button" v-bind="slotData" />
-    </template>
     <template #left-area>
       <scrollbar>
         <toc-nav />
       </scrollbar>
+    </template>
+    <template #toolbars>
+      <v-md-editor-toolbars
+        :disabled-menus="disabledMenus"
+        :toolbar="toolbar"
+        :left-toolbar="leftToolbar"
+        :right-toolbar="rightToolbar"
+      >
+        <template v-for="button of customSlotButtons" #[button]="slotData">
+          <slot :name="button" v-bind="slotData" />
+        </template>
+      </v-md-editor-toolbars>
     </template>
     <template #editor>
       <scrollbar type="editor" @scroll="handleEditorScroll" ref="editorScrollerEl">
@@ -50,6 +58,7 @@
 </template>
 
 <script lang="ts">
+import VMdEditorToolbars from '@/components/editor-toolbars.vue';
 import TextareaEditor from '@/components/textarea-editor.vue';
 import VMdContainer from '@/components/container.vue';
 import VMdUploadFile from '@/components/upload-file.vue';
@@ -72,7 +81,6 @@ import {
   watch,
   toRefs,
 } from 'vue';
-import useToolbarItems from './modules/useToolbarItems';
 import useVModel from './modules/useText';
 import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
@@ -84,7 +92,6 @@ import useUploadImage from './modules/useUploadImage';
 import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
-import useToolbar from './modules/useToolbar';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
 
@@ -102,14 +109,16 @@ export default defineComponent({
   emits: [...editorEmits, ...vModelEmits, ...fullScreenEmits],
   components: {
     [TextareaEditor.name]: TextareaEditor,
+    VMdEditorToolbars,
     VMdContainer,
     VMdUploadFile,
     ...editorComponents(),
   },
   setup(props, ctx) {
     const textEditorMinHeight = ref<string>();
-
     const containerEl = ref();
+
+    const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
 
     watch(
       () => props.modelValue,
@@ -135,14 +144,6 @@ export default defineComponent({
         immediate: true,
       }
     );
-
-    const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
-    const { setLeftToolbarItems, setRightToolbarItems, setCustomToolbarItems } = useToolbarItems();
-    const { registerToolbars } = useToolbar();
-    registerToolbars(props.toolbar);
-    setLeftToolbarItems(props.leftToolbar);
-    setRightToolbarItems(props.rightToolbar);
-    setCustomToolbarItems(customSlotButtons);
 
     const {
       handleChange,
@@ -200,8 +201,8 @@ export default defineComponent({
       getPreviewScrollContainer,
       handleEditorWrapperClick,
       handlePreviewImageClick,
-      textEditorMinHeight,
       customSlotButtons,
+      textEditorMinHeight,
       currentMode,
       fullscreen,
       tocVisible,

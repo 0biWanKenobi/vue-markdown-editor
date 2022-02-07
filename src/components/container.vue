@@ -33,24 +33,7 @@
     </div>
     <div class="v-md-editor__right-area">
       <div v-show="!isPreviewMode" class="v-md-editor__toolbar" ref="toolbarWrapper">
-        <editor-toolbar
-          class="v-md-editor__toolbar-left"
-          toolbarType="left"
-          :disabled-menus="disabledMenus"
-        >
-          <template v-for="button of leftToolbarCustomSlots" #[button]="slotData">
-            <slot :name="button" v-bind="slotData" />
-          </template>
-        </editor-toolbar>
-        <editor-toolbar
-          class="v-md-editor__toolbar-right"
-          toolbarType="right"
-          :disabled-menus="disabledMenus"
-        >
-          <template v-for="button of rightToolbarCustomSlots" #[button]="slotData">
-            <slot :name="button" v-bind="slotData" />
-          </template>
-        </editor-toolbar>
+        <slot name="toolbars"></slot>
       </div>
       <div class="v-md-editor__main">
         <div
@@ -75,8 +58,6 @@ import Toolbar from '@/components/toolbar.vue';
 import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import { computed, defineComponent, onBeforeUnmount, onMounted, toRefs, ref } from 'vue';
-import useToolbar from '@/modules/useToolbar';
-import useToolbarItems from '@/modules/useToolbarItems';
 import VueTypes from 'vue-types';
 
 export default defineComponent({
@@ -101,30 +82,6 @@ export default defineComponent({
 
     const { fullscreen, height } = toRefs(props);
     const heightGetter = computed(() => (fullscreen.value ? 'auto' : height.value));
-
-    const { toolbars } = useToolbar();
-    const getToolbarConfig = (toolbarStr: string) => {
-      return toolbarStr
-        .split('|')
-        .map((group) =>
-          group.split(' ').filter((toolbarName) => toolbarName && toolbars[toolbarName])
-        );
-    };
-
-    const { leftToolbarItems: leftToolbar, rightToolbarItems: rightToolbar } = useToolbarItems();
-    const leftToolbarGroup = computed(() => getToolbarConfig(leftToolbar.value));
-
-    const leftToolbarCustomSlots = computed(() => {
-      const buttons = leftToolbarGroup.value.flat();
-      return buttons.filter((btn) => !!toolbars[btn].slot);
-    });
-
-    const rightToolbarGroup = computed(() => getToolbarConfig(rightToolbar.value));
-
-    const rightToolbarCustomSlots = computed(() => {
-      const buttons = rightToolbarGroup.value.flat();
-      return buttons.filter((btn) => !!toolbars[btn].slot);
-    });
 
     const { mode } = toRefs(props);
     const isPreviewMode = computed(() => mode.value == EDITOR_MODE.PREVIEW);
@@ -162,10 +119,6 @@ export default defineComponent({
     return {
       toolbarHeight,
       heightGetter,
-      leftToolbarGroup,
-      leftToolbarCustomSlots,
-      rightToolbarGroup,
-      rightToolbarCustomSlots,
       isPreviewMode,
       isEditMode,
       toolbarWrapper,
