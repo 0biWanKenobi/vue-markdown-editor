@@ -27,7 +27,7 @@
       </v-md-editor-toolbars>
     </template>
     <template #editor>
-      <scrollbar type="editor" @scroll="handleEditorScroll" ref="editorScrollerEl">
+      <scrollbar type="editor" @scroll="handleEditorScroll">
         <v-md-textarea-editor
           :model-value="text"
           :min-height="textEditorMinHeight"
@@ -42,7 +42,7 @@
       </scrollbar>
     </template>
     <template #preview>
-      <scrollbar type="preview" ref="previewScrollerEl">
+      <scrollbar type="preview">
         <v-md-preview
           :text="text"
           :tab-size="tabSize"
@@ -53,7 +53,7 @@
         />
       </scrollbar>
     </template>
-    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadImgConfig" ref="uploadFile" />
+    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadImgConfig" />
   </v-md-container>
 </template>
 
