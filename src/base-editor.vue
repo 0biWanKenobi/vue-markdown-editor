@@ -7,7 +7,7 @@
     :left-area-reverse="tocNavPositionRight"
     :mode="currentMode"
     @editor-wrapper-click="handleEditorWrapperClick"
-    ref="container"
+    ref="containerEl"
   >
     <template #left-area>
       <scrollbar>
