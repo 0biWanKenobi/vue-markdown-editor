@@ -68,8 +68,6 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
 
   const uploadConfig = ref<UploadConfig>({});
 
-  const data = {};
-
   const { currentMode } = useEditorMode();
 
   watch(
@@ -86,7 +84,8 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
     () => currentMode.value,
     async (newValue) => {
       if (newValue === EDITOR_MODE.EDITABLE && enableSyncScroll.value) {
-        await nextTick(previewSyncScroll);
+        await nextTick();
+        previewSyncScroll();
       }
     },
     {
@@ -100,7 +99,8 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
 
     const onMounted = async () => {
       if (props?.autofocus) {
-        await nextTick(() => setFocusEnd());
+        await nextTick();
+        setFocusEnd();
       }
     };
 
@@ -108,7 +108,6 @@ const useCommon = (_ctx?: SetupContext<any>, props?: Record<string, any>) => {
   }
 
   return {
-    data,
     uploadConfig,
     setFocusEnd,
     handleChange,
