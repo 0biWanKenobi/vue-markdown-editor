@@ -5,7 +5,8 @@ import useEditor from './useEditor';
 const fullscreen = ref(false);
 
 const handleWindowKeyup = (e: KeyboardEvent) => {
-  if ((e.keyCode === 27 || e.key === 'Escape') && fullscreen.value) {
+  const key = e.key || e.keyCode;
+  if ((key === 'Escape' || key === 27) && fullscreen.value) {
     toggleFullScreen(false);
   }
 };
