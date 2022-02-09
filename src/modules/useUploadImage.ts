@@ -38,18 +38,17 @@ const handlePaste = (e: ClipboardEvent) => {
 };
 
 const emitUploadImage = (e: Event, files: File[]) => {
-  if (hasUploadImage.value && files.length) {
-    e.preventDefault();
+  if (!hasUploadImage.value || !files.length) return;
+  e.preventDefault();
 
-    ctx.value?.emit(
-      'upload-image',
-      e,
-      (imageConfig: any) => {
-        execCommand(image, imageConfig);
-      },
-      files
-    );
-  }
+  ctx.value?.emit(
+    'upload-image',
+    e,
+    (imageConfig: any) => {
+      execCommand(image, imageConfig);
+    },
+    files
+  );
 };
 
 const ctx = ref<SetupContext<string[]> | SetupContext<Record<string, any>>>();
