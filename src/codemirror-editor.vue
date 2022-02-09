@@ -7,7 +7,6 @@
     :left-area-reverse="tocNavPositionRight"
     :mode="currentMode"
     @resize="handleContainerResize"
-    ref="container"
   >
     <template #left-area>
       <scrollbar>
@@ -36,7 +35,7 @@
       />
     </template>
     <template #preview>
-      <scrollbar type="preview" ref="previewScrollerEl">
+      <scrollbar type="preview">
         <v-md-preview
           :text="text"
           :tab-size="tabSize"
@@ -44,11 +43,10 @@
           :before-change="beforePreviewChange"
           @change="handleChange"
           @image-click="handlePreviewImageClick"
-          ref="previewEl"
         />
       </scrollbar>
     </template>
-    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadConfig" ref="uploadFile" />
+    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadConfig" />
   </v-md-container>
 </template>
 
