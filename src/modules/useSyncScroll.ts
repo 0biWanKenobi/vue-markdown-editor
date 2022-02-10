@@ -36,7 +36,9 @@ const previewSyncScroll = () => {
     const { previewScrollTo } = usePreview();
 
     previewScrollTo(scrollHeight - clientHeight);
-  } else {
+    return;
+  }
+
     let currentLine: number | undefined;
     let nextLine: number | undefined;
 
@@ -84,7 +86,6 @@ const previewSyncScroll = () => {
 
     const { previewScrollTo } = usePreview();
     previewScrollTo(newScrollTop);
-  }
 };
 
 const handleEditorScroll = () => {
