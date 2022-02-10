@@ -5,7 +5,6 @@
   :data-line="idx + 1"
 >{{ row || ' ' }}<br></section></pre>
     <textarea
-      ref="textareaEl"
       :value="modelValue"
       :placeholder="placeholder"
       spellcheck="false"
@@ -48,7 +47,7 @@ export default defineComponent({
   emits: ['blur', 'paste', 'update:modelValue'],
   setup(props, ctx) {
     const { emit } = ctx;
-    const { triggerInputBySetHistory, hotkeysManager, textareaEl } = useTextarea(ctx);
+    const { triggerInputBySetHistory, hotkeysManager } = useTextarea(ctx);
 
     onMounted(() => {
       saveHistory();
@@ -133,7 +132,6 @@ export default defineComponent({
 
     return {
       isComposing,
-      textareaEl,
       handleKeydown,
       handleCompositionStart,
       handleCompositionUpdate,

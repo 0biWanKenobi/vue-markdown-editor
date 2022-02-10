@@ -37,7 +37,7 @@
           @drop="handleDrop"
           @paste="handlePaste"
           @blur="handleBlur"
-          ref="editorEngineEl"
+          ref="textareaEl"
         />
       </scrollbar>
     </template>
@@ -94,6 +94,7 @@ import LifecycleStage from './types/lifecycleStage';
 import type BaseEditor from './classes/baseEditor';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
+import useTextarea from './modules/useTextarea';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -117,6 +118,7 @@ export default defineComponent({
   setup(props, ctx) {
     const textEditorMinHeight = ref<string>();
     const containerEl = ref();
+    const { textareaEl } = useTextarea();
 
     const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
 
@@ -201,6 +203,8 @@ export default defineComponent({
       getPreviewScrollContainer,
       handleEditorWrapperClick,
       handlePreviewImageClick,
+      containerEl,
+      textareaEl,
       customSlotButtons,
       textEditorMinHeight,
       currentMode,
