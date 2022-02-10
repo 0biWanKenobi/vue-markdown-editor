@@ -4,13 +4,12 @@ import { LINE_MARKUP } from '@/utils/constants/markup';
 import usePreview from './usePreview';
 import useScrollbar from './useScrollbar';
 
-const syncScroll = ref(true);
 const enableSyncScroll = ref(true);
 const ignoreSyncScroll = ref(true);
 let scrollTimer: NodeJS.Timeout | undefined = undefined;
 
-const toggleSyncScroll = (enabled = !syncScroll.value) => {
-  syncScroll.value = enabled;
+const toggleSyncScroll = (enabled = !enableSyncScroll.value) => {
+  enableSyncScroll.value = enabled;
 };
 
 const previewSyncScroll = () => {
@@ -98,7 +97,6 @@ const handleEditorScroll = () => {
 
 const useSyncScroll = () => {
   return {
-    syncScroll,
     enableSyncScroll,
     ignoreSyncScroll,
     toggleSyncScroll,
