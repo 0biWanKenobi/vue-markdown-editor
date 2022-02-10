@@ -62,7 +62,7 @@ import {
   unref,
   watch,
 } from 'vue';
-import VueTypes from 'vue-types';
+import VueTypes, { object } from 'vue-types';
 import { toolbarProps } from './modules/toolbar';
 import { editorProps } from './modules/common';
 import { editorComponents } from './modules/editor/editorComponents';
@@ -83,6 +83,7 @@ import VMdUploadFile from '@/components/upload-file.vue';
 import Scrollbar from './components/scrollbar/index.vue';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
+import type CodeMirrorCfg from './types/codeMirrorCfgType';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -97,7 +98,7 @@ export default defineComponent({
     ...editorProps,
     ...toolbarProps,
     ...uploadImageProps,
-    codemirrorConfig: Object,
+    codemirrorConfig: object<CodeMirrorCfg>(),
     codemirrorStyleReset: VueTypes.bool.def(true),
     modelValue: VueTypes.string.def(''),
   },
