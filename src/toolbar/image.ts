@@ -31,18 +31,17 @@ export default {
     {
       name: 'upload-image',
       text: () => langConfig.value.uploadImage.toolbar,
-      action() {
+      async action() {
         const { uploadConfig } = useCommon();
         uploadConfig.value = uploadImgConfig.value;
         const { upload } = useUploadFile();
-        nextTick(async () => {
-          const event = await upload();
-          const target = event.target as HTMLInputElement;
-          if (!target.files) return;
-          const files = filesFilter(target.files, uploadImgConfig.value);
+        await nextTick();
+        const event = await upload();
+        const target = event.target as HTMLInputElement;
+        if (!target.files) return;
+        const files = filesFilter(target.files, uploadImgConfig.value);
 
-          emitUploadImage(event, Array.from(files));
-        });
+        emitUploadImage(event, Array.from(files));
       },
     },
   ],
