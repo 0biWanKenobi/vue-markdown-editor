@@ -20,6 +20,6 @@ export default {
   action() {
     const { execCommand } = useCommand();
     const { enableSyncScroll } = useSyncScroll();
-    execCommand(syncScroll, !enableSyncScroll);
+    execCommand(syncScroll, !enableSyncScroll.value);
   },
 };
