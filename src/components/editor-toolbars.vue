@@ -1,46 +1,3 @@
-<script setup lang="ts">
-import EditorToolbar from '@/components/toolbar.vue';
-import useToolbar from '@/modules/useToolbar';
-import { computed, toRefs } from 'vue';
-
-const props = withDefaults(
-  defineProps<{
-    disabledMenus: string[];
-    toolbar: Record<string, any>;
-    leftToolbar: string;
-    rightToolbar: string;
-  }>(),
-  {
-    leftToolbar:
-      'undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code | save',
-    rightToolbar: 'preview toc sync-scroll fullscreen',
-  }
-);
-
-const { toolbars, registerToolbars } = useToolbar();
-registerToolbars(props.toolbar);
-
-const getToolbarConfig = (toolbarStr: string) => {
-  return toolbarStr
-    .split('|')
-    .map((group) => group.split(' ').filter((toolbarName) => toolbarName && toolbars[toolbarName]));
-};
-
-const { leftToolbar, rightToolbar } = toRefs(props);
-const leftToolbarGroup = computed(() => getToolbarConfig(leftToolbar.value));
-
-const leftToolbarCustomSlots = computed(() => {
-  const buttons = leftToolbarGroup.value.flat();
-  return buttons.filter((btn) => !!toolbars[btn].slot);
-});
-
-const rightToolbarGroup = computed(() => getToolbarConfig(rightToolbar.value));
-
-const rightToolbarCustomSlots = computed(() => {
-  const buttons = rightToolbarGroup.value.flat();
-  return buttons.filter((btn) => !!toolbars[btn].slot);
-});
-</script>
 <template>
   <editor-toolbar
     class="v-md-editor__toolbar-left"
@@ -62,3 +19,59 @@ const rightToolbarCustomSlots = computed(() => {
     </template>
   </editor-toolbar>
 </template>
+
+<script lang="ts">
+import EditorToolbar from '@/components/toolbar.vue';
+import useToolbar from '@/modules/useToolbar';
+import Toolbar from '@/types/toolbarType';
+import { computed, defineComponent, toRefs } from 'vue';
+import { array, object, string } from 'vue-types';
+
+export default defineComponent({
+  components: {
+    EditorToolbar,
+  },
+  props: {
+    disabledMenus: array<string>().isRequired,
+    toolbar: object<Record<string, Toolbar>>().isRequired,
+    leftToolbar: string().def(
+      'undo redo clear | h bold italic strikethrough quote | ul ol table hr | link image code | save'
+    ),
+    rightToolbar: string().def('preview toc sync-scroll fullscreen'),
+  },
+  setup(props) {
+    const { toolbars, registerToolbars } = useToolbar();
+    registerToolbars(props.toolbar);
+
+    const getToolbarConfig = (toolbarStr: string) => {
+      return toolbarStr
+        .split('|')
+        .map((group) =>
+          group.split(' ').filter((toolbarName) => toolbarName && toolbars[toolbarName])
+        );
+    };
+
+    const { leftToolbar, rightToolbar } = toRefs(props);
+    const leftToolbarGroup = computed(() => getToolbarConfig(leftToolbar.value));
+
+    const leftToolbarCustomSlots = computed(() => {
+      const buttons = leftToolbarGroup.value.flat();
+      return buttons.filter((btn) => !!toolbars[btn].slot);
+    });
+
+    const rightToolbarGroup = computed(() => getToolbarConfig(rightToolbar.value));
+
+    const rightToolbarCustomSlots = computed(() => {
+      const buttons = rightToolbarGroup.value.flat();
+      return buttons.filter((btn) => !!toolbars[btn].slot);
+    });
+
+    return {
+      leftToolbarGroup,
+      rightToolbarGroup,
+      leftToolbarCustomSlots,
+      rightToolbarCustomSlots,
+    };
+  },
+});
+</script>
