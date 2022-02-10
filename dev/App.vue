@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-md-editor
+    <v-md-root
       v-model="text"
       height="500px"
       autofocus
@@ -13,6 +13,7 @@
       ref="editor"
       :toolbar="customToolbar"
       left-toolbar="undo redo clear | h bold italic quote | ul ol table hr | link image | save | myButton my2ndButton"
+      editor-type="codemirror"
     >
       <template #myButton>
         <select name="opts">
@@ -30,7 +31,7 @@
           alt="Settings SVG Vector"
         />
       </template>
-    </v-md-editor>
+    </v-md-root>
 
     <!-- <v-md-preview-html
       :html="html"

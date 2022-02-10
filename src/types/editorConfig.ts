@@ -1,5 +1,4 @@
 import ThemeConfig from './themeConfigType';
-import type { BaseEditor, CodeMirrorEditor } from '@/editor';
 
 import PluginCreatorParams from './pluginCreationFnParams';
 import LangClassConfig from './langClassConfig';
@@ -37,7 +36,6 @@ type EditorConfig = {
    **/
   editor: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-    instance: typeof BaseEditor | typeof CodeMirrorEditor;
     type: 'base' | 'codemirror';
   };
 

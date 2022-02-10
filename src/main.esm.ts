@@ -26,7 +26,7 @@ const toolbarsConfigured = ref(false);
 const configure = (config: EditorConfig) => {
   const {
     langConfig,
-    editor: { instance: editor, type: editorType },
+    editor: { type: editorType },
     themeConfig,
     Codemirror,
     plugins = [],
@@ -34,8 +34,6 @@ const configure = (config: EditorConfig) => {
 
   langConfig && useLang(langConfig.lang, langConfig.langConfig);
   addLang(CN);
-
-  if (!editor) return false;
 
   const VmdEditor = useEditor(editorType);
 
@@ -71,15 +69,11 @@ const configure = (config: EditorConfig) => {
 const mdEditorPlugin: Plugin = {
   /**
    *
-   * @param vue Vue instance
+   * @param _ Vue instance
    * @param config {Object} markdown editor configuration
    */
-  install: (vue, config: EditorConfig) => {
-    const {
-      editor: { instance: editor },
-    } = config;
-
-    if (configure(config)) vue.component(editor.name, editor);
+  install: (_, config: EditorConfig) => {
+    configure(config);
   },
 };
 

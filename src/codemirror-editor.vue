@@ -1,53 +1,11 @@
 <template>
-  <v-md-container
-    :height="height"
-    :fullscreen="fullscreen"
-    :left-area-visible="tocVisible"
-    :left-area-title="langConfig.toc.title"
-    :left-area-reverse="tocNavPositionRight"
-    :mode="currentMode"
-    @resize="handleContainerResize"
-  >
-    <template #left-area>
-      <scrollbar>
-        <toc-nav />
-      </scrollbar>
-    </template>
-    <template #toolbars>
-      <v-md-editor-toolbars
-        :disabled-menus="disabledMenus"
-        :toolbar="toolbar"
-        :left-toolbar="leftToolbar"
-        :right-toolbar="rightToolbar"
-      >
-        <template v-for="button of customSlotButtons" #[button]="slotData">
-          <slot :name="button" v-bind="slotData" />
-        </template>
-      </v-md-editor-toolbars>
-    </template>
-    <template #editor>
-      <div
-        class="codemirror-wrapper"
-        :class="{
-          'codemirror-reset': codemirrorStyleReset,
-        }"
-        ref="codemirrorEditorEl"
-      />
-    </template>
-    <template #preview>
-      <scrollbar type="preview">
-        <v-md-preview
-          :text="text"
-          :tab-size="tabSize"
-          :scroll-container="getPreviewScrollContainer"
-          :before-change="beforePreviewChange"
-          @change="handleChange"
-          @image-click="handlePreviewImageClick"
-        />
-      </scrollbar>
-    </template>
-    <v-md-upload-file v-if="hasUploadImage" :upload-config="uploadConfig" />
-  </v-md-container>
+  <div
+    class="codemirror-wrapper"
+    :class="{
+      'codemirror-reset': codemirrorStyleReset,
+    }"
+    ref="codemirrorEditorEl"
+  />
 </template>
 
 <script lang="ts">
@@ -62,74 +20,38 @@ import {
   unref,
   watch,
 } from 'vue';
-import VueTypes, { object } from 'vue-types';
-import { toolbarProps } from './modules/toolbar';
-import { editorProps } from './modules/common';
-import { editorComponents } from './modules/editor/editorComponents';
-import { uploadImageProps } from './modules/upload-image';
-import useVModel from './modules/useText';
+import VueTypes from 'vue-types';
 import useCodemirror from './modules/useCodemirror';
-import useUploadImage from './modules/useUploadImage';
 import useSyncScroll from './modules/useSyncScroll';
 import useCommon from './modules/useCommon';
-import useFullscreen from './modules/useFullscreen';
-import useToc from './modules/useToc';
-import useLang from './modules/useLang';
 import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
-import VMdEditorToolbars from '@/components/editor-toolbars.vue';
-import VMdContainer from '@/components/container.vue';
-import VMdUploadFile from '@/components/upload-file.vue';
-import Scrollbar from './components/scrollbar/index.vue';
-import useEditorMode from './modules/useEditorMode';
-import usePreview from './modules/usePreview';
-import type CodeMirrorCfg from './types/codeMirrorCfgType';
+import useUploadImage from './modules/useUploadImage';
+import { codemirrorEditorProps, sharedEditorProps } from './modules/common';
 
 export default defineComponent({
   name: 'v-md-editor',
-  components: {
-    VMdContainer,
-    VMdEditorToolbars,
-    VMdUploadFile,
-    ...editorComponents(),
-    Scrollbar,
-  },
   props: {
-    ...editorProps,
-    ...toolbarProps,
-    ...uploadImageProps,
-    codemirrorConfig: object<CodeMirrorCfg>(),
-    codemirrorStyleReset: VueTypes.bool.def(true),
-    modelValue: VueTypes.string.def(''),
+    ...sharedEditorProps,
+    ...codemirrorEditorProps,
+    text: VueTypes.string.def(''),
   },
   setup(props, ctx) {
     useEditor<CodemirrorEditor>('codemirror', ctx);
 
     const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
 
-    const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
-    const { text, handleInput } = useVModel(modelValue.value);
+    const { codemirrorConfig, text, tabSize, placeholder } = toRefs(props);
 
     const codemirrorEditorEl = ref();
 
-    const { uploadImageConfig } = toRefs(props);
-    const { langConfig } = useLang();
-    const { handleDrop, handlePaste, hasUploadImage } = useUploadImage(
-      ctx,
-      uploadImageConfig.value
-    );
+    const { handleDrop, handlePaste } = useUploadImage();
 
     const { handleEditorScroll } = useSyncScroll();
-    const { getPreviewScrollContainer } = usePreview();
-    const { uploadConfig, handleChange, handleBlur, handlePreviewImageClick } = useCommon(
-      ctx,
-      props
-    );
-
-    const { currentMode } = useEditorMode();
+    const { handleBlur } = useCommon(ctx, props);
 
     watch(
-      () => modelValue.value,
+      () => text.value,
       (v) => {
         if (v !== text.value) {
           text.value = v;
@@ -150,27 +72,27 @@ export default defineComponent({
         );
       await nextTick();
       const instance = new Codemirror(codemirrorEditorEl.value, {
+        tabSize: unref(tabSize),
         lineNumbers: true,
         styleActiveLine: true,
+        value: unref(text),
+        mode: 'markdown',
+        lineWrapping: true,
+        scrollbarStyle: 'overlay',
         autoCloseTags: true,
         matchBrackets: true,
         indentWithTabs: true,
         autoCloseBrackets: true,
-        ...(unref(codemirrorConfig) ?? {}),
-        tabSize: unref(tabSize),
         indentUnit: unref(tabSize),
-        value: unref(text),
         placeholder: unref(placeholder),
-        mode: 'markdown',
-        lineWrapping: true,
-        scrollbarStyle: 'overlay',
+        ...unref(codemirrorConfig),
       });
 
       codemirrorInstance.value = markRaw(instance);
 
       codemirrorInstance.value.on('change', () => {
         const newValue = getValue();
-
+        const { handleInput } = useVModel();
         handleInput(newValue);
       });
 
@@ -195,11 +117,6 @@ export default defineComponent({
       });
     });
 
-    const { toolbar } = toRefs(props);
-    const { fullscreen } = useFullscreen(ctx);
-    const { tocVisible } = useToc();
-    const customSlotButtons = Object.keys(toolbar.value).filter((btn) => toolbar.value[btn].slot);
-
     const handleContainerResize = () => {
       if (!Codemirror) return;
       // 容器大小变化的时候刷新 codemirror 解决滚动条的显示问题
@@ -211,22 +128,15 @@ export default defineComponent({
 
     return {
       text,
-      fullscreen,
-      tocVisible,
-      currentMode,
-      langConfig,
-      hasUploadImage,
-      uploadConfig,
-      customSlotButtons,
       codemirrorEditorEl,
-      handleChange,
-      handlePreviewImageClick,
       handleContainerResize,
-      getPreviewScrollContainer,
     };
   },
 });
 
+function useVModel(): { handleInput: any } {
+  throw new Error('Function not implemented.');
+}
 // createEditor(component);
 
 // export default component;

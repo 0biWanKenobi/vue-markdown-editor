@@ -2,8 +2,7 @@ import App from './App.vue';
 import { createApp } from 'vue';
 import VueMarkdownEditor from '@/main.esm';
 import { EditorConfig } from '@/types';
-import { BaseEditor } from '@/editor';
-import { PreviewHtml } from '@/preview';
+import { Root } from '@/editor';
 import { VuepressTheme } from '@/theme';
 // import { GithubTheme } from '@/theme';
 import { US } from '@/lang';
@@ -42,17 +41,16 @@ import 'codemirror/lib/codemirror.css';
 import CodeMirror from 'codemirror';
 
 const app = createApp(App);
+app.component(Root.name, Root);
 
 app.use(VueMarkdownEditor, <EditorConfig>{
   editor: {
-    instance: BaseEditor,
-    type: 'base',
+    type: 'codemirror',
   },
   langConfig: {
     lang: 'en-US',
     langConfig: US,
   },
-  preview: PreviewHtml,
   Codemirror: CodeMirror,
   themeConfig: {
     config: {
