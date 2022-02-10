@@ -5,7 +5,7 @@ import usePreview from './usePreview';
 import useScrollbar from './useScrollbar';
 
 const enableSyncScroll = ref(true);
-const ignoreSyncScroll = ref(true);
+const ignoreSyncScroll = ref(false);
 let scrollTimer: NodeJS.Timeout | undefined = undefined;
 
 const toggleSyncScroll = (enabled = !enableSyncScroll.value) => {
@@ -38,53 +38,53 @@ const previewSyncScroll = () => {
     return;
   }
 
-    let currentLine: number | undefined;
-    let nextLine: number | undefined;
+  let currentLine: number | undefined;
+  let nextLine: number | undefined;
 
-    for (let i = 0; i < previewLines.length; i++) {
-      const lineNumber = parseInt(previewLines[i]!.getAttribute(LINE_MARKUP)!);
-      const height = heightAtLine(lineNumber - 1, 'local');
+  for (let i = 0; i < previewLines.length; i++) {
+    const lineNumber = parseInt(previewLines[i]!.getAttribute(LINE_MARKUP)!);
+    const height = heightAtLine(lineNumber - 1, 'local');
 
-      if (height < editorScrollTop) {
-        currentLine = lineNumber;
-      } else {
-        nextLine = lineNumber;
-        break;
-      }
+    if (height < editorScrollTop) {
+      currentLine = lineNumber;
+    } else {
+      nextLine = lineNumber;
+      break;
     }
+  }
 
-    let percent = 0;
+  let percent = 0;
 
-    if (currentLine !== nextLine && currentLine && nextLine) {
-      const currentLineTop = heightAtLine(currentLine - 1, 'local');
-      const nextLineTop = heightAtLine(nextLine - 1, 'local');
+  if (currentLine !== nextLine && currentLine && nextLine) {
+    const currentLineTop = heightAtLine(currentLine - 1, 'local');
+    const nextLineTop = heightAtLine(nextLine - 1, 'local');
 
-      percent = (editorScrollTop - currentLineTop) / (nextLineTop - currentLineTop);
-    }
+    percent = (editorScrollTop - currentLineTop) / (nextLineTop - currentLineTop);
+  }
 
-    let newLineTop = 0;
-    let newNextLineTop = previewScrollWrapper.scrollHeight - previewScrollWrapper.clientHeight;
+  let newLineTop = 0;
+  let newNextLineTop = previewScrollWrapper.scrollHeight - previewScrollWrapper.clientHeight;
 
-    if (currentLine) {
-      const lineElement = previewEl.value?.querySelector(`[${LINE_MARKUP}="${currentLine}"]`) as
-        | HTMLElement
-        | null
-        | undefined;
-      lineElement && (newLineTop = lineElement.offsetTop);
-    }
+  if (currentLine) {
+    const lineElement = previewEl.value?.querySelector(`[${LINE_MARKUP}="${currentLine}"]`) as
+      | HTMLElement
+      | null
+      | undefined;
+    lineElement && (newLineTop = lineElement.offsetTop);
+  }
 
-    if (nextLine) {
-      const nextLineElement = previewEl.value?.querySelector(`[${LINE_MARKUP}="${nextLine}"]`) as
-        | HTMLElement
-        | null
-        | undefined;
-      nextLineElement && (newNextLineTop = nextLineElement.offsetTop);
-    }
+  if (nextLine) {
+    const nextLineElement = previewEl.value?.querySelector(`[${LINE_MARKUP}="${nextLine}"]`) as
+      | HTMLElement
+      | null
+      | undefined;
+    nextLineElement && (newNextLineTop = nextLineElement.offsetTop);
+  }
 
-    const newScrollTop = newLineTop + (newNextLineTop - newLineTop) * percent;
+  const newScrollTop = newLineTop + (newNextLineTop - newLineTop) * percent;
 
-    const { previewScrollTo } = usePreview();
-    previewScrollTo(newScrollTop);
+  const { previewScrollTo } = usePreview();
+  previewScrollTo(newScrollTop);
 };
 
 const handleEditorScroll = () => {
