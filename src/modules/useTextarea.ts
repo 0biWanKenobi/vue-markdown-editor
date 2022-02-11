@@ -1,4 +1,4 @@
-import { computed, nextTick, ref, SetupContext } from 'vue';
+import { nextTick, ref, SetupContext } from 'vue';
 import EditHistory from '@/types/editHistoryType';
 import Hotkeys from '@/utils/hotkeys';
 import insertTextAtCursor from 'insert-text-at-cursor';
@@ -10,17 +10,17 @@ const historyIndex = ref(0);
 
 const hotkeysManager = new Hotkeys();
 const textareaEl = ref();
-const textareaHtml = computed(() => textareaEl.value?.$el);
+const textareaCmp = ref();
 const ctx = ref<SetupContext>();
 
 const triggerInputBySetHistory = ref(false);
 
 const focus = () => {
-  textareaHtml.value?.focus();
+  textareaEl.value?.focus();
 };
 
 const insertText = (text: string) => {
-  insertTextAtCursor(textareaHtml.value, text);
+  insertTextAtCursor(textareaEl.value, text);
 };
 
 const goHistory = (index: number) => {
@@ -54,20 +54,20 @@ const registerHotkeys = (config: HotKey) => {
 };
 
 const heightAtLine = (lineIndex: number) => {
-  const el = textareaHtml.value?.querySelector(`section[data-line="${lineIndex}"]`);
+  const el = textareaCmp.value?.$el.querySelector(`section[data-line="${lineIndex}"]`);
 
   return el ? el.offsetTop + el.offsetHeight : 0;
 };
 
 const getRange = () => {
   return {
-    start: textareaHtml.value?.selectionStart,
-    end: textareaHtml.value?.selectionEnd,
+    start: textareaEl.value?.selectionStart,
+    end: textareaEl.value?.selectionEnd,
   };
 };
 
 const setRange = ({ start, end }: { start: number; end: number }) => {
-  textareaHtml.value?.setSelectionRange(start, end);
+  textareaEl.value?.setSelectionRange(start, end);
   updateCurrentHistoryRange();
 };
 
@@ -93,6 +93,7 @@ export default (_ctx?: SetupContext<any>) => {
     historyStack,
     historyIndex,
     hotkeysManager,
+    textareaCmp,
     textareaEl,
     registerHotkeys,
     heightAtLine,

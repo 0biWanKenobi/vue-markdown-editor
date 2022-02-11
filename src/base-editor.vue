@@ -9,7 +9,7 @@
       @drop="handleDrop"
       @paste="handlePaste"
       @blur="handleBlur"
-      ref="textareaEl"
+      ref="textareaCmp"
     />
   </scrollbar>
 </template>
@@ -27,7 +27,6 @@ import { vModelEmits } from './modules/v-model';
 
 import { inBrowser } from '@/utils/util';
 import { defineComponent, nextTick, ref, watch } from 'vue';
-import useVModel from './modules/useText';
 import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
 import useUploadImage from './modules/useUploadImage';
@@ -49,7 +48,7 @@ export default defineComponent({
   setup(props, ctx) {
     const textEditorMinHeight = ref<string>();
     const containerEl = ref();
-    const { textareaEl } = useTextarea();
+    const { textareaCmp } = useTextarea();
 
     watch(
       () => props.height,
@@ -85,7 +84,7 @@ export default defineComponent({
     const { handleDrop, handlePaste } = useUploadImage();
 
     return {
-      textareaEl,
+      textareaCmp,
       handleEditorScroll,
       handleInput,
       handleDrop,

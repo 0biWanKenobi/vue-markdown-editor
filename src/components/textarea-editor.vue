@@ -25,6 +25,7 @@
       @keyup.shift.down.exact="updateCurrentHistoryRange"
       @keyup.shift.left.exact="updateCurrentHistoryRange"
       @keyup.shift.right.exact="updateCurrentHistoryRange"
+      ref="textareaEl"
     />
   </div>
 </template>
@@ -47,7 +48,7 @@ export default defineComponent({
   emits: ['blur', 'paste', 'update:modelValue'],
   setup(props, ctx) {
     const { emit } = ctx;
-    const { triggerInputBySetHistory, hotkeysManager } = useTextarea(ctx);
+    const { triggerInputBySetHistory, hotkeysManager, textareaEl } = useTextarea(ctx);
 
     onMounted(() => {
       saveHistory();
@@ -131,6 +132,7 @@ export default defineComponent({
     const { updateCurrentHistoryRange, undo, redo } = useTextarea();
 
     return {
+      textareaEl,
       isComposing,
       handleKeydown,
       handleCompositionStart,
