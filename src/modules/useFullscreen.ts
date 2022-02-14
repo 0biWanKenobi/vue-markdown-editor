@@ -4,13 +4,6 @@ import useEditor from './useEditor';
 
 const fullscreen = ref(false);
 
-const handleWindowKeyup = (e: KeyboardEvent) => {
-  const key = e.key || e.keyCode;
-  if ((key === 'Escape' || key === 27) && fullscreen.value) {
-    toggleFullScreen(false);
-  }
-};
-
 const toggleFullScreen = (value = !fullscreen.value) => {
   fullscreen.value = value;
   const { 0: html, 1: body }: Record<number, HTMLElement> = document.querySelectorAll('html, body');
@@ -20,16 +13,23 @@ const toggleFullScreen = (value = !fullscreen.value) => {
   html.style.overflow = overflow;
 };
 
-const onMounted = () => {
-  window.addEventListener('keyup', handleWindowKeyup, false);
+const _handleWindowKeyup = (e: KeyboardEvent) => {
+  const key = e.key || e.keyCode;
+  if ((key === 'Escape' || key === 27) && fullscreen.value) {
+    toggleFullScreen(false);
+  }
+};
+
+const _onMounted = () => {
+  window.addEventListener('keyup', _handleWindowKeyup, false);
 
   if (fullscreen.value) {
     toggleFullScreen();
   }
 };
 
-const onBeforeUnmount = () => {
-  window.removeEventListener('keyup', handleWindowKeyup, false);
+const _onBeforeUnmount = () => {
+  window.removeEventListener('keyup', _handleWindowKeyup, false);
 };
 
 const areHooksSaved = ref(false);
@@ -42,8 +42,8 @@ export default (
   if (!areHooksSaved.value) {
     areHooksSaved.value = true;
     const { setLifeCycleHooks } = useEditor();
-    setLifeCycleHooks(LifecycleStage.mounted, onMounted);
-    setLifeCycleHooks(LifecycleStage.beforeUnmount, onBeforeUnmount);
+    setLifeCycleHooks(LifecycleStage.mounted, _onMounted);
+    setLifeCycleHooks(LifecycleStage.beforeUnmount, _onBeforeUnmount);
   }
 
   watch(
@@ -53,7 +53,5 @@ export default (
 
   return {
     fullscreen,
-    handleWindowKeyup,
-    toggleFullScreen,
   };
 };

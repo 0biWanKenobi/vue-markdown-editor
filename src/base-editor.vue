@@ -27,9 +27,10 @@ import { vModelEmits } from './modules/v-model';
 
 import { inBrowser } from '@/utils/util';
 import { defineComponent, nextTick, ref, watch } from 'vue';
-import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
 import useTextarea from './modules/useTextarea';
+import BaseEditor from './classes/baseEditor';
+import IEditor from './interfaces/IEditor';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -44,7 +45,9 @@ export default defineComponent({
     [TextareaEditor.name]: TextareaEditor,
     Scrollbar,
   },
-  setup(props, ctx) {
+  setup(props) {
+    const editor = ref<IEditor>(new BaseEditor());
+
     const textEditorMinHeight = ref<string>();
     const containerEl = ref();
     const { textareaCmp } = useTextarea();
@@ -69,15 +72,12 @@ export default defineComponent({
       }
     );
 
-    const { setFocusEnd: handleEditorWrapperClick } = useCommon(ctx, props);
-
     const { handleEditorScroll } = useSyncScroll();
-    // const { handleDrop, handlePaste } = useUploadImage();
 
     return {
+      editor,
       textareaCmp,
       handleEditorScroll,
-      handleEditorWrapperClick,
       textEditorMinHeight,
     };
   },

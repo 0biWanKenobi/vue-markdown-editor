@@ -1,7 +1,6 @@
 <template>
   <v-md-container
     :height="height"
-    :fullscreen="fullscreen"
     :left-area-visible="tocVisible"
     :left-area-title="langConfig.toc.title"
     :left-area-reverse="tocNavPositionRight"
@@ -35,6 +34,7 @@
             @drop="handleDrop"
             @paste="handlePaste"
             @blur="$emit('blur', $event)"
+            ref="baseEditorComponent"
           />
         </template>
         <template #loading>loading..</template>
@@ -99,12 +99,13 @@ import {
   toRefs,
   defineAsyncComponent,
   ref,
+  provide,
+  shallowRef,
 } from 'vue';
 import useVModel from './modules/useText';
 import useCommon from './modules/useCommon';
 import useEditor from './modules/useEditor';
 import useToc from './modules/useToc';
-import useFullscreen from './modules/useFullscreen';
 import useLang from './modules/useLang';
 import useUploadImage from './modules/useUploadImage';
 import useList from './modules/useList';
@@ -112,6 +113,7 @@ import LifecycleStage from './types/lifecycleStage';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
 import IEditor from './interfaces/IEditor';
+import State, { StateSymbol } from './classes/state';
 
 const BaseEditor = defineAsyncComponent(() => import('@/base-editor.vue'));
 const CodeMirrorEditor = defineAsyncComponent(() => import('@/codemirror-editor.vue'));
@@ -139,12 +141,39 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
-    const editor = ref<IEditor>();
+
+    const stateObj = new State();
+    stateObj.fullScreen.active.value = props.defaultFullscreen;
+    const state = shallowRef<State>(stateObj);
+
+    provide(StateSymbol, state);
 
     watch(
       () => props.modelValue,
       (v) => (text.value = v)
     );
+
+    const baseEditorComponent = ref();
+    const codeMirrorComponent = ref();
+
+    watch(
+      () => [baseEditorComponent.value?.editor, codeMirrorComponent.value?.editor],
+      ([bv, cv]: IEditor[]) => {
+        let editor: IEditor | undefined = undefined;
+        bv != undefined && (editor = bv);
+        cv != undefined && (editor = cv);
+        if (editor) {
+          state.value.editor = editor;
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    const handleContainerResize = () => {
+      codeMirrorComponent.value?.handleContainerResize();
+    };
 
     const { handleChange, handlePreviewImageClick, setFocusEnd } = useCommon(ctx, props);
 
@@ -154,7 +183,7 @@ export default defineComponent({
 
     const { currentMode } = useEditorMode();
 
-    const { modelValue, editorType } = toRefs(props);
+    const { modelValue } = toRefs(props);
     const { text } = useVModel(modelValue.value);
     const { callLifeCycleHooks } = useEditor();
 
@@ -164,7 +193,6 @@ export default defineComponent({
 
     onMounted(() => {
       callLifeCycleHooks(LifecycleStage.mounted);
-      editor.value = editorType.value == 'base' ? BaseEditor.editor : CodeMirrorEditor.editor;
     });
 
     onBeforeUnmount(() => {
@@ -178,16 +206,12 @@ export default defineComponent({
     useList();
     const { tocVisible } = useToc();
     const { getPreviewScrollContainer } = usePreview();
-    const { fullscreen } = useFullscreen(ctx, { fullscreen: props.defaultFullscreen });
+    const fullscreen = state.value?.fullScreen.active;
     const { langConfig } = useLang();
     const { hasUploadImage, uploadImgConfig, handleDrop, handlePaste } = useUploadImage();
 
-    const codeMirrorComponent = ref();
-    const handleContainerResize = () => {
-      codeMirrorComponent.value?.handleContainerResize();
-    };
-
     return {
+      baseEditorComponent,
       codeMirrorComponent,
       hasUploadImage,
       uploadImgConfig,

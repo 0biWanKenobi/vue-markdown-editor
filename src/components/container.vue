@@ -57,8 +57,9 @@
 import Toolbar from '@/components/toolbar.vue';
 import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
-import { computed, defineComponent, onBeforeUnmount, onMounted, toRefs, ref } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, toRefs, ref, inject } from 'vue';
 import VueTypes from 'vue-types';
+import { StateSymbol } from '@/classes/state';
 
 export default defineComponent({
   name: 'v-md-container',
@@ -66,7 +67,6 @@ export default defineComponent({
     [Toolbar.name]: Toolbar,
   },
   props: {
-    fullscreen: Boolean,
     height: String,
     noresize: Boolean,
     disabledMenus: Array,
@@ -79,9 +79,12 @@ export default defineComponent({
   emits: ['resize', 'editor-wrapper-click'],
   setup(props, { emit }) {
     const toolbarHeight = ref(0);
+    const state = inject(StateSymbol)!;
+    const fullscreen = state.value.fullScreen.active;
 
-    const { fullscreen, height } = toRefs(props);
-    const heightGetter = computed(() => (fullscreen.value ? 'auto' : height.value));
+    const { height } = toRefs(props);
+
+    const heightGetter = computed(() => (fullscreen?.value ? 'auto' : height.value));
 
     const { mode } = toRefs(props);
     const isPreviewMode = computed(() => mode.value == EDITOR_MODE.PREVIEW);
@@ -117,6 +120,7 @@ export default defineComponent({
     });
 
     return {
+      fullscreen,
       toolbarHeight,
       heightGetter,
       isPreviewMode,

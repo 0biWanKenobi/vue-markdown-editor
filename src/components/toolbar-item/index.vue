@@ -46,11 +46,12 @@ import Tooltip from './tooltip.vue';
 import VMdMenu from './menu.vue';
 import Clickoutside from '@/utils/clickoutside';
 import MENU_MODE from '@/utils/constants/menu-mode';
-import { computed, defineComponent, ref, toRefs } from 'vue';
+import { computed, defineComponent, inject, ref, toRefs } from 'vue';
 import VueTypes, { oneOfType } from 'vue-types';
 import useToolbar from '@/modules/useToolbar';
 import Position from '@/types/tooltipPositionType';
 import Menu from '@/types/toolbarItemMenu';
+import { StateSymbol } from '@/classes/state';
 
 type MenuObject = {
   items: Menu[];
@@ -81,6 +82,7 @@ export default defineComponent({
     const menuActive = ref(false);
     const { name, menus, disabledMenus, preventNativeClick } = toRefs(props);
     const { getToolbarItem } = useToolbar();
+    const state = inject(StateSymbol)!;
 
     const isMenusObject = 'items' in (menus.value ?? {});
 
@@ -92,7 +94,7 @@ export default defineComponent({
         !toolbarItem.menus?.length &&
         typeof toolbarItem.action === 'function'
       ) {
-        toolbarItem.action();
+        toolbarItem.action(state.value);
       }
     };
 

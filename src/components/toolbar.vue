@@ -24,11 +24,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import ToolbarItem from '@/components/toolbar-item/index.vue';
 import useToolbar from '@/modules/useToolbar';
 import Toolbar from '@/types/toolbarType';
 import { array } from 'vue-types';
+import { StateSymbol } from '@/classes/state';
 
 export default defineComponent({
   name: 'editor-toolbar',
@@ -44,13 +45,15 @@ export default defineComponent({
       console.log(n);
     };
 
+    const state = inject(StateSymbol)!;
+
     const { toolbars } = useToolbar();
 
     const getConfig = (itemName: string, configName: keyof Toolbar) => {
       const toolbarConfig = toolbars[itemName];
       const value = toolbarConfig[configName];
 
-      return typeof value === 'function' ? value() : value;
+      return typeof value === 'function' ? value(state.value) : value;
     };
 
     return {
