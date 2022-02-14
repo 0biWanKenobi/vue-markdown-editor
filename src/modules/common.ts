@@ -39,6 +39,6 @@ export const editorProps = {
   ...baseEditorProps,
 };
 
-export const editorEmits = ['blur', 'change', 'save', 'image-click'];
+export const editorEmits = ['blur', 'drop', 'paste'];
 
 export const shouldInheritAttrs = false;

@@ -30,7 +30,7 @@
       <Suspense v-if="editorType == 'base'">
         <template #default>
           <base-editor
-            :text="text"
+            v-model="text"
             :height="height"
             @drop="handleDrop"
             @paste="handlePaste"
@@ -42,7 +42,7 @@
       <Suspense v-else-if="editorType == 'codemirror'">
         <template #default>
           <code-mirror-editor
-            :text="text"
+            v-model="text"
             :placeholder="placeholder"
             :tab-size="tabSize"
             :codemirror-config="codemirrorConfig"
@@ -111,6 +111,7 @@ import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
+import IEditor from './interfaces/IEditor';
 
 const BaseEditor = defineAsyncComponent(() => import('@/base-editor.vue'));
 const CodeMirrorEditor = defineAsyncComponent(() => import('@/codemirror-editor.vue'));
@@ -126,7 +127,7 @@ export default defineComponent({
     ...fullScreenProps,
     modelValue: String,
   },
-  emits: [...editorEmits, ...vModelEmits, ...fullScreenEmits],
+  emits: [...editorEmits, ...vModelEmits, ...fullScreenEmits, 'change', 'save', 'image-click'],
   components: {
     BaseEditor,
     CodeMirrorEditor,
@@ -137,9 +138,8 @@ export default defineComponent({
     ...editorComponents(),
   },
   setup(props, ctx) {
-    // const containerEl = ref();
-
     const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
+    const editor = ref<IEditor>();
 
     watch(
       () => props.modelValue,
@@ -154,7 +154,7 @@ export default defineComponent({
 
     const { currentMode } = useEditorMode();
 
-    const { modelValue } = toRefs(props);
+    const { modelValue, editorType } = toRefs(props);
     const { text } = useVModel(modelValue.value);
     const { callLifeCycleHooks } = useEditor();
 
@@ -164,6 +164,7 @@ export default defineComponent({
 
     onMounted(() => {
       callLifeCycleHooks(LifecycleStage.mounted);
+      editor.value = editorType.value == 'base' ? BaseEditor.editor : CodeMirrorEditor.editor;
     });
 
     onBeforeUnmount(() => {
@@ -206,6 +207,4 @@ export default defineComponent({
     };
   },
 });
-
-// createEditor(component);
 </script>

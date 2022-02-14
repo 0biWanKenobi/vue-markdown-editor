@@ -1,10 +1,10 @@
 <template>
   <scrollbar type="editor" @scroll="handleEditorScroll">
     <v-md-textarea-editor
-      :model-value="text"
+      :model-value="modelValue"
       :min-height="textEditorMinHeight"
       :placeholder="placeholder"
-      @update:modelValue="handleInput"
+      @update:modelValue="$emit('update:modelValue', $event)"
       @click.stop
       @drop="$emit('drop', $event)"
       @paste="$emit('paste', $event)"
@@ -37,7 +37,7 @@ export default defineComponent({
   props: {
     ...baseEditorProps,
     ...sharedEditorProps,
-    text: String,
+    modelValue: String,
   },
   emits: [...editorEmits, ...vModelEmits],
   components: {

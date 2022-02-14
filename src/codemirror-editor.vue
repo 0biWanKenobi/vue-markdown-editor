@@ -25,34 +25,34 @@ import useCodemirror from './modules/useCodemirror';
 import useSyncScroll from './modules/useSyncScroll';
 import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
-import { codemirrorEditorProps, sharedEditorProps } from './modules/common';
+import { codemirrorEditorProps, editorEmits, sharedEditorProps } from './modules/common';
+import { vModelEmits } from './modules/v-model';
 
 export default defineComponent({
   name: 'v-md-editor',
   props: {
     ...sharedEditorProps,
     ...codemirrorEditorProps,
-    text: VueTypes.string.def(''),
+    modelValue: VueTypes.string.def(''),
   },
+  emits: [...editorEmits, ...vModelEmits],
   setup(props, ctx) {
     const { emit } = ctx;
     useEditor<CodemirrorEditor>('codemirror', ctx);
 
     const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
 
-    const { codemirrorConfig, text, tabSize, placeholder } = toRefs(props);
+    const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
 
     const codemirrorEditorEl = ref();
 
     const { handleEditorScroll } = useSyncScroll();
 
     watch(
-      () => text.value,
+      () => modelValue.value,
       (v) => {
-        if (v !== text.value) {
-          text.value = v;
-          codemirrorInstance.value.setValue(text.value);
-        }
+        emit('update:modelValue', v);
+        codemirrorInstance.value.setValue(v);
       }
     );
 
@@ -71,7 +71,7 @@ export default defineComponent({
         tabSize: unref(tabSize),
         lineNumbers: true,
         styleActiveLine: true,
-        value: unref(text),
+        value: unref(modelValue),
         mode: 'markdown',
         lineWrapping: true,
         scrollbarStyle: 'overlay',
@@ -123,7 +123,6 @@ export default defineComponent({
     };
 
     return {
-      text,
       codemirrorEditorEl,
       handleContainerResize,
     };
