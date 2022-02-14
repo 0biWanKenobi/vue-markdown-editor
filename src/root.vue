@@ -29,7 +29,13 @@
     <template #editor>
       <Suspense v-if="editorType == 'base'">
         <template #default>
-          <base-editor :text="text" :height="height" />
+          <base-editor
+            :text="text"
+            :height="height"
+            @drop="handleDrop"
+            @paste="handlePaste"
+            @blur="$emit('blur', $event)"
+          />
         </template>
         <template #loading>loading..</template>
       </Suspense>
@@ -41,6 +47,9 @@
             :tab-size="tabSize"
             :codemirror-config="codemirrorConfig"
             :codemirror-style-reset="codemirrorStyleReset"
+            @drop="handleDrop"
+            @paste="handlePaste"
+            @blur="$emit('blur', $event)"
             ref="codeMirrorComponent"
           />
         </template>
@@ -170,7 +179,7 @@ export default defineComponent({
     const { getPreviewScrollContainer } = usePreview();
     const { fullscreen } = useFullscreen(ctx, { fullscreen: props.defaultFullscreen });
     const { langConfig } = useLang();
-    const { hasUploadImage, uploadImgConfig } = useUploadImage();
+    const { hasUploadImage, uploadImgConfig, handleDrop, handlePaste } = useUploadImage();
 
     const codeMirrorComponent = ref();
     const handleContainerResize = () => {
@@ -186,6 +195,8 @@ export default defineComponent({
       getPreviewScrollContainer,
       handleEditorWrapperClick,
       handlePreviewImageClick,
+      handleDrop,
+      handlePaste,
       customSlotButtons,
       currentMode,
       fullscreen,

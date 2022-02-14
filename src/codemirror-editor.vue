@@ -23,10 +23,8 @@ import {
 import VueTypes from 'vue-types';
 import useCodemirror from './modules/useCodemirror';
 import useSyncScroll from './modules/useSyncScroll';
-import useCommon from './modules/useCommon';
 import useEditor from './modules/useEditor';
 import type CodemirrorEditor from './classes/codemirrorEditor';
-import useUploadImage from './modules/useUploadImage';
 import { codemirrorEditorProps, sharedEditorProps } from './modules/common';
 
 export default defineComponent({
@@ -37,6 +35,7 @@ export default defineComponent({
     text: VueTypes.string.def(''),
   },
   setup(props, ctx) {
+    const { emit } = ctx;
     useEditor<CodemirrorEditor>('codemirror', ctx);
 
     const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
@@ -45,10 +44,7 @@ export default defineComponent({
 
     const codemirrorEditorEl = ref();
 
-    const { handleDrop, handlePaste } = useUploadImage();
-
     const { handleEditorScroll } = useSyncScroll();
-    const { handleBlur } = useCommon(ctx, props);
 
     watch(
       () => text.value,
@@ -105,15 +101,15 @@ export default defineComponent({
       });
 
       codemirrorInstance.value.on('drop', (_: any, e: DragEvent) => {
-        handleDrop(e);
+        emit('drop', e);
       });
 
       codemirrorInstance.value.on('paste', (_: any, e: ClipboardEvent) => {
-        handlePaste(e);
+        emit('paste', e);
       });
 
       codemirrorInstance.value.on('blur', (_: any, e: Event) => {
-        handleBlur(e);
+        emit('blur', e);
       });
     });
 

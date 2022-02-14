@@ -6,9 +6,9 @@
       :placeholder="placeholder"
       @update:modelValue="handleInput"
       @click.stop
-      @drop="handleDrop"
-      @paste="handlePaste"
-      @blur="handleBlur"
+      @drop="$emit('drop', $event)"
+      @paste="$emit('paste', $event)"
+      @blur="$emit('blur', $event)"
       ref="textareaCmp"
     />
   </scrollbar>
@@ -29,7 +29,6 @@ import { inBrowser } from '@/utils/util';
 import { defineComponent, nextTick, ref, watch } from 'vue';
 import useCommon from './modules/useCommon';
 import useSyncScroll from './modules/useSyncScroll';
-import useUploadImage from './modules/useUploadImage';
 import useTextarea from './modules/useTextarea';
 
 export default defineComponent({
@@ -70,26 +69,14 @@ export default defineComponent({
       }
     );
 
-    const { emit } = ctx;
-
-    const handleBlur = (e: Event) => {
-      emit('blur', e);
-    };
-
     const { setFocusEnd: handleEditorWrapperClick } = useCommon(ctx, props);
 
-    const { handleInput } = useVModel();
-
     const { handleEditorScroll } = useSyncScroll();
-    const { handleDrop, handlePaste } = useUploadImage();
+    // const { handleDrop, handlePaste } = useUploadImage();
 
     return {
       textareaCmp,
       handleEditorScroll,
-      handleInput,
-      handleDrop,
-      handlePaste,
-      handleBlur,
       handleEditorWrapperClick,
       textEditorMinHeight,
     };
