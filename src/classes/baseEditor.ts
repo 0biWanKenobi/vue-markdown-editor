@@ -3,12 +3,30 @@ import Option from '@/types/OptionType';
 import Install from '@/types/installType';
 import useText from '@/modules/useText';
 import useScrollbar from '@/modules/useScrollbar';
-import useTextarea from '@/modules/useTextarea';
 import { HotKey } from '@/types/hotKeyType';
+import TextArea from './textArea';
+import { SetupContext } from 'vue';
+
+export const BaseEditorSymbol = Symbol('BaseEditor');
 
 class BaseEditor implements IEditor {
+  type = BaseEditorSymbol;
+  private _textArea = new TextArea();
+  private ctx!: SetupContext<any>;
+
+  /**
+   *
+   */
+  constructor(ctx?: SetupContext<any>) {
+    ctx && (this.ctx = ctx);
+  }
+
+  public get textArea() {
+    return this._textArea;
+  }
+
   editorFocusEnd = () => {
-    const { focus, setRange } = useTextarea();
+    const { focus, setRange } = this.textArea;
     focus();
     const { text } = useText();
     setRange({
@@ -18,14 +36,14 @@ class BaseEditor implements IEditor {
   };
 
   getCursorLineLeftText = () => {
-    const { getRange } = useTextarea();
+    const { getRange } = this.textArea;
     const { start, end } = getRange();
     const { text } = useText();
     return start === end ? text.value?.slice(0, start).split('\n').pop() ?? null : null;
   };
 
   editorRegisterHotkeys = (...hotkeys: HotKey[]) => {
-    const { registerHotkeys } = useTextarea();
+    const { registerHotkeys } = this.textArea;
     for (let hotKey of hotkeys) registerHotkeys(hotKey);
   };
 
@@ -40,23 +58,25 @@ class BaseEditor implements IEditor {
   };
 
   heightAtLine: (...arg: any[]) => number = (...arg) => {
-    const { heightAtLine } = useTextarea();
+    const { heightAtLine } = this.textArea;
     return heightAtLine(arg[0]);
   };
 
   focus = () => {
-    const { focus } = useTextarea();
+    const { focus } = this.textArea;
     focus();
   };
 
   undo = () => {
-    const { undo } = useTextarea();
-    undo();
+    const { undo } = this.textArea;
+    const oldVal = undo();
+    oldVal && this.ctx.emit('update:modelValue', oldVal);
   };
 
   redo = () => {
-    const { redo } = useTextarea();
-    redo();
+    const { redo } = this.textArea;
+    const oldVal = redo();
+    oldVal && this.ctx.emit('update:modelValue', oldVal);
   };
 
   clear = () => {
@@ -66,19 +86,19 @@ class BaseEditor implements IEditor {
   };
 
   replaceSelectionText = (text: string) => {
-    const { insertText } = useTextarea();
+    const { insertText } = this.textArea;
     insertText(text);
   };
 
   getCurrentSelectedStr = () => {
-    const { getRange } = useTextarea();
+    const { getRange } = this.textArea;
     const { start, end } = getRange();
     const { text } = useText();
     return end > start ? text.value?.slice(start, end) ?? undefined : undefined;
   };
 
   changeSelectionTo = (insertText: string, selectedText: string | undefined) => {
-    const { getRange, setRange } = useTextarea();
+    const { getRange, setRange } = this.textArea;
     const selectedIndexOfStr = selectedText ? insertText.indexOf(selectedText) : -1;
     const cursorEndIndex = getRange().end;
 

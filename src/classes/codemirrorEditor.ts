@@ -6,8 +6,22 @@ import { smooth } from '@/utils/smooth-scroll';
 import useText from '@/modules/useText';
 
 import useCodemirror from '@/modules/useCodemirror';
+import { SetupContext } from 'vue';
+
+export const CodemirrorEditorSymbol = Symbol('CodemirrorEditor');
 
 class CodemirrorEditor implements IEditor {
+  type = CodemirrorEditorSymbol;
+  textArea: any;
+  ctx!: SetupContext;
+
+  /**
+   *
+   */
+  constructor(ctx?: SetupContext<any>) {
+    ctx && (this.ctx = ctx);
+  }
+
   editorFocusEnd = () => {
     const { codemirrorInstance } = useCodemirror();
     codemirrorInstance.value.focus();

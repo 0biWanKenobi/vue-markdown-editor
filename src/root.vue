@@ -112,7 +112,6 @@ import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
-import IEditor from './interfaces/IEditor';
 import State, { StateSymbol } from './classes/state';
 
 const BaseEditor = defineAsyncComponent(() => import('@/base-editor.vue'));
@@ -155,21 +154,6 @@ export default defineComponent({
 
     const baseEditorComponent = ref();
     const codeMirrorComponent = ref();
-
-    watch(
-      () => [baseEditorComponent.value?.editor, codeMirrorComponent.value?.editor],
-      ([bv, cv]: IEditor[]) => {
-        let editor: IEditor | undefined = undefined;
-        bv != undefined && (editor = bv);
-        cv != undefined && (editor = cv);
-        if (editor) {
-          state.value.editor = editor;
-        }
-      },
-      {
-        immediate: true,
-      }
-    );
 
     const handleContainerResize = () => {
       codeMirrorComponent.value?.handleContainerResize();

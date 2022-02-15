@@ -26,11 +26,12 @@ import {
 import { vModelEmits } from './modules/v-model';
 
 import { inBrowser } from '@/utils/util';
-import { defineComponent, nextTick, ref, watch } from 'vue';
+import { defineComponent, inject, nextTick, ref, shallowRef, watch } from 'vue';
 import useSyncScroll from './modules/useSyncScroll';
 import useTextarea from './modules/useTextarea';
 import BaseEditor from './classes/baseEditor';
 import IEditor from './interfaces/IEditor';
+import { StateSymbol } from './classes/state';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -45,8 +46,10 @@ export default defineComponent({
     [TextareaEditor.name]: TextareaEditor,
     Scrollbar,
   },
-  setup(props) {
-    const editor = ref<IEditor>(new BaseEditor());
+  setup(props, ctx) {
+    const editor = shallowRef<IEditor>(new BaseEditor(ctx));
+    const state = inject(StateSymbol)!;
+    state.value.editor = editor.value;
 
     const textEditorMinHeight = ref<string>();
     const containerEl = ref();

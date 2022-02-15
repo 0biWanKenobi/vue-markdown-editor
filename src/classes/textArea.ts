@@ -1,4 +1,4 @@
-import { nextTick, ref, SetupContext } from 'vue';
+import { nextTick, ref } from 'vue';
 import insertTextAtCursor from 'insert-text-at-cursor';
 import type EditHistory from '@/types/editHistoryType';
 import Hotkeys from '@/utils/hotkeys';
@@ -9,9 +9,10 @@ class TextArea {
   private historyStack = ref<Array<EditHistory>>([]);
   private historyIndex = ref(0);
 
-  private hotkeysManager = new Hotkeys();
-  private textareaEl = ref();
-  private triggerInputBySetHistory = ref(false);
+  hotkeysManager = new Hotkeys();
+  textareaEl = ref();
+  textareaCmp = ref();
+  triggerInputBySetHistory = ref(false);
 
   focus = () => {
     this.textareaEl.value?.focus();
@@ -21,30 +22,45 @@ class TextArea {
     insertTextAtCursor(this.textareaEl.value, text);
   };
 
-  private goHistory = (index: number, ctx: SetupContext) => {
+  saveHistory = (v: string | undefined, historyMax: number) => {
+    const range = this.getRange();
+    const history = {
+      value: v,
+      range,
+    };
+
+    this.historyStack.value = this.historyStack.value.slice(0, this.historyIndex.value + 1);
+    this.historyStack.value.push(history);
+    if (this.historyStack.value.length > historyMax) this.historyStack.value.shift();
+    this.historyIndex.value = this.historyStack.value.length - 1;
+  };
+
+  private goHistory = (index: number) => {
     const { value, range } = this.historyStack.value[index];
 
-    ctx.emit('update:modelValue', value);
+    // ctx.emit('update:modelValue', value);
     this.triggerInputBySetHistory.value = true;
 
     nextTick(() => {
       this.triggerInputBySetHistory.value = false;
       this.setRange(range);
     });
+
+    return value ?? '';
   };
 
-  undo = (ctx: SetupContext) => {
-    if (this.historyIndex.value <= 0) return;
+  undo = () => {
+    if (this.historyIndex.value <= 0) return false;
 
     this.historyIndex.value--;
-    this.goHistory(this.historyIndex.value, ctx);
+    return this.goHistory(this.historyIndex.value);
   };
 
-  redo = (ctx: SetupContext) => {
-    if (this.historyIndex.value >= this.historyStack.value.length - 1) return;
+  redo = () => {
+    if (this.historyIndex.value >= this.historyStack.value.length - 1) return false;
 
     this.historyIndex.value++;
-    this.goHistory(this.historyIndex.value, ctx);
+    return this.goHistory(this.historyIndex.value);
   };
 
   registerHotkeys = (config: HotKey) => {

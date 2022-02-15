@@ -32,9 +32,9 @@
 
 <script lang="ts">
 import { isKorean } from '@/utils/util';
-import { defineComponent, onMounted, ref, toRefs, watch } from 'vue';
+import { defineComponent, inject, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
-import useTextarea from '@/modules/useTextarea';
+import { StateSymbol } from '@/classes/state';
 
 export default defineComponent({
   name: 'v-md-textarea-editor',
@@ -48,28 +48,33 @@ export default defineComponent({
   emits: ['blur', 'paste', 'update:modelValue'],
   setup(props, ctx) {
     const { emit } = ctx;
-    const { triggerInputBySetHistory, hotkeysManager, textareaEl } = useTextarea(ctx);
+    const { modelValue, historyMax } = toRefs(props);
+
+    const state = inject(StateSymbol)!;
+    const { saveHistory, textareaEl, updateCurrentHistoryRange } = state.value.editor.textArea!;
 
     onMounted(() => {
-      saveHistory();
+      saveHistory(modelValue.value, historyMax.value);
     });
 
     const handleKeydown = (e: KeyboardEvent) => {
+      const { hotkeysManager } = state.value.editor.textArea!;
       hotkeysManager.dispatch(e);
     };
 
     const isComposing = ref(false);
 
-    const { modelValue } = toRefs(props);
     const timer = ref<NodeJS.Timeout>();
 
     watch(
       () => modelValue.value,
       () => {
         clearTheTimeout();
+        const { triggerInputBySetHistory } = state.value.editor.textArea!;
         if (!triggerInputBySetHistory.value) {
           timer.value = setTimeout(() => {
-            saveHistory();
+            const { saveHistory } = state.value.editor.textArea!;
+            saveHistory(modelValue.value, historyMax.value);
 
             clearTheTimeout();
           }, props.historyDebounce);
@@ -112,24 +117,17 @@ export default defineComponent({
       emit('update:modelValue', (<HTMLInputElement>e.target)?.value);
     };
 
-    const { historyMax } = toRefs(props);
-
-    const { getRange, historyIndex, historyStack } = useTextarea();
-
-    const saveHistory = () => {
-      const range = getRange();
-      const history = {
-        value: modelValue.value,
-        range,
-      };
-
-      historyStack.value = historyStack.value.slice(0, historyIndex.value + 1);
-      historyStack.value.push(history);
-      if (historyStack.value.length > historyMax.value) historyStack.value.shift();
-      historyIndex.value = historyStack.value.length - 1;
+    const areaUndo = () => {
+      const { undo } = state.value.editor.textArea!;
+      const maybeOldVal = undo();
+      maybeOldVal && emit('update:modelValue', maybeOldVal);
     };
 
-    const { updateCurrentHistoryRange, undo, redo } = useTextarea();
+    const areaRedo = () => {
+      const { redo } = state.value.editor.textArea!;
+      const maybeOldVal = redo();
+      maybeOldVal && emit('update:modelValue', maybeOldVal);
+    };
 
     return {
       textareaEl,
@@ -142,8 +140,8 @@ export default defineComponent({
       updateCurrentHistoryRange,
       handlePaste,
       handleBlur,
-      undo,
-      redo,
+      undo: areaUndo,
+      redo: areaRedo,
     };
   },
 });

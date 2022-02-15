@@ -11,11 +11,13 @@
 <script lang="ts">
 import {
   defineComponent,
+  inject,
   markRaw,
   nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
+  shallowRef,
   toRefs,
   unref,
   watch,
@@ -23,10 +25,11 @@ import {
 import VueTypes from 'vue-types';
 import useCodemirror from './modules/useCodemirror';
 import useSyncScroll from './modules/useSyncScroll';
-import useEditor from './modules/useEditor';
-import type CodemirrorEditor from './classes/codemirrorEditor';
+import CodemirrorEditor from './classes/codemirrorEditor';
 import { codemirrorEditorProps, editorEmits, sharedEditorProps } from './modules/common';
 import { vModelEmits } from './modules/v-model';
+import IEditor from './interfaces/IEditor';
+import { StateSymbol } from './classes/state';
 
 export default defineComponent({
   name: 'v-md-editor',
@@ -38,7 +41,9 @@ export default defineComponent({
   emits: [...editorEmits, ...vModelEmits],
   setup(props, ctx) {
     const { emit } = ctx;
-    useEditor<CodemirrorEditor>('codemirror', ctx);
+    const editor = shallowRef<IEditor>(new CodemirrorEditor());
+    const state = inject(StateSymbol)!;
+    state.value.editor = editor.value;
 
     const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
 
