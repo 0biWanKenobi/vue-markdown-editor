@@ -6,12 +6,22 @@ import useScrollbar from '@/modules/useScrollbar';
 import { HotKey } from '@/types/hotKeyType';
 import TextArea from './textArea';
 import { SetupContext } from 'vue';
+import ScrollBar from './scrollBar';
 
 export const BaseEditorSymbol = Symbol('BaseEditor');
 
 class BaseEditor implements IEditor {
   type = BaseEditorSymbol;
   private _textArea = new TextArea();
+  public get textArea() {
+    return this._textArea;
+  }
+
+  private _scrollBar = new ScrollBar('editor');
+  public get scrollBar() {
+    return this._scrollBar;
+  }
+
   private ctx!: SetupContext<any>;
 
   /**
@@ -19,10 +29,6 @@ class BaseEditor implements IEditor {
    */
   constructor(ctx?: SetupContext<any>) {
     ctx && (this.ctx = ctx);
-  }
-
-  public get textArea() {
-    return this._textArea;
   }
 
   editorFocusEnd = () => {
@@ -48,12 +54,12 @@ class BaseEditor implements IEditor {
   };
 
   editorScrollToTop = (scrollTop: number) => {
-    const { scrollTo } = useScrollbar('editor');
+    const { scrollTo } = this.scrollBar;
     scrollTo(scrollTop);
   };
 
   getScrollInfo = () => {
-    const { getScrollInfo } = useScrollbar('editor');
+    const { getScrollInfo } = this.scrollBar;
     return getScrollInfo();
   };
 

@@ -41,9 +41,11 @@ export default defineComponent({
   emits: [...editorEmits, ...vModelEmits],
   setup(props, ctx) {
     const { emit } = ctx;
-    const editor = shallowRef<IEditor>(new CodemirrorEditor());
+    const editorObj = new CodemirrorEditor();
+    const editor = shallowRef<IEditor>(editorObj);
     const state = inject(StateSymbol)!;
     state.value.editor = editor.value;
+    const codemirrorInstance = editorObj.codemirrorInstance;
 
     const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
 

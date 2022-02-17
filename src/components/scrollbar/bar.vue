@@ -1,7 +1,7 @@
 <script lang="tsx">
 // Modified from https://github.com/ElemeFE/element/tree/dev/packages/scrollbar
-import useScrollbar from '@/modules/useScrollbar';
-import { computed, defineComponent, toRefs, onUnmounted, ref } from 'vue';
+import { StateSymbol } from '@/classes/state';
+import { computed, defineComponent, toRefs, onUnmounted, ref, inject } from 'vue';
 import VueTypes, { string } from 'vue-types';
 import { renderThumbStyle, BAR_MAP } from './util';
 
@@ -20,8 +20,8 @@ export default defineComponent({
     const rootEl = ref();
     const thumbEl = ref();
 
-    //  return this.$parent.wrapEl;
-    const { wrapEl } = useScrollbar(type.value);
+    const state = inject(StateSymbol)!;
+    const wrapEl = state.value.getScrollbar(type.value).wrapEl;
 
     const axes: {
       ['X']?: any;

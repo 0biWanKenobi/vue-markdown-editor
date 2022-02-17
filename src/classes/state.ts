@@ -2,7 +2,7 @@ import IEditor from '@/interfaces/IEditor';
 import { InjectionKey, Ref } from 'vue';
 import { BaseEditorSymbol } from './baseEditor';
 import FullScreen from './fullScreen';
-import TextArea from './textArea';
+import ScrollBar from './scrollBar';
 
 export const StateSymbol: InjectionKey<Ref<State>> = Symbol('State');
 
