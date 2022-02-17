@@ -1,5 +1,5 @@
 import IEditor from '@/interfaces/IEditor';
-import { InjectionKey, Ref } from 'vue';
+import type BaseEditor from './baseEditor';
 import { BaseEditorSymbol } from './baseEditor';
 import FullScreen from './fullScreen';
 import ScrollBar from './scrollBar';
@@ -12,6 +12,10 @@ class State {
   editor!: IEditor;
   fullScreen = new FullScreen();
   hotkeysManager = new Hotkeys();
+  private get baseEditor() {
+    return this.editor as BaseEditor;
+  }
+
   get textArea() {
     return this.editor.type == BaseEditorSymbol ? this.baseEditor.textArea : undefined;
   }
