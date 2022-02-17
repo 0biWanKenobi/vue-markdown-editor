@@ -1,3 +1,4 @@
+import type State from '@/classes/state';
 import { HotKey } from '@/types/hotKeyType';
 import { keyCodesToName, KeyName, keyNames } from './key-codes';
 
@@ -13,7 +14,7 @@ class Hotkeys {
     };
   }
 
-  dispatch(e: KeyboardEvent) {
+  dispatch(e: KeyboardEvent, state: State) {
     const keyName: string = this.getKeyName(e).toString().toLowerCase();
     let opt;
 
@@ -36,7 +37,7 @@ class Hotkeys {
 
       if (preventDefault) e.preventDefault();
 
-      action(e);
+      action(state);
     }
   }
 

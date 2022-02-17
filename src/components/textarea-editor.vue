@@ -64,8 +64,8 @@ export default defineComponent({
     });
 
     const handleKeydown = (e: KeyboardEvent) => {
-      const { hotkeysManager } = state.value.editor.textArea!;
-      hotkeysManager.dispatch(e);
+      const { hotkeysManager } = state.value;
+      hotkeysManager.dispatch(e, state.value);
     };
 
     const isComposing = ref(false);

@@ -104,7 +104,7 @@ export default defineComponent({
       });
 
       codemirrorInstance.value.on('keydown', (_: any, e: KeyboardEvent) => {
-        hotkeysManager.dispatch(e);
+        hotkeysManager.dispatch(e, state.value);
       });
 
       codemirrorInstance.value.on('drop', (_: any, e: DragEvent) => {
