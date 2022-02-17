@@ -6,6 +6,7 @@ import VueTypes, { string, instanceOf, object } from 'vue-types';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import EDITOR_MODE_TYPE from '@/types/editorMode';
 import CodeMirrorCfg from '@/types/codeMirrorCfgType';
+import type CodeMirror from '@/types/codeMirrorInstance';
 
 const rootProps = {
   theme: Object,
@@ -22,6 +23,7 @@ export const codemirrorEditorProps = {
   tabSize: VueTypes.number.def(2),
   codemirrorConfig: object<CodeMirrorCfg | {}>().def({}),
   codemirrorStyleReset: VueTypes.bool.def(true),
+  CodeMirror: object<CodeMirror>(),
 };
 
 export const baseEditorProps = {

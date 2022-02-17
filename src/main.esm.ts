@@ -5,7 +5,6 @@ import useLangModule from './modules/useLang';
 import { CN } from '@/lang/index';
 
 import EditorConfig, { ThemeConfigOption } from '@/types/editorConfig';
-import useCodemirror from '@/modules/useCodemirror';
 
 import useVMdParser from './modules/useVMdParser';
 import useEditor from './modules/useEditor';
@@ -27,7 +26,6 @@ const configure = (config: EditorConfig) => {
     langConfig,
     editor: { type: editorType },
     themeConfig,
-    Codemirror,
     plugins = [],
   } = config;
 
@@ -53,10 +51,6 @@ const configure = (config: EditorConfig) => {
 
   for (const pluginConfig of plugins) {
     VmdEditor.editor.use(pluginConfig.plugin, pluginConfig.params);
-  }
-
-  if (Codemirror) {
-    useCodemirror(Codemirror);
   }
 
   return true;

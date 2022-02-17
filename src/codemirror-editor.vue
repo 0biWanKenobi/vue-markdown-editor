@@ -23,7 +23,6 @@ import {
   watch,
 } from 'vue';
 import VueTypes from 'vue-types';
-import useCodemirror from './modules/useCodemirror';
 import useSyncScroll from './modules/useSyncScroll';
 import CodemirrorEditor from './classes/codemirrorEditor';
 import { codemirrorEditorProps, editorEmits, sharedEditorProps } from './modules/common';
@@ -49,7 +48,7 @@ export default defineComponent({
 
     const { hotkeysManager } = state.value;
 
-    const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
+    const { CodeMirror, codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
 
     const codemirrorEditorEl = ref();
 
@@ -69,12 +68,12 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      if (!Codemirror)
+      if (!CodeMirror.value)
         return console.error(
           '1.5.0与2.1.0版本之后Codemirror将由用户自己配置，请配置Codemirror，如何配置请参考相关文档'
         );
       await nextTick();
-      const instance = new Codemirror(codemirrorEditorEl.value, {
+      const instance = new CodeMirror.value(codemirrorEditorEl.value, {
         tabSize: unref(tabSize),
         lineNumbers: true,
         styleActiveLine: true,
@@ -121,7 +120,7 @@ export default defineComponent({
     });
 
     const handleContainerResize = () => {
-      if (!Codemirror) return;
+      if (!CodeMirror) return;
       // 容器大小变化的时候刷新 codemirror 解决滚动条的显示问题
       codemirrorInstance.value.refresh();
     };

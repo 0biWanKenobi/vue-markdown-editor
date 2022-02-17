@@ -47,6 +47,7 @@
             :tab-size="tabSize"
             :codemirror-config="codemirrorConfig"
             :codemirror-style-reset="codemirrorStyleReset"
+            :code-mirror="CodeMirror"
             @drop="handleDrop"
             @paste="handlePaste"
             @blur="$emit('blur', $event)"
@@ -112,6 +113,8 @@ import LifecycleStage from './types/lifecycleStage';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
 import State, { StateSymbol } from './classes/state';
+import { object } from 'vue-types';
+import type CodeMirror from '@/types/codeMirrorInstance';
 
 const BaseEditor = defineAsyncComponent(() => import('@/base-editor.vue'));
 const CodeMirrorEditor = defineAsyncComponent(() => import('@/codemirror-editor.vue'));
@@ -126,6 +129,7 @@ export default defineComponent({
     ...uploadImageProps,
     ...fullScreenProps,
     modelValue: String,
+    CodeMirror: object<CodeMirror>(),
   },
   emits: [...editorEmits, ...vModelEmits, ...fullScreenEmits, 'change', 'save', 'image-click'],
   components: {
