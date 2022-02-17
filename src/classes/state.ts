@@ -40,6 +40,30 @@ class State {
         this._genericScrollbar ??= new ScrollBar();
         return this._genericScrollbar;
   }
+  }
+
+  insert = (getInsertContent: (v: string | undefined) => { text: string; selected?: string }) => {
+    const { getCurrentSelectedStr, replaceSelectionText, changeSelectionTo, focus } = this.editor;
+
+    focus();
+
+    const currentSelectedStr = getCurrentSelectedStr();
+    const { selected, text } = getInsertContent(currentSelectedStr);
+
+    replaceSelectionText(text);
+
+    nextTick().then(() => {
+      changeSelectionTo(text, selected);
+    });
+  };
+
+  setFocusEnd = () => {
+    const { previewScrollTo } = usePreview();
+
+    this.editor.editorFocusEnd();
+    this.editor.editorScrollToTop(9999);
+    previewScrollTo(9999);
+  };
 }
 
 export default State;

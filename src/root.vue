@@ -69,7 +69,7 @@
           :tab-size="tabSize"
           :scroll-container="getPreviewScrollContainer"
           :before-change="beforePreviewChange"
-          @change="handleChange"
+          @change="$emit('change', $event)"
           @image-click="handlePreviewImageClick"
         />
       </scrollbar>
@@ -104,7 +104,6 @@ import {
   shallowRef,
 } from 'vue';
 import useVModel from './modules/useText';
-import useCommon from './modules/useCommon';
 import useEditor from './modules/useEditor';
 import useToc from './modules/useToc';
 import useLang from './modules/useLang';
@@ -142,6 +141,7 @@ export default defineComponent({
     ...editorComponents(),
   },
   setup(props, ctx) {
+    const { emit } = ctx;
     const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
 
     const stateObj = new State();
@@ -162,10 +162,12 @@ export default defineComponent({
       codeMirrorComponent.value?.handleContainerResize();
     };
 
-    const { handleChange, handlePreviewImageClick, setFocusEnd } = useCommon(ctx, props);
+    const handlePreviewImageClick = (images: Array<any>, currentIndex: number) => {
+      emit('image-click', images, currentIndex);
+    };
 
     const handleEditorWrapperClick = () => {
-      props.editorType == 'base' && setFocusEnd();
+      props.editorType == 'base' && state.value.setFocusEnd();
     };
 
     const { currentMode } = useEditorMode();
@@ -179,6 +181,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
+      handleEditorWrapperClick();
       callLifeCycleHooks(LifecycleStage.mounted);
     });
 
@@ -202,7 +205,6 @@ export default defineComponent({
       hasUploadImage,
       uploadImgConfig,
       handleContainerResize,
-      handleChange,
       getPreviewScrollContainer,
       handleEditorWrapperClick,
       handlePreviewImageClick,
