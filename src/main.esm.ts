@@ -11,7 +11,6 @@ import useVMdParser from './modules/useVMdParser';
 import useEditor from './modules/useEditor';
 import useCommand from './modules/useCommand';
 import useToolbar from './modules/useToolbar';
-import useHotkeys from './modules/useHotkeys';
 
 const { use: useLang, add: addLang } = useLangModule();
 
@@ -36,9 +35,6 @@ const configure = (config: EditorConfig) => {
   addLang(CN);
 
   const VmdEditor = useEditor(editorType);
-
-  const { scheduleOnMounted } = useHotkeys();
-  scheduleOnMounted();
 
   if (!themeConfig) return false;
   configTheme(themeConfig);

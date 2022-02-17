@@ -1,7 +1,6 @@
 import IEditor from '@/interfaces/IEditor';
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
-import { HotKey } from '@/types/hotKeyType';
 import { smooth } from '@/utils/smooth-scroll';
 import useText from '@/modules/useText';
 
@@ -35,11 +34,6 @@ class CodemirrorEditor implements IEditor {
     if (startLine !== endLine || startCh !== endCh) return;
 
     return this.codemirrorInstance.value.getLine(startLine).slice(0, startCh);
-  };
-
-  editorRegisterHotkeys = (arg: HotKey) => {
-    const { hotkeysManager } = useCodemirror();
-    hotkeysManager.registerHotkeys(arg);
   };
 
   editorScrollToTop = (scrollTop: number) => {

@@ -2,8 +2,6 @@ import IEditor from '@/interfaces/IEditor';
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
 import useText from '@/modules/useText';
-import useScrollbar from '@/modules/useScrollbar';
-import { HotKey } from '@/types/hotKeyType';
 import TextArea from './textArea';
 import { SetupContext } from 'vue';
 import ScrollBar from './scrollBar';
@@ -46,11 +44,6 @@ class BaseEditor implements IEditor {
     const { start, end } = getRange();
     const { text } = useText();
     return start === end ? text.value?.slice(0, start).split('\n').pop() ?? null : null;
-  };
-
-  editorRegisterHotkeys = (...hotkeys: HotKey[]) => {
-    const { registerHotkeys } = this.textArea;
-    for (let hotKey of hotkeys) registerHotkeys(hotKey);
   };
 
   editorScrollToTop = (scrollTop: number) => {

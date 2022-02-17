@@ -47,7 +47,7 @@ export default defineComponent({
     state.value.editor = editor.value;
     const codemirrorInstance = editorObj.codemirrorInstance;
 
-    const { Codemirror, codemirrorInstance, hotkeysManager } = useCodemirror();
+    const { hotkeysManager } = state.value;
 
     const { codemirrorConfig, modelValue, tabSize, placeholder } = toRefs(props);
 

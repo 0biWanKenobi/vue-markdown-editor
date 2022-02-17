@@ -108,7 +108,6 @@ import useEditor from './modules/useEditor';
 import useToc from './modules/useToc';
 import useLang from './modules/useLang';
 import useUploadImage from './modules/useUploadImage';
-import useList from './modules/useList';
 import LifecycleStage from './types/lifecycleStage';
 import useEditorMode from './modules/useEditorMode';
 import usePreview from './modules/usePreview';
@@ -187,7 +186,6 @@ export default defineComponent({
       callLifeCycleHooks(LifecycleStage.unmounted);
     });
 
-    useList();
     const { tocVisible } = useToc();
     const { getPreviewScrollContainer } = usePreview();
     const fullscreen = state.value?.fullScreen.active;

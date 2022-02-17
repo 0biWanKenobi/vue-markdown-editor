@@ -1,13 +1,10 @@
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
-import type TextArea from '@/classes/textArea';
 
 interface IEditor {
-  textArea: TextArea | undefined;
   type: Symbol;
   editorFocusEnd: () => void;
   getCursorLineLeftText: () => string | null;
-  editorRegisterHotkeys: (...arg: any[]) => void;
   editorScrollToTop: (scrollTop: number) => void;
   getScrollInfo: () => {
     clientHeight: number;

@@ -1,15 +1,11 @@
 import { nextTick, ref } from 'vue';
 import insertTextAtCursor from 'insert-text-at-cursor';
 import type EditHistory from '@/types/editHistoryType';
-import Hotkeys from '@/utils/hotkeys';
-import { HotKey } from '@/types/hotKeyType';
 
 class TextArea {
   private timer = ref<NodeJS.Timeout>();
   private historyStack = ref<Array<EditHistory>>([]);
   private historyIndex = ref(0);
-
-  hotkeysManager = new Hotkeys();
   textareaEl = ref();
   textareaCmp = ref();
   triggerInputBySetHistory = ref(false);
@@ -61,10 +57,6 @@ class TextArea {
 
     this.historyIndex.value++;
     return this.goHistory(this.historyIndex.value);
-  };
-
-  registerHotkeys = (config: HotKey) => {
-    this.hotkeysManager.registerHotkeys(config);
   };
 
   heightAtLine = (lineIndex: number) => {

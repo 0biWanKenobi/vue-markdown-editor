@@ -36,6 +36,12 @@ import { defineComponent, inject, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
 import { StateSymbol } from '@/classes/state';
 
+const ol = /^\s*([\d]+\.)( \[[ xX]])? /;
+const ul = /^\s*([-*])( \[[ xX]])? /;
+
+const ulSyntax = /([*-] |[\d]+\. )/;
+const olSyntax = /([\d])+\.( \[[ xX]])? /;
+
 export default defineComponent({
   name: 'v-md-textarea-editor',
   props: {
@@ -128,6 +134,49 @@ export default defineComponent({
       const maybeOldVal = redo();
       maybeOldVal && emit('update:modelValue', maybeOldVal);
     };
+
+    state.value.hotkeysManager.registerHotkeys({
+      key: 'enter',
+      preventDefault: false,
+      action: (e: any) => {
+        if (isComposing.value) return;
+
+        const {
+          editor: { getCursorLineLeftText, replaceSelectionText },
+        } = state.value;
+
+        const cursorLineLeftText = getCursorLineLeftText();
+        let suffix;
+        let syntax;
+
+        if (cursorLineLeftText && ol.test(cursorLineLeftText)) {
+          suffix = 'x. ';
+          syntax = olSyntax;
+
+          e.preventDefault();
+        } else if (cursorLineLeftText && ul.test(cursorLineLeftText)) {
+          suffix = '- ';
+          syntax = ulSyntax;
+
+          e.preventDefault();
+        } else {
+          return;
+        }
+
+        const indent = cursorLineLeftText.search(syntax);
+        const suffixIndex = indent + suffix.length;
+        let beforeText = cursorLineLeftText.slice(0, suffixIndex);
+        const content = cursorLineLeftText.slice(suffixIndex, cursorLineLeftText.length);
+
+        if (content) {
+          if (suffix === 'x. ') {
+            beforeText = beforeText.replace(/(\d+)/, (parseInt(beforeText) + 1).toString());
+          }
+
+          replaceSelectionText(`\n${beforeText}`, 'end');
+        }
+      },
+    });
 
     return {
       textareaEl,
