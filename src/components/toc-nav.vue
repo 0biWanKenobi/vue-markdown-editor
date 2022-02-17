@@ -14,14 +14,14 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref, toRefs, watch } from 'vue';
+import { computed, defineComponent, inject, nextTick, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
 import { LINE_MARKUP } from '@/utils/constants/markup';
 import TocTitle from '@/types/tocTitleType';
 import { tocProps } from '@/modules/toc';
 import useVModel from '@/modules/useText';
-import usePreview from '@/modules/usePreview';
 import useScroll from '@/modules/useScroll';
+import { StateSymbol } from '@/classes/state';
 
 export default defineComponent({
   name: 'toc-nav',
@@ -61,8 +61,10 @@ export default defineComponent({
       tocIncludeLevel.value?.map((level) => `h${level}`).join(',')
     );
 
+    const state = inject(StateSymbol)!;
+
     const updateTocNav = () => {
-      const { previewEl } = usePreview();
+      const { previewEl } = state.value.preview;
       if (!previewEl.value) return;
 
       const anchors: HTMLElement[] = previewEl.value.querySelectorAll(anchorsSelector.value);

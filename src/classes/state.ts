@@ -1,4 +1,6 @@
 import IEditor from '@/interfaces/IEditor';
+import Preview from './preview';
+import { InjectionKey, nextTick, Ref } from 'vue';
 import type BaseEditor from './baseEditor';
 import { BaseEditorSymbol } from './baseEditor';
 import FullScreen from './fullScreen';
@@ -12,6 +14,9 @@ class State {
   editor!: IEditor;
   fullScreen = new FullScreen();
   hotkeysManager = new Hotkeys();
+
+  readonly preview = new Preview();
+
   private get baseEditor() {
     return this.editor as BaseEditor;
   }
@@ -39,7 +44,7 @@ class State {
       default:
         this._genericScrollbar ??= new ScrollBar();
         return this._genericScrollbar;
-  }
+    }
   }
 
   insert = (getInsertContent: (v: string | undefined) => { text: string; selected?: string }) => {
@@ -58,11 +63,9 @@ class State {
   };
 
   setFocusEnd = () => {
-    const { previewScrollTo } = usePreview();
-
     this.editor.editorFocusEnd();
     this.editor.editorScrollToTop(9999);
-    previewScrollTo(9999);
+    this.preview.previewScrollTo(9999);
   };
 }
 

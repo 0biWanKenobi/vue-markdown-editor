@@ -110,7 +110,6 @@ import useLang from './modules/useLang';
 import useUploadImage from './modules/useUploadImage';
 import LifecycleStage from './types/lifecycleStage';
 import useEditorMode from './modules/useEditorMode';
-import usePreview from './modules/usePreview';
 import State, { StateSymbol } from './classes/state';
 import { object } from 'vue-types';
 import type CodeMirror from '@/types/codeMirrorInstance';
@@ -194,7 +193,7 @@ export default defineComponent({
     });
 
     const { tocVisible } = useToc();
-    const { getPreviewScrollContainer } = usePreview();
+    const { getPreviewScrollContainer } = stateObj.preview;
     const fullscreen = state.value?.fullScreen.active;
     const { langConfig } = useLang();
     const { hasUploadImage, uploadImgConfig, handleDrop, handlePaste } = useUploadImage();

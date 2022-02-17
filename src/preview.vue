@@ -12,13 +12,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, toRefs, watch } from 'vue';
+import { computed, defineComponent, inject, toRefs, watch } from 'vue';
 import xss from '@/utils/xss/index';
-import usePreview from './modules/usePreview';
 import { previewProps, previewEmits } from '@/modules/preview';
 import useVMdParser from './modules/useVMdParser';
 import VueTypes from 'vue-types';
 import useLang from '@/modules/useLang';
+import { StateSymbol } from './classes/state';
 
 export default defineComponent({
   name: 'v-md-preview',
@@ -31,7 +31,8 @@ export default defineComponent({
   emits: [...previewEmits, 'change'],
   setup(props, ctx) {
     const { emit } = ctx;
-    const { html, previewEl, handlePreviewClick } = usePreview();
+    const state = inject(StateSymbol)!;
+    const { html, previewEl, handlePreviewClick } = state.value.preview;
 
     const onPreviewClick = (e: Event) => {
       const result = handlePreviewClick(e);
