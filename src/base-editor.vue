@@ -28,7 +28,6 @@ import { vModelEmits } from './modules/v-model';
 import { inBrowser } from '@/utils/util';
 import { defineComponent, inject, nextTick, ref, shallowRef, watch } from 'vue';
 import useSyncScroll from './modules/useSyncScroll';
-import useTextarea from './modules/useTextarea';
 import BaseEditor from './classes/baseEditor';
 import IEditor from './interfaces/IEditor';
 import { StateSymbol } from './classes/state';
@@ -53,7 +52,7 @@ export default defineComponent({
 
     const textEditorMinHeight = ref<string>();
     const containerEl = ref();
-    const { textareaCmp } = useTextarea();
+    const { textareaCmp } = state.value.textArea!;
 
     watch(
       () => props.height,
