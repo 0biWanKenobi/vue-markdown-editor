@@ -57,7 +57,7 @@ export default defineComponent({
     const { modelValue, historyMax } = toRefs(props);
 
     const state = inject(StateSymbol)!;
-    const { saveHistory, textareaEl, updateCurrentHistoryRange } = state.value.editor.textArea!;
+    const { saveHistory, textareaEl, updateCurrentHistoryRange } = state.value.textArea!;
 
     onMounted(() => {
       saveHistory(modelValue.value, historyMax.value);
@@ -76,10 +76,10 @@ export default defineComponent({
       () => modelValue.value,
       () => {
         clearTheTimeout();
-        const { triggerInputBySetHistory } = state.value.editor.textArea!;
+        const { triggerInputBySetHistory } = state.value.textArea!;
         if (!triggerInputBySetHistory.value) {
           timer.value = setTimeout(() => {
-            const { saveHistory } = state.value.editor.textArea!;
+            const { saveHistory } = state.value.textArea!;
             saveHistory(modelValue.value, historyMax.value);
 
             clearTheTimeout();
@@ -124,13 +124,13 @@ export default defineComponent({
     };
 
     const areaUndo = () => {
-      const { undo } = state.value.editor.textArea!;
+      const { undo } = state.value.textArea!;
       const maybeOldVal = undo();
       maybeOldVal && emit('update:modelValue', maybeOldVal);
     };
 
     const areaRedo = () => {
-      const { redo } = state.value.editor.textArea!;
+      const { redo } = state.value.textArea!;
       const maybeOldVal = redo();
       maybeOldVal && emit('update:modelValue', maybeOldVal);
     };
