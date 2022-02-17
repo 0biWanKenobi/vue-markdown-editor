@@ -19,6 +19,11 @@ class TextArea {
   };
 
   saveHistory = (v: string | undefined, historyMax: number) => {
+    if (this.triggerInputBySetHistory.value) {
+      this.triggerInputBySetHistory.value = false;
+      return;
+    }
+
     const range = this.getRange();
     const history = {
       value: v,
@@ -33,12 +38,9 @@ class TextArea {
 
   private goHistory = (index: number) => {
     const { value, range } = this.historyStack.value[index];
-
-    // ctx.emit('update:modelValue', value);
     this.triggerInputBySetHistory.value = true;
 
     nextTick(() => {
-      this.triggerInputBySetHistory.value = false;
       this.setRange(range);
     });
 
