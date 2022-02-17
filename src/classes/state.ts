@@ -19,9 +19,26 @@ class State {
   get textArea() {
     return this.editor.type == BaseEditorSymbol ? this.baseEditor.textArea : undefined;
   }
+
+  private _previewScrollbar!: ScrollBar;
+  private _genericScrollbar!: ScrollBar;
+
   constructor() {
     for (const hotKey of Object.values(HotkeyList)) this.hotkeysManager.registerHotkeys(hotKey);
   }
+
+  getScrollbar(type: 'editor' | 'preview' | undefined) {
+    switch (type) {
+      case 'editor':
+        return this.baseEditor.scrollBar;
+
+      case 'preview':
+        this._previewScrollbar ??= new ScrollBar('preview');
+        return this._previewScrollbar;
+
+      default:
+        this._genericScrollbar ??= new ScrollBar();
+        return this._genericScrollbar;
   }
 }
 
