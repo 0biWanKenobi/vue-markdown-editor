@@ -56,7 +56,6 @@ class TextArea {
 
   redo = () => {
     if (this.historyIndex.value >= this.historyStack.value.length - 1) return false;
-
     this.historyIndex.value++;
     return this.goHistory(this.historyIndex.value);
   };
@@ -82,12 +81,12 @@ class TextArea {
   updateCurrentHistoryRange = () => {
     if (this.timer.value) return;
 
-    this.updateHistory(this.historyIndex.value, {
+    this._updateHistory(this.historyIndex.value, {
       range: this.getRange(),
     });
   };
 
-  updateHistory = (index: number, data: Partial<EditHistory>) => {
+  private _updateHistory = (index: number, data: Partial<EditHistory>) => {
     const history = this.historyStack.value[index];
 
     if ('value' in data) history.value = data.value;
