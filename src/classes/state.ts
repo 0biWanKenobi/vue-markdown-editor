@@ -11,11 +11,13 @@ import EDITOR_MODE from '@/utils/constants/editor-mode';
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
 import PluginCreatorParams from '@/types/pluginCreationFnParams';
+import { VMdParser } from '@/utils/v-md-parser';
 
 export const StateSymbol: InjectionKey<Ref<State>> = Symbol('State');
 
 class State {
-  editor!: IEditor;
+  readonly editor!: IEditor;
+  readonly parser: VMdParser;
 
   currentMode = ref(EDITOR_MODE.EDITABLE);
   isPreviewMode = computed(() => this.currentMode.value === EDITOR_MODE.PREVIEW);
@@ -39,6 +41,7 @@ class State {
   constructor() {
     for (const hotKey of Object.values(HotkeyList)) this.hotkeysManager.registerHotkeys(hotKey);
     this.preview = new Preview(this.isPreviewMode);
+    this.parser = new VMdParser();
   }
 
   use(optionsOrInstall: Option | Install, opt?: any) {
