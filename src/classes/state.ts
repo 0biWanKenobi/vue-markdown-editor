@@ -25,7 +25,6 @@ class State {
     return this.editor.type == BaseEditorSymbol ? this.baseEditor.textArea : undefined;
   }
 
-  private _previewScrollbar!: ScrollBar;
   private _genericScrollbar!: ScrollBar;
 
   constructor() {
@@ -39,8 +38,7 @@ class State {
         return this.baseEditor.scrollBar;
 
       case 'preview':
-        this._previewScrollbar ??= new ScrollBar('preview');
-        return this._previewScrollbar;
+        return this.preview.scrollBar;
 
       default:
         this._genericScrollbar ??= new ScrollBar();
