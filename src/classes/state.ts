@@ -8,6 +8,9 @@ import ScrollBar from './scrollBar';
 import Hotkeys from '@/utils/hotkeys';
 import * as HotkeyList from '@/hotkeys';
 import EDITOR_MODE from '@/utils/constants/editor-mode';
+import Option from '@/types/OptionType';
+import Install from '@/types/installType';
+import PluginCreatorParams from '@/types/pluginCreationFnParams';
 
 export const StateSymbol: InjectionKey<Ref<State>> = Symbol('State');
 
@@ -37,6 +40,26 @@ class State {
     for (const hotKey of Object.values(HotkeyList)) this.hotkeysManager.registerHotkeys(hotKey);
     this.preview = new Preview(this.isPreviewMode);
   }
+
+  use(optionsOrInstall: Option | Install, opt?: any) {
+    if (typeof optionsOrInstall === 'function') {
+      optionsOrInstall(this, opt);
+    } else {
+      (<Install>optionsOrInstall).install(this, opt);
+    }
+    return this;
+  }
+
+  installPlugins = (
+    plugins: Array<{
+      plugin: Install;
+      params?: PluginCreatorParams;
+    }>
+  ) => {
+    for (const pluginConfig of plugins) {
+      this.use(pluginConfig.plugin, pluginConfig.params);
+    }
+  };
 
   getScrollbar(type: 'editor' | 'preview' | undefined) {
     switch (type) {
