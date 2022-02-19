@@ -1,10 +1,9 @@
-import { computed, ref } from 'vue';
+import { computed, ComputedRef, ref } from 'vue';
 import { LINE_MARKUP, HEADING_MARKUP, ANCHOR_MARKUP } from '@/utils/constants/markup';
 import { getScrollTop } from '@/utils/scroll-top';
 import smoothScroll from '@/utils/smooth-scroll';
 import ScrollToTargetParams from '@/types/scrollToTargetParams';
 import ScrollBar from './scrollBar';
-import useEditorMode from '@/modules/useEditorMode';
 
 class Preview {
   previewEl = ref<any>();
@@ -12,6 +11,11 @@ class Preview {
   html = ref<string>();
 
   readonly scrollBar = new ScrollBar('preview');
+  private readonly isPreviewMode: ComputedRef<boolean>;
+
+  constructor(isPreviewMode: ComputedRef<boolean>) {
+    this.isPreviewMode = isPreviewMode;
+  }
 
   previewScrollTo = (scrollTop: number) => {
     const { scrollTo } = this.scrollBar;
@@ -62,9 +66,8 @@ class Preview {
 
   getPreviewScrollContainer = computed(() => {
     const { wrapEl } = this.scrollBar;
-    const { isPreviewMode } = useEditorMode();
     const previewScrollContainer = wrapEl.value;
-    const defaultContainer = isPreviewMode.value ? window : previewScrollContainer;
+    const defaultContainer = this.isPreviewMode.value ? window : previewScrollContainer;
 
     return this.propScrollContainer ? this.propScrollContainer() : defaultContainer;
   });

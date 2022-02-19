@@ -1,17 +1,23 @@
 import IEditor from '@/interfaces/IEditor';
 import Preview from './preview';
-import { InjectionKey, nextTick, Ref } from 'vue';
+import { computed, InjectionKey, nextTick, ref, Ref } from 'vue';
 import type BaseEditor from './baseEditor';
 import { BaseEditorSymbol } from './baseEditor';
 import FullScreen from './fullScreen';
 import ScrollBar from './scrollBar';
 import Hotkeys from '@/utils/hotkeys';
 import * as HotkeyList from '@/hotkeys';
+import EDITOR_MODE from '@/utils/constants/editor-mode';
 
 export const StateSymbol: InjectionKey<Ref<State>> = Symbol('State');
 
 class State {
   editor!: IEditor;
+
+  currentMode = ref(EDITOR_MODE.EDITABLE);
+  isPreviewMode = computed(() => this.currentMode.value === EDITOR_MODE.PREVIEW);
+  isEditMode = computed(() => this.currentMode.value === EDITOR_MODE.EDIT);
+  isEditableMode = computed(() => this.currentMode.value === EDITOR_MODE.EDITABLE);
   fullScreen = new FullScreen();
   hotkeysManager = new Hotkeys();
 
@@ -29,7 +35,7 @@ class State {
 
   constructor() {
     for (const hotKey of Object.values(HotkeyList)) this.hotkeysManager.registerHotkeys(hotKey);
-    this.preview = new Preview();
+    this.preview = new Preview(this.isPreviewMode);
   }
 
   getScrollbar(type: 'editor' | 'preview' | undefined) {
