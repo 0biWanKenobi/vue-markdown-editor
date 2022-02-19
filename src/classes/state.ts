@@ -15,7 +15,7 @@ class State {
   fullScreen = new FullScreen();
   hotkeysManager = new Hotkeys();
 
-  readonly preview = new Preview();
+  readonly preview: Preview;
 
   private get baseEditor() {
     return this.editor as BaseEditor;
@@ -30,6 +30,7 @@ class State {
 
   constructor() {
     for (const hotKey of Object.values(HotkeyList)) this.hotkeysManager.registerHotkeys(hotKey);
+    this.preview = new Preview();
   }
 
   getScrollbar(type: 'editor' | 'preview' | undefined) {
