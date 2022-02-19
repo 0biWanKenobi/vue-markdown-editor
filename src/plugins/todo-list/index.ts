@@ -4,7 +4,6 @@ import parser from './parser';
 import useLang from '@/modules/useLang';
 import useCommand from '@/modules/useCommand';
 import useToolbar from '@/modules/useToolbar';
-import useHotkeys from '@/modules/useHotkeys';
 import useVMdParser from '@/modules/useVMdParser';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
 
@@ -26,20 +25,19 @@ const createTodoListPlugin: PluginCreatorFn = (
   });
 
   return {
-    install() {
+    install(state) {
       //if (VMdEditor.name === 'v-md-editor') {
       const { registerCommand, execCommand } = useCommand();
       const { addToolbar } = useToolbar();
-      const { registerHotkeys } = useHotkeys();
       const lang = useLang();
 
       registerCommand(name!, commandHandler);
       addToolbar(toolbar);
-      registerHotkeys({
+      state.hotkeysManager.registerHotkeys({
         modifier: 'ctrlShift',
         key: 'u',
         action() {
-          execCommand(name!);
+          execCommand(name!, state);
         },
       });
       lang.add({
