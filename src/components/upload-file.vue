@@ -12,16 +12,14 @@
 
 <script lang="ts">
 import useUploadFile from '@/modules/useUploadFile';
+import UploadConfig from '@/types/uploadConfigType';
 import { defineComponent } from 'vue';
 import { object } from 'vue-types';
 
 export default defineComponent({
   name: 'v-md-upload-file',
   props: {
-    uploadConfig: object<{
-      accept?: string;
-      multiple?: boolean | 'true' | 'false';
-    }>().isRequired,
+    uploadConfig: object<UploadConfig>().isRequired,
   },
   setup() {
     const { key, handleUpload, fileInputEl } = useUploadFile();

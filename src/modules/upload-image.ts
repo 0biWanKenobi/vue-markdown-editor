@@ -1,7 +1,9 @@
 import UploadFile from '@/components/upload-file.vue';
+import UploadConfig from '@/types/uploadConfigType';
+import { object } from 'vue-types';
 
 export const uploadImageProps = {
-  uploadImageConfig: Object,
+  uploadImageConfig: object<UploadConfig>(),
 };
 
 export const uploadImageEmits = ['upload-image'];
