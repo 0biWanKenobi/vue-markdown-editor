@@ -1,15 +1,15 @@
 import IEditor from '@/interfaces/IEditor';
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
-import useText from '@/modules/useText';
 import TextArea from './textArea';
-import { SetupContext } from 'vue';
+import { ref, SetupContext } from 'vue';
 import ScrollBar from './scrollBar';
 
 export const BaseEditorSymbol = Symbol('BaseEditor');
 
 class BaseEditor implements IEditor {
   type = BaseEditorSymbol;
+  text = ref('');
 
   private _textArea: TextArea;
   public get textArea() {
@@ -29,20 +29,18 @@ class BaseEditor implements IEditor {
   }
 
   editorFocusEnd = () => {
-    const { focus, setRange } = this.textArea;
-    focus();
-    const { text } = useText();
+    const { setRange } = this.textArea;
+    this.focus();
     setRange({
-      start: text.value?.length ?? 0,
-      end: text.value?.length ?? 0,
+      start: this.text.value?.length ?? 0,
+      end: this.text.value?.length ?? 0,
     });
   };
 
   getCursorLineLeftText = () => {
     const { getRange } = this.textArea;
     const { start, end } = getRange();
-    const { text } = useText();
-    return start === end ? text.value?.slice(0, start).split('\n').pop() ?? null : null;
+    return start === end ? this.text.value?.slice(0, start).split('\n').pop() ?? null : null;
   };
 
   editorScrollToTop = (scrollTop: number) => {
@@ -61,8 +59,7 @@ class BaseEditor implements IEditor {
   };
 
   focus = () => {
-    const { focus } = this.textArea;
-    focus();
+    this.textArea.focus();
   };
 
   undo = () => {
@@ -78,9 +75,9 @@ class BaseEditor implements IEditor {
   };
 
   clear = () => {
-    focus();
-    const { handleInput } = useText();
-    handleInput('');
+    this.focus();
+    this.text.value = '';
+    this.ctx.emit('update:modelValue', '');
   };
 
   replaceSelectionText = (text: string) => {
@@ -91,8 +88,7 @@ class BaseEditor implements IEditor {
   getCurrentSelectedStr = () => {
     const { getRange } = this.textArea;
     const { start, end } = getRange();
-    const { text } = useText();
-    return end > start ? text.value?.slice(start, end) ?? undefined : undefined;
+    return end > start ? this.text.value?.slice(start, end) ?? undefined : undefined;
   };
 
   changeSelectionTo = (insertText: string, selectedText: string | undefined) => {
@@ -102,8 +98,7 @@ class BaseEditor implements IEditor {
 
     if (!selectedText || selectedIndexOfStr === -1) return;
 
-    const { text } = useText();
-    const textSliced = text.value?.slice(0, cursorEndIndex) ?? '';
+    const textSliced = this.text.value?.slice(0, cursorEndIndex) ?? '';
     const insertTextIndex = textSliced.length - insertText.length;
     const rangeStartIndex = insertTextIndex + selectedIndexOfStr;
     const rangeEndIndex = rangeStartIndex + selectedText.length;
