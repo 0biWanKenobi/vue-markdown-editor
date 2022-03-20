@@ -16,7 +16,7 @@ import { VMdParser } from '@/utils/v-md-parser';
 export const StateSymbol: InjectionKey<Ref<State>> = Symbol('State');
 
 class State {
-  readonly editor!: IEditor;
+  text = ref<string | undefined>('');
   readonly parser: VMdParser;
 
   currentMode = ref(EDITOR_MODE.EDITABLE);
@@ -27,6 +27,22 @@ class State {
   hotkeysManager = new Hotkeys();
 
   readonly preview: Preview;
+  private _editor!: IEditor;
+
+  get editor() {
+    return this._editor;
+  }
+
+  set editor(e: IEditor) {
+    this._editor = e;
+    watch(
+      () => this.text.value,
+      (v) => (this._editor.text.value = v),
+      {
+        immediate: true,
+      }
+    );
+  }
 
   private get baseEditor() {
     return this.editor as BaseEditor;

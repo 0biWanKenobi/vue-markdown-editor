@@ -2,7 +2,6 @@ import IEditor from '@/interfaces/IEditor';
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
 import { smooth } from '@/utils/smooth-scroll';
-import useText from '@/modules/useText';
 
 import { ref, SetupContext } from 'vue';
 
@@ -10,6 +9,7 @@ export const CodemirrorEditorSymbol = Symbol('CodemirrorEditor');
 
 class CodemirrorEditor implements IEditor {
   type = CodemirrorEditorSymbol;
+  text = ref('');
   ctx!: SetupContext;
 
   readonly codemirrorInstance = ref();
@@ -95,8 +95,8 @@ class CodemirrorEditor implements IEditor {
       this.codemirrorInstance.value.setSelection(curEndLine);
       return;
     }
-    const { text } = useText();
-    const lines = text.value?.split('\n').slice(curStartLine.line, curEndLine.line + 1);
+
+    const lines = this.text.value?.split('\n').slice(curStartLine.line, curEndLine.line + 1);
     const startIndex = lines && lines.join('\n').indexOf(selectedText, curStartLine.ch);
     const endIndex = startIndex && startIndex + selectedText.length;
 
