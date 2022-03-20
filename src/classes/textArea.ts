@@ -66,7 +66,7 @@ class TextArea {
   };
 
   heightAtLine = (lineIndex: number) => {
-    const el = this.textareaEl.value?.querySelector(`section[data-line="${lineIndex}"]`);
+    const el = this.textareaCmp.value?.$el?.querySelector(`section[data-line="${lineIndex}"]`);
 
     return el ? el.offsetTop + el.offsetHeight : 0;
   };
