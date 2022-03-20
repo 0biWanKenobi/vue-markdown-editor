@@ -10,7 +10,8 @@ export const BaseEditorSymbol = Symbol('BaseEditor');
 
 class BaseEditor implements IEditor {
   type = BaseEditorSymbol;
-  private _textArea = new TextArea();
+
+  private _textArea: TextArea;
   public get textArea() {
     return this._textArea;
   }
@@ -22,11 +23,9 @@ class BaseEditor implements IEditor {
 
   private ctx!: SetupContext<any>;
 
-  /**
-   *
-   */
-  constructor(ctx?: SetupContext<any>) {
-    ctx && (this.ctx = ctx);
+  constructor(ctx: SetupContext<any>) {
+    this.ctx = ctx;
+    this._textArea = new TextArea(ctx);
   }
 
   editorFocusEnd = () => {

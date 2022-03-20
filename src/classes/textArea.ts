@@ -1,14 +1,22 @@
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, SetupContext } from 'vue';
 import insertTextAtCursor from 'insert-text-at-cursor';
 import type EditHistory from '@/types/editHistoryType';
 
 class TextArea {
+  private ctx: SetupContext<any>;
   private timer = ref<NodeJS.Timeout>();
   private historyStack = ref<Array<EditHistory>>([]);
   private historyIndex = ref(0);
   textareaEl = ref();
   textareaCmp = ref();
   triggerInputBySetHistory = ref(false);
+
+  /**
+   *
+   */
+  constructor(ctx: SetupContext<any>) {
+    this.ctx = ctx;
+  }
 
   focus = () => {
     this.textareaEl.value?.focus();
@@ -19,11 +27,6 @@ class TextArea {
   };
 
   saveHistory = (v: string | undefined, historyMax: number) => {
-    if (this.triggerInputBySetHistory.value) {
-      this.triggerInputBySetHistory.value = false;
-      return;
-    }
-
     const range = this.getRange();
     const history = {
       value: v,
@@ -38,9 +41,11 @@ class TextArea {
 
   private goHistory = (index: number) => {
     const { value, range } = this.historyStack.value[index];
+    this.ctx.emit('update:modelValue', value);
     this.triggerInputBySetHistory.value = true;
 
     nextTick(() => {
+      this.triggerInputBySetHistory.value = false;
       this.setRange(range);
     });
 
