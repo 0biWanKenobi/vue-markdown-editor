@@ -37,7 +37,7 @@ class Hotkeys {
 
       if (preventDefault) e.preventDefault();
 
-      action(state);
+      action(state, e);
     }
   }
 
