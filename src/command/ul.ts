@@ -1,13 +1,11 @@
-import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
 import { generatorText } from '@/utils/util';
 
 import { ul as name } from '@/utils/constants/command';
+import type State from '@/classes/state';
 
-const command = () => {
-  const { insert } = useCommon();
-
-  insert((selected) => {
+const command = (state: State) => {
+  state.insert((selected) => {
     const { langConfig } = useLang();
     const { placeholder } = langConfig.value.ul;
 

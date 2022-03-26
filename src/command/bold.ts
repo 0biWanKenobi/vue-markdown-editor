@@ -1,14 +1,13 @@
-import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
 import { generatorText } from '@/utils/util';
 
 import { bold as name } from '@/utils/constants/command';
+import type State from '@/classes/state';
 
 const { langConfig } = useLang();
 
-const command = () => {
-  const { insert } = useCommon();
-  insert((selected) => {
+const command = (state: State) => {
+  state.insert((selected) => {
     const prefix = '**';
     const suffix = '**';
     const { placeholder }: { placeholder: string } = langConfig.value.bold;

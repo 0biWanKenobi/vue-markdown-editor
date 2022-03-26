@@ -1,11 +1,9 @@
-import useEditor from '@/modules/useEditor';
 import { clear as name } from '@/utils/constants/command';
 
-const command = () => {
-  const {
-    editor: { clear },
-  } = useEditor();
-  clear();
+import type State from '@/classes/state';
+
+const command = (state: State) => {
+  state.editor.clear();
 };
 
 Object.defineProperty(command, 'name', { value: name });

@@ -1,13 +1,12 @@
 import useLang from '@/modules/useLang';
-import useCommon from '@/modules/useCommon';
 import { generatorText } from '@/utils/util';
 
 import { h6 as name } from '@/utils/constants/command';
 
-const command = () => {
-  const { insert } = useCommon();
+import type State from '@/classes/state';
 
-  insert((selected) => {
+const command = (state: State) => {
+  state.insert((selected) => {
     const { langConfig } = useLang();
     const prefix = '######';
     const { placeholder } = langConfig.value.h6;

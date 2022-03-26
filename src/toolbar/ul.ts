@@ -1,5 +1,6 @@
 import { ul } from '@/utils/constants/command';
 import useLang from '@/modules/useLang';
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
 
 const { langConfig } = useLang();
@@ -9,7 +10,7 @@ export default {
   name: ul,
   icon: 'v-md-icon-ul',
   title: () => `${langConfig.value.ul.toolbar}（Ctrl+U）`,
-  action() {
-    execCommand(ul);
+  action(state: State) {
+    execCommand(ul, state);
   },
 };

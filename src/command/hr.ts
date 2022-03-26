@@ -1,9 +1,9 @@
-import useCommon from '@/modules/useCommon';
 import { hr as name } from '@/utils/constants/command';
 
-const command = () => {
-  const { insert } = useCommon();
-  insert(() => ({
+import type State from '@/classes/state';
+
+const command = (state: State) => {
+  state.insert(() => ({
     text: '------------------------------------',
   }));
 };

@@ -1,11 +1,10 @@
-import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
 import { quote as name } from '@/utils/constants/command';
 
-const command = () => {
-  const { insert } = useCommon();
+import type State from '@/classes/state';
 
-  insert((selected) => {
+const command = (state: State) => {
+  state.insert((selected) => {
     const { langConfig } = useLang();
     const prefix = '>';
     const content = selected || langConfig.value.quote.placeholder;

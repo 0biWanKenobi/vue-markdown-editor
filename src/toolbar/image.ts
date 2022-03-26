@@ -1,16 +1,12 @@
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
-import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
-import useUploadFile from '@/modules/useUploadFile';
-import useUploadImage from '@/modules/useUploadImage';
 import { image } from '@/utils/constants/command';
 import { filesFilter } from '@/utils/file';
 import { nextTick } from 'vue';
 
 const { langConfig } = useLang();
 const { execCommand } = useCommand();
-
-const { uploadImgConfig, emitUploadImage } = useUploadImage();
 
 export default {
   name: image,
@@ -20,25 +16,25 @@ export default {
     {
       name: 'image-link',
       text: () => langConfig.value.imageLink.toolbar,
-      action(config: any) {
+      action(config: any, state: State) {
         if (config?.insertWithSize) {
-          execCommand(image, { width: 'auto', height: 'auto' });
+          execCommand(image, state, { width: 'auto', height: 'auto' });
         } else {
-          execCommand(image);
+          execCommand(image, state);
         }
       },
     },
     {
       name: 'upload-image',
       text: () => langConfig.value.uploadImage.toolbar,
-      async action() {
-        const { uploadConfig } = useCommon();
-        uploadConfig.value = uploadImgConfig.value;
-        const { upload } = useUploadFile();
+      async action(state: State) {
         await nextTick();
-        const event = await upload();
+        const event = await state.fileUpload.upload();
         const target = event.target as HTMLInputElement;
         if (!target.files) return;
+
+        const { uploadImgConfig, emitUploadImage } = state.imageUpload;
+
         const files = filesFilter(target.files, uploadImgConfig.value);
 
         emitUploadImage(event, Array.from(files));

@@ -1,10 +1,9 @@
-import useEditor from '@/modules/useEditor';
-
 import { redo as name } from '@/utils/constants/command';
 
-const command = () => {
-  const { editor } = useEditor();
-  editor.redo();
+import type State from '@/classes/state';
+
+const command = (state: State) => {
+  state.editor.redo();
 };
 
 Object.defineProperty(command, 'name', { value: name });

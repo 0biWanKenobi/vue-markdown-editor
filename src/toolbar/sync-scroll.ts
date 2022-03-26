@@ -1,25 +1,23 @@
 import { syncScroll } from '@/utils/constants/command';
 import useLang from '@/modules/useLang';
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
-import useSyncScroll from '@/modules/useSyncScroll';
 
 export default {
   name: syncScroll,
   icon: 'v-md-icon-sync',
-  title: () => {
+  title: (state: State) => {
     const { langConfig } = useLang();
     const syncScrollLang = langConfig.value.syncScroll;
-    const { enableSyncScroll } = useSyncScroll();
+    const enableSyncScroll = state?.syncScroll.enableSyncScroll.value;
 
     return enableSyncScroll ? syncScrollLang.disabled : syncScrollLang.enabled;
   },
-  active: () => {
-    const { enableSyncScroll } = useSyncScroll();
-    return enableSyncScroll.value;
+  active: (state: State) => {
+    return state?.syncScroll.enableSyncScroll.value;
   },
-  action() {
+  action(state: State) {
     const { execCommand } = useCommand();
-    const { enableSyncScroll } = useSyncScroll();
-    execCommand(syncScroll, !enableSyncScroll.value);
+    execCommand(syncScroll, state);
   },
 };

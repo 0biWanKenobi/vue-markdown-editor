@@ -1,5 +1,6 @@
 import { quote } from '@/utils/constants/command';
 import useLang from '@/modules/useLang';
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
 
 const { langConfig } = useLang();
@@ -9,7 +10,7 @@ export default {
   name: quote,
   icon: 'v-md-icon-quote',
   title: () => `${langConfig.value.quote.toolbar}（Ctrl+Q）`,
-  action() {
-    execCommand(quote);
+  action(state: State) {
+    execCommand(quote, state);
   },
 };

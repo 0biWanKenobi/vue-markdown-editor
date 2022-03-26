@@ -1,5 +1,6 @@
 import { table } from '@/utils/constants/command';
 import useLang from '@/modules/useLang';
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
 
 const { langConfig } = useLang();
@@ -9,7 +10,7 @@ export default {
   name: table,
   icon: 'v-md-icon-table',
   title: () => langConfig.value.table.toolbar,
-  action() {
-    execCommand(table);
+  action(state: State) {
+    execCommand(table, state);
   },
 };

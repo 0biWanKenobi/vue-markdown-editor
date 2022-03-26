@@ -1,22 +1,19 @@
+import type State from '@/classes/state';
 import useLang from '@/modules/useLang';
-import useToc from '@/modules/useToc';
 
 export default {
   name: 'toc',
   icon: 'v-md-icon-toc',
-  title: () => {
+  title: (state: State) => {
     const { langConfig } = useLang();
     const tocLang = langConfig.value.toc;
 
-    const { tocVisible } = useToc();
-    return tocVisible.value ? tocLang.disabled : tocLang.enabled;
+    return state?.tocVisible.value ? tocLang.disabled : tocLang.enabled;
   },
-  active: () => {
-    const { tocVisible } = useToc();
-    return tocVisible.value;
+  active: (state: State) => {
+    return state?.tocVisible.value;
   },
-  action() {
-    const { toggleToc } = useToc();
-    toggleToc();
+  action(state: State) {
+    state?.toggleToc();
   },
 };

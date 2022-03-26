@@ -1,4 +1,4 @@
-import useCommon from '@/modules/useCommon';
+import State from '@/classes/state';
 import { image as name } from '@/utils/constants/command';
 
 type Image = {
@@ -8,9 +8,8 @@ type Image = {
   height?: string | number;
 };
 
-const command = ({ url, desc, width, height }: Image = {}) => {
-  const { insert } = useCommon();
-  insert(() => {
+const command = (state: State, { url, desc, width, height }: Image = {}) => {
+  state.insert(() => {
     const urlPlaceholder = 'http://';
     const descPlaceholder = 'Description';
     let selected: string | undefined = urlPlaceholder;

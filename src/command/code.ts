@@ -1,9 +1,9 @@
-import useCommon from '@/modules/useCommon';
 import { code as name } from '@/utils/constants/command';
 
-const command = () => {
-  const { insert } = useCommon();
-  insert((selected) => {
+import type State from '@/classes/state';
+
+const command = (state: State) => {
+  state.insert((selected) => {
     const prefix = '``` language';
     const suffix = '```';
     let text = `${prefix}\n${suffix}`;

@@ -1,21 +1,20 @@
 import EDITOR_MODE from '@/utils/constants/editor-mode';
 import useLang from '@/modules/useLang';
-import useEditorMode from '@/modules/useEditorMode';
+import type State from '@/classes/state';
 
 const { langConfig } = useLang();
 
 export default {
   name: 'preview',
   icon: 'v-md-icon-preview',
-  title: () => {
+  title: (state: State) => {
     const previewLang = langConfig.value.preview;
-    const { isEditableMode } = useEditorMode();
 
-    return isEditableMode.value ? previewLang.disabled : previewLang.enabled;
+    return state.isEditableMode.value ? previewLang.disabled : previewLang.enabled;
   },
-  active: () => useEditorMode().isEditableMode.value,
-  action() {
-    const { isEditableMode, currentMode } = useEditorMode();
+  active: (state: State) => state.isEditableMode.value,
+  action(state: State) {
+    const { isEditableMode, currentMode } = state;
     currentMode.value = isEditableMode.value ? EDITOR_MODE.EDIT : EDITOR_MODE.EDITABLE;
   },
 };

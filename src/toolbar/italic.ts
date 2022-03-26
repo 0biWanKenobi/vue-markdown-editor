@@ -1,5 +1,6 @@
 import { italic } from '@/utils/constants/command';
 import useLang from '@/modules/useLang';
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
 
 const { langConfig } = useLang();
@@ -9,7 +10,7 @@ export default {
   name: italic,
   icon: 'v-md-icon-italic',
   title: () => `${langConfig.value.italic.toolbar}（Ctrl+I）`,
-  action() {
-    execCommand(italic);
+  action(state: State) {
+    execCommand(italic, state);
   },
 };
