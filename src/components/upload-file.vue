@@ -11,9 +11,9 @@
 </template>
 
 <script lang="ts">
-import useUploadFile from '@/modules/useUploadFile';
+import { StateSymbol } from '@/classes/state';
 import UploadConfig from '@/types/uploadConfigType';
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { object } from 'vue-types';
 
 export default defineComponent({
@@ -22,7 +22,8 @@ export default defineComponent({
     uploadConfig: object<UploadConfig>().isRequired,
   },
   setup() {
-    const { key, handleUpload, fileInputEl } = useUploadFile();
+    const state = inject(StateSymbol)!.value;
+    const { key, handleUpload, fileInputEl } = state.fileUpload;
 
     return {
       key,

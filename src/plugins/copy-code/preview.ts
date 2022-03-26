@@ -1,6 +1,5 @@
-import useEditor from '@/modules/useEditor';
-import usePreview from '@/modules/usePreview';
 import LifecycleStage from '@/types/lifecycleStage';
+import PluginCreatorFn from '@/types/pluginCreatorFn';
 import copyToClipboard from 'copy-to-clipboard';
 import { nextTick, ref, watch } from 'vue';
 
@@ -33,15 +32,13 @@ function handleCopyCodeClick({ target }: Event, emit: Function) {
   }
 }
 
-export default function createCopyCodePreview() {
+export default <PluginCreatorFn>function createCopyCodePreview() {
   return {
-    install() {
-      const { emit, setLifeCycleHooks, installEmits } = useEditor();
-      const eventListener = (e: Event) => handleCopyCodeClick(e, emit);
+    install(state) {
+      const { setLifeCycleHooks } = state.lifecycle;
+      const eventListener = (e: Event) => handleCopyCodeClick(e, state.emit);
 
-      installEmits('copy-code-success');
-
-      const { previewEl } = usePreview();
+      const { previewEl } = state.preview;
       const stopHandle = watch(
         () => previewEl.value,
         (el) => {
@@ -59,11 +56,10 @@ export default function createCopyCodePreview() {
       );
 
       const beforeUnmount = () => {
-        const { previewEl } = usePreview();
         previewEl.value?.removeEventListener('click', eventListener);
       };
 
       setLifeCycleHooks(LifecycleStage.beforeUnmount, beforeUnmount);
     },
   };
-}
+};

@@ -1,5 +1,5 @@
-import type { VMdParser } from '@/utils/v-md-parser';
+import State from '@/classes/state';
 
-type ThemeInstallFn = (vMdParser: VMdParser, options: Record<string, any> | undefined) => void;
+type ThemeInstallFn = (state: State, options: Record<string, any> | undefined) => void;
 
 export default ThemeInstallFn;

@@ -48,7 +48,6 @@ import Clickoutside from '@/utils/clickoutside';
 import MENU_MODE from '@/utils/constants/menu-mode';
 import { computed, defineComponent, inject, ref, toRefs } from 'vue';
 import VueTypes, { oneOfType } from 'vue-types';
-import useToolbar from '@/modules/useToolbar';
 import Position from '@/types/tooltipPositionType';
 import Menu from '@/types/toolbarItemMenu';
 import { StateSymbol } from '@/classes/state';
@@ -79,10 +78,11 @@ export default defineComponent({
   },
   emits: ['click-item'],
   setup(props) {
+    const state = inject(StateSymbol)!;
+
     const menuActive = ref(false);
     const { name, menus, disabledMenus, preventNativeClick } = toRefs(props);
-    const { getToolbarItem } = useToolbar();
-    const state = inject(StateSymbol)!;
+    const { getToolbarItem } = state.value.toolbarManager;
 
     const isMenusObject = 'items' in (menus.value ?? {});
 

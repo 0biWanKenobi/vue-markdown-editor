@@ -1,8 +1,5 @@
 import ThemeConfig from './themeConfigType';
-
-import PluginCreatorParams from './pluginCreationFnParams';
 import LangClassConfig from './langClassConfig';
-import Install from './installType';
 import ThemeInstallFn from './themeInstallFnType';
 
 export type ThemeConfigOption = {
@@ -29,33 +26,6 @@ export type ThemeConfigOption = {
  */
 type EditorConfig = {
   langConfig?: LangClassConfig;
-  /**
-   * @property editor: Either `BaseEditor` or `CodeMirrorEditor`.
-   *
-   * You should `import {BaseEditor} from '@kangc/v-md-editor`, or `import {CodeMirrorEditor} from '@kangc/v-md-editor`
-   **/
-  editor: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-    type: 'base' | 'codemirror';
-  };
-
-  plugins?: Array<{
-    plugin: Install;
-    params?: PluginCreatorParams;
-  }>;
-  /**
-   * @property Codemirror: * `CodeMirror` instance.
-   *
-   * You should `import CodeMirror from 'codemirror'`.
-   *
-   * @property themeConfig: theme Configuration
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Codemirror?: any;
-  /**
-   * @property themeConfig: theme Configuration
-   */
-  themeConfig?: ThemeConfigOption;
 };
 
 export default EditorConfig;

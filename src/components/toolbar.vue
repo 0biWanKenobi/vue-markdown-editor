@@ -26,7 +26,6 @@
 <script lang="ts">
 import { defineComponent, inject } from 'vue';
 import ToolbarItem from '@/components/toolbar-item/index.vue';
-import useToolbar from '@/modules/useToolbar';
 import Toolbar from '@/types/toolbarType';
 import { array } from 'vue-types';
 import { StateSymbol } from '@/classes/state';
@@ -47,7 +46,7 @@ export default defineComponent({
 
     const state = inject(StateSymbol)!;
 
-    const { toolbars } = useToolbar();
+    const { toolbars } = state.value.toolbarManager;
 
     const getConfig = (itemName: string, configName: keyof Toolbar) => {
       const toolbarConfig = toolbars[itemName];

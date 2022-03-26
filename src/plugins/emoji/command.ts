@@ -1,8 +1,7 @@
-import useCommon from '@/modules/useCommon';
+import type State from '@/classes/state';
 
-export default function commandHandler(emojiType: string) {
-  const { insert } = useCommon();
-  insert(() => {
+export default function commandHandler(emojiType: string, state: State) {
+  state.insert(() => {
     const prefix = ':';
     const suffix = ':';
 

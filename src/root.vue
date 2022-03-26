@@ -97,22 +97,21 @@ import {
   onMounted,
   onUnmounted,
   watch,
-  toRefs,
   defineAsyncComponent,
   ref,
   provide,
   shallowRef,
+  nextTick,
 } from 'vue';
-import useVModel from './modules/useText';
-import useEditor from './modules/useEditor';
-import useToc from './modules/useToc';
 import useLang from './modules/useLang';
-import useUploadImage from './modules/useUploadImage';
 import LifecycleStage from './types/lifecycleStage';
-import useEditorMode from './modules/useEditorMode';
 import State, { StateSymbol } from './classes/state';
-import { object } from 'vue-types';
+import { array, object } from 'vue-types';
 import type CodeMirror from '@/types/codeMirrorInstance';
+import type Install from '@/types/installType';
+import type PluginCreatorParams from '@/types/pluginCreationFnParams';
+import { ThemeConfigOption } from './types/editorConfig';
+import EDITOR_MODE from '@/utils/constants/editor-mode';
 
 const BaseEditor = defineAsyncComponent(() => import('@/base-editor.vue'));
 const CodeMirrorEditor = defineAsyncComponent(() => import('@/codemirror-editor.vue'));
@@ -128,6 +127,11 @@ export default defineComponent({
     ...fullScreenProps,
     modelValue: String,
     CodeMirror: object<CodeMirror>(),
+    plugins: array<{
+      plugin: Install;
+      params?: PluginCreatorParams;
+    }>().def([]),
+    theme: object<ThemeConfigOption>().isRequired,
   },
   emits: [...editorEmits, ...vModelEmits, ...fullScreenEmits, 'change', 'save', 'image-click'],
   components: {
@@ -143,15 +147,42 @@ export default defineComponent({
     const { emit } = ctx;
     const customSlotButtons = Object.keys(props.toolbar).filter((btn) => props.toolbar[btn].slot);
 
-    const stateObj = new State();
+    const stateObj = new State(ctx);
     stateObj.fullScreen.active.value = props.defaultFullscreen;
+
+    watch(
+      () => props.mode,
+      (newValue) => newValue && (stateObj.currentMode.value = newValue),
+      {
+        immediate: true,
+      }
+    );
+
+    watch(
+      () => stateObj.currentMode.value,
+      async (newValue) => {
+        if (newValue === EDITOR_MODE.EDITABLE && stateObj.syncScroll.enableSyncScroll.value) {
+          await nextTick();
+          stateObj.syncScroll.previewSyncScroll();
+        }
+      },
+      {
+        flush: 'post',
+      }
+    );
+
+    stateObj.installTheme(props.theme);
+    stateObj.installPlugins(props.plugins);
     const state = shallowRef<State>(stateObj);
 
     provide(StateSymbol, state);
 
     watch(
       () => props.modelValue,
-      (v) => (text.value = v)
+      (v) => (state.value.text.value = v),
+      {
+        immediate: true,
+      }
     );
 
     const baseEditorComponent = ref();
@@ -169,18 +200,13 @@ export default defineComponent({
       props.editorType == 'base' && state.value.setFocusEnd();
     };
 
-    const { currentMode } = useEditorMode();
-
-    const { modelValue } = toRefs(props);
-    const { text } = useVModel(modelValue.value);
-    const { callLifeCycleHooks } = useEditor();
+    const { callLifeCycleHooks } = stateObj.lifecycle;
 
     onBeforeMount(() => {
       callLifeCycleHooks(LifecycleStage.beforeMount);
     });
 
     onMounted(() => {
-      handleEditorWrapperClick();
       callLifeCycleHooks(LifecycleStage.mounted);
     });
 
@@ -192,11 +218,10 @@ export default defineComponent({
       callLifeCycleHooks(LifecycleStage.unmounted);
     });
 
-    const { tocVisible } = useToc();
     const { getPreviewScrollContainer } = stateObj.preview;
     const fullscreen = state.value?.fullScreen.active;
     const { langConfig } = useLang();
-    const { hasUploadImage, uploadImgConfig, handleDrop, handlePaste } = useUploadImage();
+    const { hasUploadImage, uploadImgConfig, handleDrop, handlePaste } = stateObj.imageUpload;
 
     return {
       baseEditorComponent,
@@ -210,11 +235,11 @@ export default defineComponent({
       handleDrop,
       handlePaste,
       customSlotButtons,
-      currentMode,
+      currentMode: stateObj.currentMode,
       fullscreen,
-      tocVisible,
+      tocVisible: stateObj.tocVisible,
       langConfig,
-      text,
+      text: state.value.text,
     };
   },
 });

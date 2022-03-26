@@ -1,13 +1,23 @@
 <script lang="tsx">
 // Modified from https://github.com/ElemeFE/element/tree/dev/packages/scrollbar
 
-import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
+import {
+  defineComponent,
+  h,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRefs,
+  watch,
+} from 'vue';
 import { addResizeListener, removeResizeListener } from '@/utils/resize-event';
 import scrollbarWidth from '@/utils/scrollbar-width';
 import { arraytoObject } from '@/utils/util';
 import Bar from './bar.vue';
 import VueTypes, { string } from 'vue-types';
-import useScrollbar from '@/modules/useScrollbar';
+import { StateSymbol } from '@/classes/state';
 
 export default defineComponent({
   name: 'scrollbar',
@@ -29,7 +39,8 @@ export default defineComponent({
   emits: ['scroll'],
 
   setup(props, { emit, slots }) {
-    const { resizeEl, wrapEl } = useScrollbar(props.type);
+    const state = inject(StateSymbol)!;
+    const { resizeEl, wrapEl } = state.value.getScrollbar(props.type);
 
     const sizeWidth = ref('0');
     const sizeHeight = ref('0');

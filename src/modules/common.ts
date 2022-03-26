@@ -41,6 +41,7 @@ export const editorProps = {
   ...baseEditorProps,
 };
 
+export const pluginsEmits = ['copy-code-success'];
 export const editorEmits = ['blur', 'drop', 'paste'];
 
 export const shouldInheritAttrs = false;

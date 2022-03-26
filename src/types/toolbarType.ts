@@ -4,10 +4,10 @@ type Toolbar = {
   name: string;
   icon?: string;
   text?: string;
-  active?: (state?: State) => boolean;
+  active?: (state: State) => boolean;
   preventNativeClick?: boolean;
-  title: (state?: State) => string;
-  action?: (state?: State) => void;
+  title: (state: State) => string;
+  action?: (state: State) => void;
   menus?: any;
   slot?: boolean;
 };

@@ -23,7 +23,6 @@ import {
   watch,
 } from 'vue';
 import VueTypes from 'vue-types';
-import useSyncScroll from './modules/useSyncScroll';
 import CodemirrorEditor from './classes/codemirrorEditor';
 import { codemirrorEditorProps, editorEmits, sharedEditorProps } from './modules/common';
 import { vModelEmits } from './modules/v-model';
@@ -52,7 +51,7 @@ export default defineComponent({
 
     const codemirrorEditorEl = ref();
 
-    const { handleEditorScroll } = useSyncScroll();
+    const { handleEditorScroll } = state.value.syncScroll;
 
     watch(
       () => modelValue.value,
@@ -92,11 +91,10 @@ export default defineComponent({
 
       codemirrorInstance.value = markRaw(instance);
 
-      codemirrorInstance.value.on('change', () => {
-        const newValue = getValue();
-        const { handleInput } = useVModel();
-        handleInput(newValue);
-      });
+      // codemirrorInstance.value.on('change', () => {
+      //   const newValue = getValue();
+      //    emit('update:modelValue',newValue)
+      // });
 
       codemirrorInstance.value.on('scroll', () => {
         handleEditorScroll();
@@ -124,9 +122,9 @@ export default defineComponent({
       // 容器大小变化的时候刷新 codemirror 解决滚动条的显示问题
       codemirrorInstance.value.refresh();
     };
-    const getValue = () => {
-      return codemirrorInstance.value.getValue();
-    };
+    // const getValue = () => {
+    //   return codemirrorInstance.value.getValue();
+    // };
 
     return {
       codemirrorEditorEl,
@@ -135,9 +133,6 @@ export default defineComponent({
   },
 });
 
-function useVModel(): { handleInput: any } {
-  throw new Error('Function not implemented.');
-}
 // createEditor(component);
 
 // export default component;

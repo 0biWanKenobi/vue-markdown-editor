@@ -12,10 +12,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import usePreview from './modules/usePreview';
+import { defineComponent, inject } from 'vue';
 import { previewProps, previewEmits } from '@/modules/preview';
 import VueTypes from 'vue-types';
+import { StateSymbol } from './classes/state';
 
 export default defineComponent({
   name: 'v-md-preview-html',
@@ -26,7 +26,8 @@ export default defineComponent({
   },
   emits: previewEmits,
   setup(_, { emit }) {
-    const { previewEl, handlePreviewClick } = usePreview();
+    const state = inject(StateSymbol)!;
+    const { previewEl, handlePreviewClick } = state.value.preview;
 
     const onPreviewClick = (e: Event) => {
       const result = handlePreviewClick(e);

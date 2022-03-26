@@ -24,7 +24,7 @@ class ScrollBar {
       case 'editor':
         this.wrapEl = this.editorWrapEl;
         this.resizeEl = this.editorResizeEl;
-        this.scrollTo = (scrollTop: number) => this._scrollTo(this.wrapEl, scrollTop);
+        this.scrollTo = (scrollTop: number) => this._scrollTo(this.wrapEl.value, scrollTop);
         break;
       case 'preview':
         this.wrapEl = this.previewWrapEl;
@@ -37,7 +37,7 @@ class ScrollBar {
         break;
     }
     this.getScrollInfo = () => this._getScrollInfo(this.wrapEl);
-    this.scrollTo = (scrollTop: number) => this._scrollTo(this.wrapEl, scrollTop);
+    this.scrollTo = (scrollTop: number) => this._scrollTo(this.wrapEl.value, scrollTop);
   }
 
   _getScrollInfo = (el: Ref<any>) => {

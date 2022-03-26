@@ -1,9 +1,7 @@
 import createToolbar from './toolbar';
 import commandHandler from './command';
 import useCommand from '@/modules/useCommand';
-import useToolbar from '@/modules/useToolbar';
 import useLang from '@/modules/useLang';
-import useVMdParser from '@/modules/useVMdParser';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
 
 export default function creator({ emojiJson, parser }: { emojiJson: any; parser: any }) {
@@ -25,12 +23,11 @@ export default function creator({ emojiJson, parser }: { emojiJson: any; parser:
     });
 
     return {
-      install() {
-        // if (VMdEditor.name === 'v-md-editor') {
+      install(state) {
         const { registerCommand } = useCommand();
         registerCommand(name!, commandHandler);
 
-        const { addToolbar } = useToolbar();
+        const { addToolbar } = state.toolbarManager;
         addToolbar(toolbar);
 
         const lang = useLang();
@@ -44,9 +41,9 @@ export default function creator({ emojiJson, parser }: { emojiJson: any; parser:
         });
         // }
 
-        const vMdParser = useVMdParser();
-        vMdParser.use(parser, {
+        state.parser.use(parser, {
           customEmoji,
+          state,
         });
       },
     };

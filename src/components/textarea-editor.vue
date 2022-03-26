@@ -34,6 +34,7 @@
 import { isKorean } from '@/utils/util';
 import { defineComponent, inject, onMounted, ref, toRefs, watch } from 'vue';
 import VueTypes from 'vue-types';
+import type State from '@/classes/state';
 import { StateSymbol } from '@/classes/state';
 
 const ol = /^\s*([\d]+\.)( \[[ xX]])? /;
@@ -138,7 +139,7 @@ export default defineComponent({
     state.value.hotkeysManager.registerHotkeys({
       key: 'enter',
       preventDefault: false,
-      action: (e: any) => {
+      action: (_: State, e: any) => {
         if (isComposing.value) return;
 
         const {
@@ -208,6 +209,7 @@ export default defineComponent({
   font-family: $editor-font-family;
   line-height: $editor-line-height;
   word-break: break-all;
+  background-color: white;
 }
 
 .v-md-textarea-editor {

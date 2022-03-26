@@ -2,18 +2,17 @@ import parser from './parser';
 import { deepAssign } from '@/utils/deep-assign';
 import { inBrowser } from '@/utils/util';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
-import useVMdParser from '@/modules/useVMdParser';
 import { Mermaid } from 'mermaid';
 import { nextTick, watch } from 'vue';
-import usePreview from '@/modules/usePreview';
+import type State from '@/classes/state';
 
 export default function creator(mermaid: Mermaid | undefined) {
-  async function handleMdChange() {
+  async function handleMdChange(state: State) {
     if (!inBrowser) return;
 
     await nextTick();
 
-    const { previewEl } = usePreview();
+    const { previewEl } = state.preview;
     const eles = previewEl.value?.querySelectorAll('.v-md-mermaid');
 
     if (!eles?.length) return;
@@ -59,15 +58,14 @@ export default function creator(mermaid: Mermaid | undefined) {
     deepAssign(initialize, mermaidInitializeOptions);
 
     return {
-      install() {
-        const vMdParser = useVMdParser();
-        vMdParser.use(parser);
+      install(state) {
+        state.parser.use(parser);
         // was on created
         mermaid!.initialize(initialize);
-        const { html } = usePreview();
+        const { html } = state.preview;
         watch(
           () => html.value,
-          (_) => handleMdChange(),
+          (_) => handleMdChange(state),
           { immediate: true }
         );
       },

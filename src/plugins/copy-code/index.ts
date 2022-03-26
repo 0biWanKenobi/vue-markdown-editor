@@ -1,16 +1,13 @@
-import useEditor from '@/modules/useEditor';
-import useVMdParser from '@/modules/useVMdParser';
 import parser from './parser';
 import createCopyCodePreview from './preview';
+import PluginCreatorFn from '@/types/pluginCreatorFn';
 
-export default function createCopyCodePlugin() {
+export default <PluginCreatorFn>function () {
   return {
-    install() {
-      const vMdParser = useVMdParser();
-      vMdParser.use(parser);
+    install(state) {
+      state.parser.use(parser);
 
-      const { editor: VMdEditor } = useEditor();
-      VMdEditor.use(createCopyCodePreview());
+      state.use(createCopyCodePreview());
     },
   };
-}
+};

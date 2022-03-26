@@ -1,6 +1,6 @@
 import IEditor from '@/interfaces/IEditor';
 import Preview from './preview';
-import { computed, InjectionKey, nextTick, ref, Ref } from 'vue';
+import { computed, InjectionKey, nextTick, ref, Ref, SetupContext, watch } from 'vue';
 import type BaseEditor from './baseEditor';
 import { BaseEditorSymbol } from './baseEditor';
 import FullScreen from './fullScreen';
@@ -12,21 +12,40 @@ import Option from '@/types/OptionType';
 import Install from '@/types/installType';
 import PluginCreatorParams from '@/types/pluginCreationFnParams';
 import { VMdParser } from '@/utils/v-md-parser';
+import ToolbarManager from './toolbarManager';
+import { ThemeConfigOption } from '@/types/editorConfig';
+import SyncScroll from './syncScroll';
+import Scroll from './scroll';
+import Lifecycle from './lifecycle';
+import FileUpload from './fileUpload';
+import useCommand from '@/modules/useCommand';
+import ImageUpload from './imageUpload';
 
 export const StateSymbol: InjectionKey<Ref<State>> = Symbol('State');
 
 class State {
   text = ref<string | undefined>('');
   readonly parser: VMdParser;
+  readonly toolbarManager: ToolbarManager;
+  readonly syncScroll: SyncScroll;
+  readonly scroll: Scroll;
+  private ctx = ref<SetupContext<any>>();
 
   currentMode = ref(EDITOR_MODE.EDITABLE);
   isPreviewMode = computed(() => this.currentMode.value === EDITOR_MODE.PREVIEW);
   isEditMode = computed(() => this.currentMode.value === EDITOR_MODE.EDIT);
   isEditableMode = computed(() => this.currentMode.value === EDITOR_MODE.EDITABLE);
-  fullScreen = new FullScreen();
+
+  tocVisible = ref<boolean>(false);
+
+  fullScreen: FullScreen;
   hotkeysManager = new Hotkeys();
 
   readonly preview: Preview;
+  readonly lifecycle: Lifecycle;
+  readonly fileUpload: FileUpload;
+  readonly imageUpload: ImageUpload;
+
   private _editor!: IEditor;
 
   get editor() {
@@ -54,11 +73,35 @@ class State {
 
   private _genericScrollbar!: ScrollBar;
 
-  constructor() {
+  constructor(ctx: SetupContext<any>) {
     for (const hotKey of Object.values(HotkeyList)) this.hotkeysManager.registerHotkeys(hotKey);
+    this.lifecycle = new Lifecycle();
+    this.fileUpload = new FileUpload();
+    this.imageUpload = new ImageUpload(ctx, this.execCmd);
+    this.fullScreen = new FullScreen(ctx, this.lifecycle);
     this.preview = new Preview(this.isPreviewMode);
     this.parser = new VMdParser();
+    this.toolbarManager = new ToolbarManager();
+    this.syncScroll = new SyncScroll(
+      () => this.preview,
+      () => this.editor,
+      this.getScrollbar.bind(this)
+    );
+    this.scroll = new Scroll(
+      () => this.syncScroll.ignoreSyncScroll.value,
+      () => this.isPreviewMode.value,
+      () => this.isEditMode.value,
+      () => this.editor,
+      () => this.preview
+    );
+    this.ctx.value = ctx;
+
+    this.toolbarManager.addDefaultToolbars();
   }
+
+  emit = (e: string, ...args: any[]) => {
+    this.ctx.value?.emit(e, args);
+  };
 
   use(optionsOrInstall: Option | Install, opt?: any) {
     if (typeof optionsOrInstall === 'function') {
@@ -69,6 +112,15 @@ class State {
     return this;
   }
 
+  private execCmd = (cmdName: string, ...params: any[]) => {
+    const { execCommand } = useCommand();
+    execCommand(cmdName, [this, ...params]);
+  };
+
+  installTheme = (configOption: ThemeConfigOption) => {
+    configOption.theme.install(this, configOption.config);
+  };
+
   installPlugins = (
     plugins: Array<{
       plugin: Install;
@@ -78,6 +130,14 @@ class State {
     for (const pluginConfig of plugins) {
       this.use(pluginConfig.plugin, pluginConfig.params);
     }
+  };
+
+  save = () => {
+    this.ctx.value?.emit('save', this.text.value, this.preview.html.value);
+  };
+
+  toggleToc = (visible = !this.tocVisible.value) => {
+    this.tocVisible.value = visible;
   };
 
   getScrollbar(type: 'editor' | 'preview' | undefined) {

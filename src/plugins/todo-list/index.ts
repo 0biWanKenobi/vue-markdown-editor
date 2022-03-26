@@ -3,8 +3,6 @@ import commandHandler from './command';
 import parser from './parser';
 import useLang from '@/modules/useLang';
 import useCommand from '@/modules/useCommand';
-import useToolbar from '@/modules/useToolbar';
-import useVMdParser from '@/modules/useVMdParser';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
 
 const createTodoListPlugin: PluginCreatorFn = (
@@ -28,7 +26,7 @@ const createTodoListPlugin: PluginCreatorFn = (
     install(state) {
       //if (VMdEditor.name === 'v-md-editor') {
       const { registerCommand, execCommand } = useCommand();
-      const { addToolbar } = useToolbar();
+      const { addToolbar } = state.toolbarManager;
       const lang = useLang();
 
       registerCommand(name!, commandHandler);
@@ -55,8 +53,7 @@ const createTodoListPlugin: PluginCreatorFn = (
         },
       });
 
-      const vMdParser = useVMdParser();
-      vMdParser.use(parser, {
+      state.parser.use(parser, {
         color,
       });
     },

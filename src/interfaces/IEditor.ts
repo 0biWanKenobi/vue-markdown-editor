@@ -1,7 +1,9 @@
 import Option from '@/types/OptionType';
 import Install from '@/types/installType';
+import { Ref } from 'vue';
 
 interface IEditor {
+  text: Ref<string | undefined>;
   type: Symbol;
   editorFocusEnd: () => void;
   getCursorLineLeftText: () => string | null;

@@ -15,7 +15,6 @@
 import { computed, defineComponent, inject, toRefs, watch } from 'vue';
 import xss from '@/utils/xss/index';
 import { previewProps, previewEmits } from '@/modules/preview';
-import useVMdParser from './modules/useVMdParser';
 import VueTypes from 'vue-types';
 import useLang from '@/modules/useLang';
 import { StateSymbol } from './classes/state';
@@ -39,7 +38,7 @@ export default defineComponent({
       if (result) emit('image-click', result);
     };
 
-    const vMdParser = useVMdParser();
+    const vMdParser = state.value.parser;
 
     const previewClass = computed(() => vMdParser.themeConfig?.previewClass);
 

@@ -1,8 +1,6 @@
+import type State from '@/classes/state';
 import useCommand from '@/modules/useCommand';
-import useCommon from '@/modules/useCommon';
 import useLang from '@/modules/useLang';
-import useToolbar from '@/modules/useToolbar';
-import useVMdParser from '@/modules/useVMdParser';
 import PluginCreatorFn from '@/types/pluginCreatorFn';
 import parser from './parser';
 
@@ -14,9 +12,8 @@ const createTipPlugin: PluginCreatorFn = (
   }
 ) => {
   const { name, icon, text } = param;
-  const commandHandler = function (type = 'tip') {
-    const { insert } = useCommon();
-    insert((selected) => {
+  const commandHandler = function (type = 'tip', state: State) {
+    state.insert((selected) => {
       const { langConfig } = useLang();
       const prefix = ':::';
       const suffix = ':::';
@@ -41,39 +38,39 @@ const createTipPlugin: PluginCreatorFn = (
       {
         name: 'tip',
         text: () => langConfig.value.tip.tip.toolbar,
-        action() {
-          execCommand(name!);
+        action(state: State) {
+          execCommand(name!, 'tip', state);
         },
       },
       {
         name: 'warning',
         text: () => langConfig.value.tip.warning.toolbar,
-        action() {
-          execCommand(name!, 'warning');
+        action(state: State) {
+          execCommand(name!, 'warning', state);
         },
       },
       {
         name: 'danger',
         text: () => langConfig.value.tip.danger.toolbar,
-        action() {
-          execCommand(name!, 'danger');
+        action(state: State) {
+          execCommand(name!, 'danger', state);
         },
       },
       {
         name: 'details',
         text: () => langConfig.value.tip.details.toolbar,
-        action() {
-          execCommand(name!, 'details');
+        action(state: State) {
+          execCommand(name!, 'details', state);
         },
       },
     ],
   };
 
   return {
-    install() {
+    install(state) {
       // if (VMdEditor.name === 'v-md-') {
       const { registerCommand } = useCommand();
-      const { addToolbar } = useToolbar();
+      const { addToolbar } = state.toolbarManager;
       registerCommand(name!, commandHandler);
       addToolbar(toolbar);
       const lang = useLang();
@@ -123,8 +120,7 @@ const createTipPlugin: PluginCreatorFn = (
         },
       });
 
-      const vMdParser = useVMdParser();
-      vMdParser.use(parser);
+      state.parser.use(parser);
     },
   };
 };

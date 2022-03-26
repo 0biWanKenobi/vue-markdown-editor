@@ -19,8 +19,6 @@ import VueTypes from 'vue-types';
 import { LINE_MARKUP } from '@/utils/constants/markup';
 import TocTitle from '@/types/tocTitleType';
 import { tocProps } from '@/modules/toc';
-import useVModel from '@/modules/useText';
-import useScroll from '@/modules/useScroll';
 import { StateSymbol } from '@/classes/state';
 
 export default defineComponent({
@@ -33,11 +31,12 @@ export default defineComponent({
   setup(props) {
     const { includeLevel: tocIncludeLevel } = toRefs(props);
 
-    const { text } = useVModel();
+    const state = inject(StateSymbol)!;
+
     let updateTocNavTimer: NodeJS.Timeout;
 
     watch(
-      () => text.value,
+      () => state.value.text.value,
       async (_, oldVal) => {
         // render in the first time
         if (typeof oldVal === 'undefined') {
@@ -61,8 +60,6 @@ export default defineComponent({
       tocIncludeLevel.value?.map((level) => `h${level}`).join(',')
     );
 
-    const state = inject(StateSymbol)!;
-
     const updateTocNav = () => {
       const { previewEl } = state.value.preview;
       if (!previewEl.value) return;
@@ -85,8 +82,7 @@ export default defineComponent({
     };
 
     const handleNavClick = ({ lineIndex }: TocTitle) => {
-      const { scrollToLine } = useScroll();
-      lineIndex && scrollToLine(parseInt(lineIndex.toString()));
+      lineIndex && state.value.scroll.scrollToLine(parseInt(lineIndex.toString()));
     };
 
     return {

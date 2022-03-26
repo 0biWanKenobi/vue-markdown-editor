@@ -26,8 +26,7 @@ import {
 import { vModelEmits } from './modules/v-model';
 
 import { inBrowser } from '@/utils/util';
-import { defineComponent, inject, nextTick, ref, shallowRef, watch } from 'vue';
-import useSyncScroll from './modules/useSyncScroll';
+import { defineComponent, inject, nextTick, onMounted, ref, shallowRef, watch } from 'vue';
 import BaseEditor from './classes/baseEditor';
 import IEditor from './interfaces/IEditor';
 import { StateSymbol } from './classes/state';
@@ -74,7 +73,11 @@ export default defineComponent({
       }
     );
 
-    const { handleEditorScroll } = useSyncScroll();
+    const { handleEditorScroll } = state.value.syncScroll;
+
+    onMounted(() => {
+      state.value.setFocusEnd();
+    });
 
     return {
       editor,

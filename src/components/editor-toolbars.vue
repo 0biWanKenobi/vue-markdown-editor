@@ -21,10 +21,10 @@
 </template>
 
 <script lang="ts">
+import { StateSymbol } from '@/classes/state';
 import EditorToolbar from '@/components/toolbar.vue';
-import useToolbar from '@/modules/useToolbar';
 import Toolbar from '@/types/toolbarType';
-import { computed, defineComponent, toRefs } from 'vue';
+import { computed, defineComponent, inject, toRefs } from 'vue';
 import { array, object, string } from 'vue-types';
 
 export default defineComponent({
@@ -40,7 +40,8 @@ export default defineComponent({
     rightToolbar: string().def('preview toc sync-scroll fullscreen'),
   },
   setup(props) {
-    const { toolbars, registerToolbars } = useToolbar();
+    const state = inject(StateSymbol)!;
+    const { toolbars, registerToolbars } = state.value.toolbarManager;
     registerToolbars(props.toolbar);
 
     const getToolbarConfig = (toolbarStr: string) => {

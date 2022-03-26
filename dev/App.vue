@@ -13,7 +13,9 @@
       ref="editor"
       :toolbar="customToolbar"
       left-toolbar="undo redo clear | h bold italic quote | ul ol table hr | link image | save | myButton my2ndButton"
-      editor-type="codemirror"
+      editor-type="base"
+      :theme="theme"
+      :plugins="plugins"
     >
       <template #myButton>
         <select name="opts">
@@ -44,6 +46,29 @@
 import text from './text';
 // import html from './html';
 import { defineComponent } from '@vue/runtime-core';
+import Prism from 'prismjs';
+import { VuepressTheme } from '@/theme';
+import {
+  CreateEmojiPlugin,
+  CreateKatexPluginCdn,
+  CreateTodoListPlugin,
+  CreateLineNumberPlugin,
+  CreateCopyCodePlugin,
+  CreateHighlightLinesPlugin,
+  CreateMermaidPluginCdn,
+  CreateCopyCodePreviewPlugin,
+} from '@/plugins';
+
+const plugins = [
+  { plugin: CreateCopyCodePreviewPlugin() },
+  { plugin: CreateEmojiPlugin() },
+  { plugin: CreateKatexPluginCdn() },
+  { plugin: CreateTodoListPlugin() },
+  { plugin: CreateLineNumberPlugin() },
+  { plugin: CreateCopyCodePlugin() },
+  { plugin: CreateHighlightLinesPlugin() },
+  { plugin: CreateMermaidPluginCdn() },
+];
 
 export default defineComponent({
   setup() {
@@ -83,10 +108,22 @@ export default defineComponent({
       console.log(code);
     };
 
+    const themeConfig = {
+      config: {
+        Prism,
+        codeHighlightExtensionMap: {
+          vue: 'markup',
+        },
+      },
+      theme: VuepressTheme,
+    };
+
     return {
       text,
       // html,
       customToolbar,
+      theme: themeConfig,
+      plugins,
       handleFullscreenChange,
       handleUploadImage,
       handleSave,
